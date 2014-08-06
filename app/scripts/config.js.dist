@@ -1,0 +1,41 @@
+var env = process.env.NODE_ENV || 'development';
+
+var config = {
+	development: {
+		debug: true,
+
+		refresh: 30,
+
+		triggers: {
+			selectInMaintenance: false,
+			selectWithUnacknowledgedEvents: false,
+			selectWithAcknowledgedEvents: false,
+			selectWithLastEventUnacknowledged: true,
+			selectSkipDependent: false,
+			selectMinimalSeverity: 3,
+
+			filterGroup: null,
+			filterHost: null,
+			filterSeverity: null,
+
+			sortField: 'lastchange',
+			sortOrder: 'DESC',
+
+			limit: 100
+		},
+
+		servers: [{
+			name: 'zabbix.my.domain',
+
+			url: 'https://zabbix.my.domain/api_jsonrpc.php',
+			user: 'zabbix-monitor',
+			password: 'secret123',
+
+			triggers: {
+				limit: 100
+			}
+		}]
+	}
+};
+
+module.exports = config[env];

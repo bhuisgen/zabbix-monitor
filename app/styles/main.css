@@ -1,0 +1,57 @@
+.trigger-header {
+	padding: 4px;
+	border: 1px solid #FFFFFF;
+}
+
+.trigger-row {
+	padding: 4px;
+	border: 1px solid #FFFFFF;
+}
+
+.trigger-priority-0 {
+	background-color: #DBDBDB;
+}
+
+.trigger-priority-1 {
+	background-color: #D6F6FF;
+}
+
+.trigger-priority-2 {
+	background-color: #FFF6A5;
+}
+
+.trigger-priority-3 {
+	background-color: #FFB689;
+}
+
+.trigger-priority-4 {
+	background-color: #FF9999;
+}
+
+.trigger-priority-5 {
+	background-color: #FF3838;
+}
+
+.trigger-status-ok {
+	color: #00AA00;
+}
+
+.trigger-status-problem {
+	color: #DC0000;
+}
+
+.trigger-event-unacknowledged-ok {
+	background-color: #00AA00;
+}
+
+.trigger-event-acknowledged-ok {
+	background-color: #00AA00;
+}
+
+.trigger-event-unacknowledged-problem {
+	background-color: #DC0000;
+}
+
+.trigger-event-acknowledged-problem {
+	background-color: #DC0000;
+}
