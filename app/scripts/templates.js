@@ -81,15 +81,15 @@ exports.home = doT.template('' +
     '       </div>' +
     '       <div class="panel-body">' +
     '           <div id="trigger-header-{{=server}}" class="row trigger-header">' +
-    '               <div class="col-xs-2 col-sd-2 col-md-2 col-lg-2">Host</div>' +
-    '               <div class="col-xs-9 col-sd-7 col-md-7 col-lg-7">Description</div>' +
-    '               <div class="hidden-xs col-sd-2 col-md-2 col-lg-2">Last change</div>' +
+    '               <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">Host</div>' +
+    '               <div class="col-xs-9 col-sm-6 col-md-7 col-lg-7">Description</div>' +
+    '               <div class="hidden-xs col-sm-4 col-md-3 col-lg-3">Last change</div>' +
     '           </div>' +
     '           {{ for (var i = 0; i < it.triggers[server].length; i++) { }}' +
     '           <div id="trigger-data-{{= server }}-{{= it.triggers[server][i].triggerid }}" class="row trigger-row trigger-priority-{{= it.triggers[server][i].priority }}">' +
-    '               <div class="col-xs-2 col-sd-2 col-md-2 col-lg-2">{{= it.triggers[server][i].host }}</div>' +
-    '               <div class="col-xs-9 col-sd-7 col-md-7 col-lg-7">{{= it.triggers[server][i].description }}</div>' +
-    '               <div class="hidden-xs col-sd-2 col-md-2 col-lg-2">{{= new Date(it.triggers[server][i].lastchange * 1000).toUTCString() }}</div>' +
+    '               <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">{{= it.triggers[server][i].host }}</div>' +
+    '               <div class="col-xs-9 col-sm-6 col-md-7 col-lg-7">{{= it.triggers[server][i].description }}</div>' +
+    '               <div class="hidden-xs col-sm-4 col-md-3 col-lg-3">{{= new Date(it.triggers[server][i].lastchange * 1000).toUTCString() }}</div>' +
     '           </div>' +
     '           {{ } }}' +
     '       </div>' +
@@ -106,23 +106,23 @@ exports.history = doT.template('' +
     '       </div>' +
     '       <div class="panel-body">' +
     '           <div id="trigger-header-{{=server}}" class="row trigger-header">' +
-    '               <div class="col-xs-1 col-sd-1 col-md-1 col-lg-1">Status</div>' +
-    '               <div class="col-xs-2 col-sd-2 col-md-2 col-lg-2">Host</div>' +
-    '               <div class="col-xs-9 col-sd-7 col-md-7 col-lg-7">Description</div>' +
-    '               <div class="hidden-xs col-sd-2 col-md-2 col-lg-2">Last change</div>' +
+    '               <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Status</div>' +
+    '               <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">Host</div>' +
+    '               <div class="col-xs-9 col-sm-6 col-md-6 col-lg-6">Description</div>' +
+    '               <div class="hidden-xs col-sm-3 col-md-3 col-lg-3">Last change</div>' +
     '           </div>' +
     '           {{ for (var i = 0; i < it.triggers[server].length; i++) { }}' +
     '           <div id="trigger-data-{{=server}}-{{=it.triggers[server][i].triggerid}}" class="row trigger-row">' +
-    '               <div class="col-xs-1 col-sd-1 col-md-1 col-lg-1">' +
+    '               <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">' +
     '                   {{? it.triggers[server][i].value === "0" }}' +
     '                   <span class="trigger-status-ok">OK</span>' +
     '                   {{??}}' +
     '                   <span class="trigger-status-problem">PROBLEM<span class="trigger-status-problem">' +
     '                   {{?}}' +
     '               </div>' +
-    '               <div class="col-xs-2 col-sd-2 col-md-2 col-lg-2{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{=it.triggers[server][i].host}}</div>' +
-    '               <div class="col-xs-9 col-sd-7 col-md-7 col-lg-7{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{=it.triggers[server][i].description}}</div>' +
-    '               <div class="hidden-xs col-sd-2 col-md-2 col-lg-2{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{= new Date(it.triggers[server][i].lastchange * 1000).toUTCString()}}</div>' +
+    '               <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{=it.triggers[server][i].host}}</div>' +
+    '               <div class="col-xs-9 col-sm-6 col-md-6 col-lg-6{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{=it.triggers[server][i].description}}</div>' +
+    '               <div class="hidden-xs col-sm-3 col-md-3 col-lg-3{{? it.triggers[server][i].value !== "0"}} trigger-priority-{{=it.triggers[server][i].priority}}{{?}}">{{= new Date(it.triggers[server][i].lastchange * 1000).toUTCString()}}</div>' +
     '           </div>' +
     '           {{ } }}' +
     '       </div>' +
