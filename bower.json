@@ -1,0 +1,9 @@
+{
+  "name": "zabbix-monitor",
+  "private": true,
+  "dependencies": {
+    "bootswatch-dist": "3.2.0-cyborg",
+    "jquery": "~2.1.1"
+  },
+  "devDependencies": {}
+}

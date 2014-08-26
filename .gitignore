@@ -1,0 +1,7 @@
+.tmp/
+.sass-cache
+bower_components/
+dist/
+node_modules/
+test/bower_components
+app/scripts/config.js

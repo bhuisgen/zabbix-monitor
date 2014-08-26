@@ -1,0 +1,80 @@
+.triggers {
+}
+
+.triggers-header {
+	padding: 4px;
+}
+
+.triggers-row {
+	padding: 4px;
+}
+
+.trigger-priority-notclassified {
+	background-color: #888888;
+}
+
+.trigger-priority-information {
+	background-color: #2A9FD6;
+}
+
+.trigger-priority-warning {
+	background-color: #FF8800;
+}
+
+.trigger-priority-average {
+	background-color: #FF6666;
+}
+
+.trigger-priority-high {
+	background-color: #FF3333;
+}
+
+.trigger-priority-disaster {
+	background-color: #FF0000;
+}
+
+.trigger-status-ok {
+	background-color: #00AA00;
+}
+
+.trigger-status-problem {
+	background-color: #DC0000;
+}
+
+.events {
+}
+
+.events-header {
+	padding: 4px;
+}
+
+.events-row {
+	padding: 4px;
+}
+
+.event-status-ok {
+	background-color: #00AA00;
+}
+
+.event-status-problem {
+	background-color: #DC0000;
+}
+
+.httptests {
+}
+
+.httptests-header {
+	padding: 4px;
+}
+
+.httptests-row {
+	padding: 4px;
+}
+
+.httptest-status-ok {
+	background-color: #00AA00;
+}
+
+.httptest-status-problem {
+	background-color: #DC0000;
+}
