@@ -5,23 +5,25 @@ var config = {
 		debug: true,
 
 		refresh: 30,
+		alerts: true,
 
 		triggers: {
+			severity: 2,
+			status: 1,
+			age: 7,
+			sortField: 'priority',
+			sortOrder: 'DESC',
+
 			selectInMaintenance: false,
 			selectWithUnacknowledgedEvents: false,
 			selectWithAcknowledgedEvents: false,
 			selectWithLastEventUnacknowledged: true,
-			selectSkipDependent: false,
-			selectMinimalSeverity: 3,
+			selectSkipDependent: true,
+			selectMinimalSeverity: 0,
 
 			filterGroup: null,
 			filterHost: null,
 			filterSeverity: null,
-
-			sortField: 'lastchange',
-			sortOrder: 'DESC',
-
-			limit: 100
 		},
 
 		servers: [{
@@ -30,10 +32,6 @@ var config = {
 			url: 'https://zabbix.my.domain/api_jsonrpc.php',
 			user: 'zabbix-monitor',
 			password: 'secret123',
-
-			triggers: {
-				limit: 100
-			}
 		}]
 	}
 };

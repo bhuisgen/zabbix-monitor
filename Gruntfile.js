@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         watch: {
             bower: {
                 files: ['bower.json'],
-                tasks: ['bowerInstall']
+                tasks: ['wiredep']
             },
             js: {
                 files: ['<%= config.app %>/scripts/{,*/}*.js'],
@@ -47,9 +47,20 @@ module.exports = function(grunt) {
             gruntfile: {
                 files: ['Gruntfile.js']
             },
+            less: {
+                files: ['<%= config.app %>/theme/{,*/}*.less'],
+                tasks: ['less'],
+                options: {
+                    livereload: true
+                }
+            },
             styles: {
                 files: ['<%= config.app %>/styles/{,*/}*.css'],
                 tasks: ['newer:copy:styles', 'autoprefixer']
+            },
+            templates: {
+                files: ['<%= config.app %>/templates/{,*/}*.dotjs'],
+                tasks: ['dot']
             },
             livereload: {
                 options: {
@@ -67,7 +78,6 @@ module.exports = function(grunt) {
         connect: {
             options: {
                 port: 9000,
-                open: true,
                 livereload: 35729,
                 // Change this to '0.0.0.0' to access the server from outside
                 hostname: 'localhost'
@@ -180,6 +190,33 @@ module.exports = function(grunt) {
                     ]
                 }
             }
+        },
+
+        dot: {
+            templates: {
+                options: {
+                    variable: 'templates',
+                    root: __dirname + '/app/templates',
+                    node: true
+                },
+                src: ['app/templates/{,*/}*.dotjs'],
+                dest: 'app/scripts/templates.js'
+            }
+        },
+
+        less: {
+            theme: {
+                options: {
+                    strictMath: true,
+                    sourceMap: true,
+                    outputSourceFiles: true,
+                    sourceMapURL: 'bootstrap.css.map',
+                    sourceMapFilename: 'app/styles/bootstrap.css.map'
+                },
+                files: {
+                    'app/styles/bootstrap.css': 'app/theme/bootstrap.less',
+                }
+            },
         },
 
         // Reads HTML for usemin blocks to enable smart builds that automatically
@@ -300,7 +337,14 @@ module.exports = function(grunt) {
                 cwd: '<%= config.app %>/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
-            }
+            },
+            fonts: {
+                expand: true,
+                dot: true,
+                cwd: 'bower_components/bootstrap/dist/fonts',
+                dest: '.tmp/fonts/',
+                src: ['{,*/}*']
+            },
         },
 
         browserify: {
@@ -314,13 +358,16 @@ module.exports = function(grunt) {
         concurrent: {
             server: [
                 'copy:styles',
+                'copy:fonts',
                 'browserify'
             ],
             test: [
-                'copy:styles'
+                'copy:styles',
+                'copy:fonts',
             ],
             dist: [
                 'copy:styles',
+                'copy:fonts',
                 'imagemin',
                 'svgmin',
                 'browserify'
@@ -335,6 +382,8 @@ module.exports = function(grunt) {
 
         grunt.task.run([
             'clean:server',
+            'dot',
+            'less',
             'concurrent:server',
             'autoprefixer',
             'connect:livereload',
@@ -359,6 +408,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
+        'dot',
+        'less',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',

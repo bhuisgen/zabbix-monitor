@@ -1,0 +1,22 @@
+<section id="httptests" class="container-fluid">
+    {{ for (var server in it.httptests) { }}
+    <div class="httptests">
+        <div class="httptest-header">
+        </div>
+        {{ for (var i = 0; i < it.httptests[server].length; i++) { }}
+        <div id="httptest-data-{{= server }}-{{= it.httptests[server][i].hostid }}" class="row httptests-row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+            {{? it.httptests[server][i].status === '0' }}
+            <span class="label httptest-status-ok">OK</span>
+            {{??}}
+            <span class="label httptest-status-problem">PROBLEM</span>
+            {{?}}
+            </div>
+            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7">{{= it.httptests[server][i].name }}</div>
+            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2">{{= it.httptests[server][i].hosts[0].host }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2">{{= new Date((it.httptests[server][i].nextcheck - it.httptests[server][i].delay) * 1000).toLocaleString() }}</div>
+        </div>
+        {{ } }}
+    </div>
+    {{ } }}
+</section>

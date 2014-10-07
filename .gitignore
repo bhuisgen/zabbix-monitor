@@ -5,3 +5,6 @@ dist
 bower_components
 test/bower_components
 app/scripts/config.js
+app/scripts/templates.js
+app/styles/bootstrap.css
+app/styles/bootstrap.css.map

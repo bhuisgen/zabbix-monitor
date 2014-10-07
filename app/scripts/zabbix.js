@@ -1,7 +1,5 @@
 'use strict';
 
-var request = require('browser-request');
-
 var Client = function(url, user, password) {
     this.url = url;
     this.user = user;
@@ -11,7 +9,7 @@ var Client = function(url, user, password) {
     this.debug = true;
 };
 
-Client.prototype.call = function call(method, params, callback) {
+Client.prototype.send = function send(method, params, callback) {
     callback = callback || function() {
         return true;
     };
@@ -22,38 +20,34 @@ Client.prototype.call = function call(method, params, callback) {
         console.log('::zabbix-api method: ' + method + ' params: ' + JSON.stringify(params));
     }
 
-    request({
-        method: 'POST',
-        uri: this.url,
+    $.ajax({
+        type: 'POST',
+        url: this.url,
         headers: {
             'content-type': 'application/json-rpc'
         },
-        body: JSON.stringify({
+        dataType: 'json',
+        data: JSON.stringify({
             jsonrpc: '2.0',
             id: ++this.rpcid,
             auth: this.authid,
             method: method,
             params: params
         }),
-        rejectUnauthorized: false
-    }, function(err, res, body) {
-        var data = null;
-
-        if (err) {
-            callback(err, data);
-        } else {
-            if ((res.statusCode === 200) && (typeof body !== 'undefined')) {
-                data = JSON.parse(body);
-
+        error: function(jqXHRn, textStatus, errorThrown) {
+            return callback(new Error(errorThrown));
+        },
+        success: function(data, textStatus, jqXHR) {
+            if ((jqXHR.status === 200) && data) {
                 if (self.debug) {
-                    console.log('::zabbix-api method: ' + method + ' result: ' + body);
+                    console.log('::zabbix-api method: ' + method + ' result: ' + JSON.stringify(data));
                 }
 
-                callback(null, data);
-            } else if (res.statusCode === 412) {
-                callback(new Error('Invalid parameters'), data);
+                return callback(null, data);
+            } else if (jqXHR.status === 412) {
+                return callback(new Error('Invalid parameters'));
             } else {
-                callback(new Error('Unknown method'), data);
+                return callback(new Error('Unknown method'));
             }
         }
     });
@@ -66,7 +60,7 @@ Client.prototype.authenticate = function authenticate(callback) {
 
     var self = this;
 
-    this.call('user.authenticate', {
+    this.send('user.authenticate', {
         'user': this.user,
         'password': this.password
     }, function(err, data) {

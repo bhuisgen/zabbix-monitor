@@ -1,57 +1,124 @@
-.trigger-header {
+.discoveredhost-status-up {
+	background-color: #00AA00;
+}
+
+.discoveredhost-status-down {
+	background-color: #DC0000;
+}
+
+.discoveredservice-status-up {
+	background-color: #00AA00;
+}
+
+.discoveredservice-status-down {
+	background-color: #DC0000;
+}
+
+.events-header {
+	padding: 8px;
+}
+
+.events-row {
 	padding: 4px;
-	border: 1px solid #FFFFFF;
 }
 
-.trigger-row {
+.httptests-header {
+	padding: 8px;
+}
+
+.httptests-row {
 	padding: 4px;
-	border: 1px solid #FFFFFF;
 }
 
-.trigger-priority-0 {
-	background-color: #DBDBDB;
+.httptest-status-ok {
+	background-color: #00AA00;
 }
 
-.trigger-priority-1 {
-	background-color: #D6F6FF;
+.httptest-status-problem {
+	background-color: #DC0000;
 }
 
-.trigger-priority-2 {
-	background-color: #FFF6A5;
+.trigger-alert {
+	display: block;
 }
 
-.trigger-priority-3 {
-	background-color: #FFB689;
+.triggers-header {
+	padding: 8px;
 }
 
-.trigger-priority-4 {
-	background-color: #FF9999;
+.triggers-row {
+	padding: 4px;
+	color: #FFFFFF;
 }
 
-.trigger-priority-5 {
-	background-color: #FF3838;
+.trigger-label {
+	display: block;
+}
+
+.trigger-priority-notclassified {
+	background-color: #888888;
+}
+
+.trigger-priority-information {
+	background-color: #2A9FD6;
+}
+
+.trigger-priority-warning {
+	background-color: #FF8800;
+}
+
+.trigger-priority-average {
+	background-color: #FF6666;
+}
+
+.trigger-priority-high {
+	background-color: #FF3333;
+}
+
+.trigger-priority-disaster {
+	background-color: #FF0000;
 }
 
 .trigger-status-ok {
-	color: #00AA00;
+	background-color: #00AA00;
 }
 
 .trigger-status-problem {
-	color: #DC0000;
-}
-
-.trigger-event-unacknowledged-ok {
-	background-color: #00AA00;
-}
-
-.trigger-event-acknowledged-ok {
-	background-color: #00AA00;
-}
-
-.trigger-event-unacknowledged-problem {
 	background-color: #DC0000;
 }
 
-.trigger-event-acknowledged-problem {
-	background-color: #DC0000;
+@media screen {
+    .triggers-row, .events-row, .httptests-row {   
+    	font-size: 18px;
+	}
+
+	.triggers-alert {
+		font-size: 18px;
+
+	}
+}
+
+@media screen and (max-width: 1200px) {
+    .triggers-row, .events-rows, .httptests-row {   
+    	font-size: 16px;
+	}
+
+	.triggers-alert {
+		font-size: 16px;
+
+	}
+}
+
+@media screen and (max-width: 992px) {
+    .triggers-row, .events-row, .httptests-row {   
+    	font-size: 14px;
+	}
+}
+
+.hide-overflow
+{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    display:block;
 }
