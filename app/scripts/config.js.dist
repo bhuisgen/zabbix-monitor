@@ -1,6 +1,51 @@
 var env = process.env.NODE_ENV || 'development';
 
-var config = {
+var config = {	
+	production: {
+		debug: false,
+
+		refresh: 30,
+		alerts: true,
+
+		triggers: {
+			severity: 2,
+			status: 1,
+			age: 7,
+			sortField: 'priority',
+			sortOrder: 'DESC',
+
+			selectInMaintenance: false,
+			selectWithUnacknowledgedEvents: false,
+			selectWithAcknowledgedEvents: false,
+			selectWithLastEventUnacknowledged: true,
+			selectSkipDependent: true,
+			selectMinimalSeverity: 0,
+
+			filterGroup: null,
+			filterHost: null,
+			filterSeverity: null,
+		},
+
+		events: {
+			period: 3600,
+			sortField: 'clock',
+			sortOrder: 'DESC'
+		},
+
+		httptests: {
+			sortField: 'name',
+			sortOrder: 'ASC'
+		},
+
+		servers: [{
+			name: 'zabbix.my.domain',
+
+			url: 'https://zabbix.my.domain/api_jsonrpc.php',
+			user: 'zabbix-monitor',
+			password: 'secret123',
+		}]
+	}
+
 	development: {
 		debug: true,
 
@@ -24,6 +69,17 @@ var config = {
 			filterGroup: null,
 			filterHost: null,
 			filterSeverity: null,
+		},
+
+		events: {
+			period: 3600,
+			sortField: 'clock',
+			sortOrder: 'DESC'
+		},
+
+		httptests: {
+			sortField: 'name',
+			sortOrder: 'ASC'
 		},
 
 		servers: [{

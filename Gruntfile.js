@@ -29,10 +29,6 @@ module.exports = function(grunt) {
 
         // Watches files for changes and runs tasks based on the changed files
         watch: {
-            bower: {
-                files: ['bower.json'],
-                tasks: ['wiredep']
-            },
             js: {
                 files: ['<%= config.app %>/scripts/{,*/}*.js'],
                 tasks: ['jshint', 'browserify'],
@@ -60,7 +56,10 @@ module.exports = function(grunt) {
             },
             templates: {
                 files: ['<%= config.app %>/templates/{,*/}*.dotjs'],
-                tasks: ['dot']
+                tasks: ['dot'],
+                options: {
+                    livereload: true
+                }
             },
             livereload: {
                 options: {
@@ -87,7 +86,7 @@ module.exports = function(grunt) {
                     middleware: function(connect) {
                         return [
                             connect.static('.tmp'),
-                            connect().use('/bower_components', connect.static('./bower_components')),
+                            connect().use('/bower_components', connect.static('<%= config.app %>/bower_components')),
                             connect.static(config.app)
                         ];
                     }
@@ -101,7 +100,7 @@ module.exports = function(grunt) {
                         return [
                             connect.static('.tmp'),
                             connect.static('test'),
-                            connect().use('/bower_components', connect.static('./bower_components')),
+                            connect().use('/bower_components', connect.static('<%= config.app %>/bower_components')),
                             connect.static(config.app)
                         ];
                     }
@@ -166,14 +165,6 @@ module.exports = function(grunt) {
                     src: '{,*/}*.css',
                     dest: '.tmp/styles/'
                 }]
-            }
-        },
-
-        // Automatically inject Bower components into the HTML file
-        wiredep: {
-            app: {
-                src: ['<%= config.app %>/index.html'],
-                exclude: ['bower_components/bootstrap/dist/js/bootstrap.js']
             }
         },
 
@@ -326,7 +317,7 @@ module.exports = function(grunt) {
                 }, {
                     expand: true,
                     dot: true,
-                    cwd: 'bower_components/bootstrap/dist',
+                    cwd: '<%= config.app %>/bower_components/bootstrap/dist',
                     src: ['fonts/*.*'],
                     dest: '<%= config.dist %>'
                 }]
@@ -341,7 +332,7 @@ module.exports = function(grunt) {
             fonts: {
                 expand: true,
                 dot: true,
-                cwd: 'bower_components/bootstrap/dist/fonts',
+                cwd: '<%= config.app %>/bower_components/bootstrap/dist/fonts',
                 dest: '.tmp/fonts/',
                 src: ['{,*/}*']
             },

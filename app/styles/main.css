@@ -19,7 +19,8 @@
 }
 
 .events-row {
-	padding: 4px;
+    padding: 4px;
+    color: #FFFFFF;
 }
 
 .httptests-header {
@@ -27,7 +28,8 @@
 }
 
 .httptests-row {
-	padding: 4px;
+    padding: 4px;
+    color: #FFFFFF;
 }
 
 .httptest-status-ok {
@@ -38,8 +40,8 @@
 	background-color: #DC0000;
 }
 
-.trigger-alert {
-	display: block;
+.httptest-alert {
+    display: block;
 }
 
 .triggers-header {
@@ -87,30 +89,33 @@
 	background-color: #DC0000;
 }
 
+.trigger-alert {
+    display: block;
+}
+
 @media screen {
-    .triggers-row, .events-row, .httptests-row {   
+    .events-row, .httptests-row, .triggers-row {   
     	font-size: 18px;
 	}
 
-	.triggers-alert {
+	.httptests-alert, .triggers-alert {
 		font-size: 18px;
-
 	}
 }
 
 @media screen and (max-width: 1200px) {
-    .triggers-row, .events-rows, .httptests-row {   
+    .events-rows, .httptests-row, .triggers-row {   
     	font-size: 16px;
 	}
 
-	.triggers-alert {
+	.httptests-alert, .triggers-alert {
 		font-size: 16px;
 
 	}
 }
 
 @media screen and (max-width: 992px) {
-    .triggers-row, .events-row, .httptests-row {   
+    .events-row, .httptests-row, .triggers-row {   
     	font-size: 14px;
 	}
 }

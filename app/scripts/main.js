@@ -1,5 +1,6 @@
 'use strict';
 
+var async = require('async');
 var doT = require('dot');
 var moment = require('moment');
 
@@ -27,44 +28,34 @@ var timeoutId;
 function connectClients(callback) {
     var clients = {};
 
-    var count = config.servers.length;
-
-    var doConnect = function(server) {
-        count--;
-
+    async.each(config.servers, function(server, callback) {
         var client = new Zabbix(server.url, server.user, server.password);
 
         client.config = server;
 
         client.authenticate(function(err, data) {
             if (err) {
-                callback(err, null);
+                return callback(err);
             }
 
             clients[server.name] = client;
 
-            if (!count) {
-                callback(null, clients);
-            }
+            return callback(null);
         });
-    };
 
-    for (var i = 0, j = count; i < j; i++) {
-        doConnect(config.servers[i]);
-    }
+    }, function(err) {
+        if (err) {
+            return callback(err, null);
+        }
+
+        return callback(null, clients);
+    });
 }
 
 function getServers(clients, callback) {
-    var servers = [];
+    var servers = Object.keys(clients);
 
-    var keys = Object.keys(clients);
-    var count = keys.length;
-
-    for (var i = 0, j = count; i < j; i++) {
-        servers.push(keys[i]);
-    }
-
-    callback(null, servers);
+    return callback(null, servers);
 }
 
 function getHostGroups(clients, servers, callback) {
@@ -73,32 +64,32 @@ function getHostGroups(clients, servers, callback) {
     var keys = Object.keys(clients);
     var count = keys.length;
 
-    var doGetHostGroups = function(client) {
+    var doGetHosts = function(client) {
         count--;
 
         if (servers && (servers.indexOf(client.config.name) === -1)) {
             if (!count) {
-                callback(null, groups);
+                return callback(null, groups);
             }
         } else {
             client.send('hostgroup.get', {
                 output: 'extend',
             }, function(err, data) {
                 if (err) {
-                    callback(err, groups);
+                    return callback(err, null);
                 }
 
                 groups[client.config.name] = data.result;
 
                 if (!count) {
-                    callback(null, groups);
+                    return callback(null, groups);
                 }
             });
         }
     };
 
     for (var i = 0, j = count; i < j; i++) {
-        doGetHostGroups(clients[keys[i]]);
+        doGetHosts(clients[keys[i]]);
     }
 }
 
@@ -113,20 +104,20 @@ function getHosts(clients, servers, groups, callback) {
 
         if (servers && (servers.indexOf(client.config.name) === -1)) {
             if (!count) {
-                callback(null, hosts);
+                return callback(null, hosts);
             }
         } else {
             client.send('host.get', {
                 output: 'extend',
             }, function(err, data) {
                 if (err) {
-                    callback(err, hosts);
+                    return callback(err, hosts);
                 }
 
                 hosts[client.config.name] = data.result;
 
                 if (!count) {
-                    callback(null, hosts);
+                    return callback(null, hosts);
                 }
             });
         }
@@ -148,7 +139,7 @@ function getTriggers(clients, servers, groups, hosts, callback) {
 
         if (servers && (servers.indexOf(client.config.name) === -1)) {
             if (!count) {
-                callback(null, triggers);
+                return callback(null, triggers);
             }
         } else {
             var params = {
@@ -206,13 +197,13 @@ function getTriggers(clients, servers, groups, hosts, callback) {
 
             client.send('trigger.get', params, function(err, data) {
                 if (err) {
-                    callback(err, null);
+                    return callback(err, null);
                 }
 
                 triggers[client.config.name] = data.result;
 
                 if (!count) {
-                    callback(null, triggers);
+                    return callback(null, triggers);
                 }
             });
         }
@@ -234,28 +225,36 @@ function getEvents(clients, servers, groups, hosts, callback) {
 
         if (servers && (servers.indexOf(client.config.name) === -1)) {
             if (!count) {
-                callback(null, events);
+                return callback(null, events);
             }
         } else {
             var params = {
                 output: ['eventid', 'acknowledged', 'clock', 'object', 'source', 'value'],
+                expandData: 1,
                 expandDescription: 1,
+                expandExpression: 1,
                 time_from: (Number(new Date().getTime() / 1000).toFixed() - config.events.period),
                 selectHosts: 'extend',
                 selectRelatedObject: 'extend',
-                sortfield: ['clock', 'eventid'],
-                sortorder: 'DESC'
             };
+
+            if (config.events.sortField) {
+                params.sortfield = config.events.sortField;
+            }
+
+            if (config.events.sortOrder) {
+                params.sortorder = config.events.sortOrder;
+            }
 
             client.send('event.get', params, function(err, data) {
                 if (err) {
-                    callback(err, null);
+                    return callback(err, null);
                 }
 
                 events[client.config.name] = data.result;
 
                 if (!count) {
-                    callback(null, events);
+                    return callback(null, events);
                 }
             });
         }
@@ -277,7 +276,7 @@ function getHTTPTests(clients, servers, groups, hosts, callback) {
 
         if (servers && (servers.indexOf(client.config.name) === -1)) {
             if (!count) {
-                callback(null, events);
+                return callback(null, events);
             }
         } else {
             var params = {
@@ -286,21 +285,53 @@ function getHTTPTests(clients, servers, groups, hosts, callback) {
                 expandName: 1,
                 expandStepName: 1,
                 selectSteps: 'extend',
-                selectHosts: 'extend',
-                sortfield: ['name'],
-                sortorder: 'ASC'
+                selectHosts: 'extend'
             };
+
+            if (config.httptests.sortField) {
+                params.sortfield = config.httptests.sortField;
+            }
+
+            if (config.httptests.sortOrder) {
+                params.sortorder = config.httptests.sortOrder;
+            }
 
             client.send('httptest.get', params, function(err, data) {
                 if (err) {
-                    callback(err, null);
+                    return callback(err);
                 }
 
                 httptests[client.config.name] = data.result;
 
-                if (!count) {
-                    callback(null, httptests);
-                }
+                var hostids = {};
+
+                async.each(httptests[client.config.name], function(test, callback) {
+                    client.send('item.get', {
+                        output: ['lastvalue'],
+                        hostids: test.hosts[0].hostid,
+                        webitems: 1,
+                        search: {
+                            key_: 'web.test.fail[' + test.name + ']'
+                        }
+                    }, function(err, data) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        test.lastvalue = data.result[0].lastvalue;
+
+                        return callback(null);
+                    });
+
+                }, function(err) {
+                    if (err) {
+                        return callback(err, null, null);
+                    }
+
+                    if (!count) {
+                        return callback(null, httptests);
+                    }
+                });
             });
         }
     };
@@ -358,10 +389,10 @@ function showTriggersView() {
             information: 0,
             notclassified: 0
         };
-        
+
         if (config.alerts) {
             for (var server in triggers) {
-                for (var i = 0; i < triggers[server].length; i++) {
+                for (var i = 0, j = triggers[server].length; i < j; i++) {
                     if (triggers[server][i].value === '0') {
                         continue;
                     }
@@ -419,6 +450,7 @@ function showEventsView() {
 
             return;
         }
+
         if (view !== 'events') {
             return;
         }
@@ -438,11 +470,6 @@ function showEventsView() {
 }
 
 function showWebView() {
-    $('#menu').html(templates.menu({
-        config: config,
-        view: view
-    }));
-
     getHTTPTests(clients, null, null, null, function(err, data) {
         if (err) {
             console.error(err);
@@ -455,6 +482,17 @@ function showWebView() {
         }
 
         httptests = data;
+        httptests.alerts = 0;
+
+        if (config.alerts) {
+            for (var server in httptests) {
+                for (var i = 0, j = httptests[server].length; i < j; i++) {
+                    if (httptests[server][i].lastvalue !== '0') {
+                        httptests.alerts++;
+                    }
+                }
+            }
+        }
 
         $('#menu').html(templates.menu({
             config: config,
@@ -805,6 +843,96 @@ $('body').on('click', 'a[href="#triggers-sortorder-DESC"]', function(e) {
     e.preventDefault();
 });
 
+$('body').on('click', 'a[href="#events-sortfield-eventid"]', function(e) {
+    $('a[href="#events-sortfield-' + config.events.sortField + '"]').parent().removeClass('active');
+    $('a[href="#events-sortfield-eventid"]').parent().addClass('active');
+
+    config.events.sortField = 'eventid';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#events-sortfield-objectid"]', function(e) {
+    $('a[href="#events-objectid-' + config.events.sortField + '"]').parent().removeClass('active');
+    $('a[href="#events-objectid-eventid"]').parent().addClass('active');
+
+    config.events.sortField = 'objectid';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#events-sortfield-clock"]', function(e) {
+    $('a[href="#events-sort-' + config.events.sortField + '"]').parent().removeClass('active');
+    $('a[href="#events-sort-clock"]').parent().addClass('active');
+
+    config.events.sortField = 'clock';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#events-sortorder-ASC"]', function(e) {
+    $('a[href="#events-sortorder-' + config.events.sortField + '"]').parent().removeClass('active');
+    $('a[href="#events-sortorder-ASC"]').parent().addClass('active');
+
+    config.events.sortOrder = 'ASC';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#events-sortorder-DESC"]', function(e) {
+    $('a[href="#events-sortorder-' + config.events.sortField + '"]').parent().removeClass('active');
+    $('a[href="#events-sortorder-DESC"]').parent().addClass('active');
+
+    config.events.sortOrder = 'DESC';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#httptests-sortfield-httptestid"]', function(e) {
+    $('a[href="#httptests-sortfield-' + config.httptests.sortField + '"]').parent().removeClass('active');
+    $('a[href="#httptests-sortfield-httptestid"]').parent().addClass('active');
+
+    config.httptests.sortField = 'httptestid';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#httptests-sortfield-name"]', function(e) {
+    $('a[href="#httptests-sort-' + config.httptests.sortField + '"]').parent().removeClass('active');
+    $('a[href="#httptests-sort-name"]').parent().addClass('active');
+
+    config.httptests.sortField = 'name';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#httptests-sortorder-ASC"]', function(e) {
+    $('a[href="#httptests-sortorder-' + config.httptests.sortField + '"]').parent().removeClass('active');
+    $('a[href="#httptests-sortorder-ASC"]').parent().addClass('active');
+
+    config.httptests.sortOrder = 'ASC';
+    refresh();
+
+    e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#httptests-sortorder-DESC"]', function(e) {
+    $('a[href="#httptests-sortorder-' + config.httptests.sortField + '"]').parent().removeClass('active');
+    $('a[href="#httptests-sortorder-DESC"]').parent().addClass('active');
+
+    config.httptests.sortOrder = 'DESC';
+    refresh();
+
+    e.preventDefault();
+});
+
 /*
  * Script
  */
@@ -847,8 +975,6 @@ connectClients(function(err, data) {
 
         hosts = data;
     });
-
-    console.log(templates);
 
     $('#app').html(templates.app({
         config: config,
