@@ -1,7 +1,10 @@
-.tmp/
+node_modules
+dist
+.tmp
 .sass-cache
-bower_components/
-dist/
-node_modules/
+bower_components
 test/bower_components
 app/scripts/config.js
+app/scripts/templates.js
+app/styles/bootstrap.css
+app/styles/bootstrap.css.map

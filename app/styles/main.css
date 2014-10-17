@@ -1,12 +1,60 @@
-.triggers {
+.discoveredhost-status-up {
+	background-color: #00AA00;
+}
+
+.discoveredhost-status-down {
+	background-color: #DC0000;
+}
+
+.discoveredservice-status-up {
+	background-color: #00AA00;
+}
+
+.discoveredservice-status-down {
+	background-color: #DC0000;
+}
+
+.events-header {
+	padding: 8px;
+}
+
+.events-row {
+    padding: 4px;
+    color: #FFFFFF;
+}
+
+.httptests-header {
+	padding: 8px;
+}
+
+.httptests-row {
+    padding: 4px;
+    color: #FFFFFF;
+}
+
+.httptest-status-ok {
+	background-color: #00AA00;
+}
+
+.httptest-status-problem {
+	background-color: #DC0000;
+}
+
+.httptest-alert {
+    display: block;
 }
 
 .triggers-header {
-	padding: 4px;
+	padding: 8px;
 }
 
 .triggers-row {
 	padding: 4px;
+	color: #FFFFFF;
+}
+
+.trigger-label {
+	display: block;
 }
 
 .trigger-priority-notclassified {
@@ -41,40 +89,41 @@
 	background-color: #DC0000;
 }
 
-.events {
+.trigger-alert {
+    display: block;
 }
 
-.events-header {
-	padding: 4px;
+@media screen {
+    .events-row, .httptests-row, .triggers-row {   
+    	font-size: 18px;
+	}
+
+	.httptests-alert, .triggers-alert {
+		font-size: 18px;
+	}
 }
 
-.events-row {
-	padding: 4px;
+@media screen and (max-width: 1200px) {
+    .events-rows, .httptests-row, .triggers-row {   
+    	font-size: 16px;
+	}
+
+	.httptests-alert, .triggers-alert {
+		font-size: 16px;
+
+	}
 }
 
-.event-status-ok {
-	background-color: #00AA00;
+@media screen and (max-width: 992px) {
+    .events-row, .httptests-row, .triggers-row {   
+    	font-size: 14px;
+	}
 }
 
-.event-status-problem {
-	background-color: #DC0000;
-}
-
-.httptests {
-}
-
-.httptests-header {
-	padding: 4px;
-}
-
-.httptests-row {
-	padding: 4px;
-}
-
-.httptest-status-ok {
-	background-color: #00AA00;
-}
-
-.httptest-status-problem {
-	background-color: #DC0000;
+.hide-overflow
+{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    display:block;
 }

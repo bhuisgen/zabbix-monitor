@@ -1,23 +1,40 @@
 var env = process.env.NODE_ENV || 'development';
 
-var config = {
+var config = {	
 	production: {
+		debug: false,
+
 		refresh: 30,
+		alerts: true,
 
 		triggers: {
+			severity: 2,
+			status: 1,
+			age: 7,
+			sortField: 'priority',
+			sortOrder: 'DESC',
+
 			selectInMaintenance: false,
 			selectWithUnacknowledgedEvents: false,
 			selectWithAcknowledgedEvents: false,
 			selectWithLastEventUnacknowledged: true,
-			selectSkipDependent: false,
+			selectSkipDependent: true,
 			selectMinimalSeverity: 0,
 
-			limit: 100
+			filterGroup: null,
+			filterHost: null,
+			filterSeverity: null,
 		},
 
 		events: {
 			period: 3600,
-			limit: 100
+			sortField: 'clock',
+			sortOrder: 'DESC'
+		},
+
+		httptests: {
+			sortField: 'name',
+			sortOrder: 'ASC'
 		},
 
 		servers: [{
@@ -25,35 +42,44 @@ var config = {
 
 			url: 'https://zabbix.my.domain/api_jsonrpc.php',
 			user: 'zabbix-monitor',
-			password: 'secret',
-
-			triggers: {
-			},
-
-			events: {
-			}
+			password: 'secret123',
 		}]
-	},
+	}
 
 	development: {
 		debug: true,
 
 		refresh: 30,
+		alerts: true,
 
 		triggers: {
+			severity: 2,
+			status: 1,
+			age: 7,
+			sortField: 'priority',
+			sortOrder: 'DESC',
+
 			selectInMaintenance: false,
 			selectWithUnacknowledgedEvents: false,
 			selectWithAcknowledgedEvents: false,
 			selectWithLastEventUnacknowledged: true,
-			selectSkipDependent: false,
+			selectSkipDependent: true,
 			selectMinimalSeverity: 0,
 
-			limit: 40
+			filterGroup: null,
+			filterHost: null,
+			filterSeverity: null,
 		},
 
 		events: {
 			period: 3600,
-			limit: 40
+			sortField: 'clock',
+			sortOrder: 'DESC'
+		},
+
+		httptests: {
+			sortField: 'name',
+			sortOrder: 'ASC'
 		},
 
 		servers: [{
@@ -61,13 +87,7 @@ var config = {
 
 			url: 'https://zabbix.my.domain/api_jsonrpc.php',
 			user: 'zabbix-monitor',
-			password: 'secret',
-
-			triggers: {
-			},
-
-			events: {
-			}
+			password: 'secret123',
 		}]
 	}
 };

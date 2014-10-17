@@ -1,0 +1,69 @@
+<section id="events" class="container-fluid">
+    <div class="row">
+        <div class="hidden-xs col-sm-6 col-md-6 col-lg-6">
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li{{? it.config.events.sortField === 'eventid' }} class="active"{{?}}><a href="#events-sortfield-eventid">Identifier</a></li>
+                            <li{{? it.config.events.sortField === 'objectid' }} class="active"{{?}}><a href="#events-sortfield-objectid">Object</a></li>
+                            <li{{? it.config.events.sortField === 'clock' }} class="active"{{?}}><a href="#events-sortfield-clock">Clock</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Order <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li{{? it.config.events.sortOrder === 'ASC' }} class="active"{{?}}><a href="#events-sortorder-ASC">Ascending</a></li>
+                            <li{{? it.config.events.sortOrder === 'DESC' }} class="active"{{?}}><a href="#events-sortorder-DESC">Descending</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
+    {{ for (var server in it.events) { }}
+    <div class="events">
+        <div class="events-header">
+        </div>
+        {{ for (var i = 0; i < it.events[server].length; i++) { }}
+        <div id="events-data-{{= server }}-{{= it.events[server][i].eventid }}" class="row events-row">
+            {{? it.events[server][i].object === '0' }}
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+            {{? it.events[server][i].value === '0' }}
+            <span class="label trigger-status-ok hide-overflow">TRIGGER</span>
+            {{??}}
+            <span class="label trigger-status-problem hide-overflow">TRIGGER</span>
+            {{?}}
+            </div>
+            <div class="col-xs-8 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.events[server][i].hosts[0].host }}</div>
+            <div class="hidden-xs col-sm-8 col-md-5 col-lg-7 hide-overflow">{{= it.events[server][i].relatedObject.description }}</div>
+            <div class="hidden-xs hidden-sm col-md-3 col-lg-2 hide-overflow">{{= new Date(it.events[server][i].clock * 1000).toLocaleString() }}</div>
+            {{?? it.events[server][i].object === '1' }}
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+                {{? it.events[server][i].relatedObject.status === '0' }}
+                <span class="label discoveredhost-status-up hide-overflow">DISCOVERY</span>
+                {{??}}
+                <span class="label discoveredhost-status-down hide-overflow">DISCOVERY</span>
+                {{?}}
+            </div>
+            <div class="col-xs-8 col-sm-10 col-md-7 col-lg-9 hide-overflow">{{= it.events[server][i].hosts[0].host }}</div>
+            <div class="hidden-xs col-sm-8 col-md-5 col-lg-7 hide-overflow">Host {{? it.events[server][i].relatedObject.status === '0' }}is up{{??}}is down{{?}}</div>
+            <div class="hidden-xs hidden-sm col-md-3 col-lg-2 hide-overflow">{{= new Date(it.events[server][i].clock * 1000).toLocaleString() }}</div>
+            {{?? it.events[server][i].object === '2' }}
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+            {{? it.events[server][i].relatedObject.status === '0' }}
+            <span class="label discoveredservice-status-up hide-overflow">DISCOVERY</span>
+            {{??}}
+            <span class="label discoveredservice-status-down hide-overflow">DISCOVERY</span>
+            {{?}}
+            </div>
+            <div class="col-xs-8 col-sm-10 col-md-7 col-lg-9 hide-overflow">{{= it.events[server][i].hosts[0].host }}</div>
+            <div class="hidden-xs col-sm-8 col-md-5 col-lg-7 hide-overflow">Service port {{= it.events[server][i].relatedObject.port }} {{? it.events[server][i].relatedObject.status === '0' }}is up{{??}}Host is down{{?}}</div>
+            <div class="hidden-xs hidden-sm col-md-3 col-lg-2 hide-overflow">{{= new Date(it.events[server][i].clock * 1000).toLocaleString() }}</div>
+            {{?}}
+        </div>
+        {{ } }}
+    </div>
+    {{ } }}
+</section>'

@@ -1,0 +1,55 @@
+<section id="httptests" class="container-fluid">
+    <div class="row">
+        <div class="hidden-xs col-sm-6 col-md-6 col-lg-6">
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li{{? it.config.httptests.sortField === 'httptestid' }} class="active"{{?}}><a href="#httptests-sortfield-httptestid">Identifier</a></li>
+                            <li{{? it.config.httptests.sortField === 'name' }} class="active"{{?}}><a href="#httptests-sortfield-name">Name</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Order <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li{{? it.config.httptests.sortOrder === 'ASC' }} class="active"{{?}}><a href="#httptests-sortorder-ASC">Ascending</a></li>
+                            <li{{? it.config.httptests.sortOrder === 'DESC' }} class="active"{{?}}><a href="#httptests-sortorder-DESC">Descending</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <ul class="httptests-alerts list-inline">
+                        {{? it.httptests.alerts && (it.httptests.alerts !== '0') }}
+                        <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.httptests.alerts }}</span></li>
+                        {{?}}
+                    </ul>
+                </div>
+            </div>
+       </div>
+   </div>
+    {{ for (var server in it.httptests) { }}
+    <div class="httptests">
+        <div class="httptests-header">
+        </div>
+        {{ for (var i = 0; i < it.httptests[server].length; i++) { }}
+        <div id="httptest-data-{{= server }}-{{= it.httptests[server][i].httptestid }}" class="row httptests-row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+            {{? it.httptests[server][i].lastvalue === '0' }}
+            <span class="httptest-status-ok label hide-overflow">OK</span>
+            {{??}}
+            <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
+            {{?}}
+            </div>
+            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests[server][i].name }}</div>
+            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests[server][i].hosts[0].name }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date((it.httptests[server][i].nextcheck - it.httptests[server][i].delay) * 1000).toLocaleDateString() + ' ' + new Date((it.httptests[server][i].nextcheck - it.httptests[server][i].delay) * 1000).toLocaleTimeString()}}</div>
+        </div>
+        {{ } }}
+    </div>
+    {{ } }}
+</section>
