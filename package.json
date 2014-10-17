@@ -1,6 +1,6 @@
 {
   "name": "zabbix-monitor",
-  "version": "0.0.0",
+  "version": "0.2.0 ",
   "author": "Boris HUISGEN <bhuisgen@hbis.fr>",
   "license": "gpl3",
   "repository": {
