@@ -29,7 +29,7 @@ function connectClients(callback) {
     var clients = {};
 
     async.each(config.servers, function(server, callback) {
-        var client = new Zabbix(server.url, server.user, server.password);
+        var client = new Zabbix(server.url, server.user, server.password, config.debug);
 
         client.config = server;
 

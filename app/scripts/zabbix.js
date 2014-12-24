@@ -1,12 +1,12 @@
 'use strict';
 
-var Client = function(url, user, password) {
+var Client = function(url, user, password, debug) {
     this.url = url;
     this.user = user;
     this.password = password;
     this.rpcid = 0;
     this.authid = null;
-    this.debug = true;
+    this.debug = (typeof debug === 'undefined' ? false : debug);
 };
 
 Client.prototype.send = function send(method, params, callback) {
