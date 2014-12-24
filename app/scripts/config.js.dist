@@ -44,7 +44,7 @@ var config = {
 			user: 'zabbix-monitor',
 			password: 'secret123',
 		}]
-	}
+	},
 
 	development: {
 		debug: true,
