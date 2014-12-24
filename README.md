@@ -24,7 +24,7 @@ Under GNU GPL licence
 Copy the configuration file template and edit the file:
 
     $ cp app/scripts/config.js.dist app/scripts/config.js
-    $ vim app/config.js
+    $ vim app/scripts/config.js
 
 Declare your Zabbix server and the user account which will be used to make API calls:
 
