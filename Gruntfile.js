@@ -397,6 +397,10 @@ module.exports = function(grunt) {
         ]);
     });
 
+    grunt.registerTask('lint', [
+        'jshint'
+    ]);
+
     grunt.registerTask('build', [
         'clean:dist',
         'dot',
