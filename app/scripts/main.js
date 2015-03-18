@@ -164,7 +164,7 @@ function getTriggers(clients, servers, groups, hosts, callback) {
             }
 
             if (config.triggers.selectInMaintenance) {
-                params.maintenance = 1;
+                params.maintenance = true;
             }
 
             if (config.triggers.selectWithUnacknowledgedEvents) {
