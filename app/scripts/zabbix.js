@@ -9,6 +9,45 @@ var Client = function(url, user, password, debug) {
     this.debug = (typeof debug === 'undefined' ? false : debug);
 };
 
+Client.prototype.login = function login(callback) {
+    callback = callback || function() {
+        return true;
+    };
+
+    var self = this;
+
+    this.send('user.login', {
+        'user': this.user,
+        'password': this.password
+    }, function(err, data) {
+        if (!err) {
+            self.authid = data.result;
+
+            callback(null, data);
+        } else {
+            callback(err, data);
+        }
+    });
+};
+
+Client.prototype.logout = function logout(callback) {
+    callback = callback || function() {
+        return true;
+    };
+
+    var self = this;
+
+    this.send('user.logout', {}, function(err, data) {
+        if (!err) {
+            self.authid = null;
+
+            callback(null, data);
+        } else {
+            callback(err, data);
+        }
+    });
+};
+
 Client.prototype.send = function send(method, params, callback) {
     callback = callback || function() {
         return true;
@@ -49,27 +88,6 @@ Client.prototype.send = function send(method, params, callback) {
             } else {
                 return callback(new Error('Unknown method'));
             }
-        }
-    });
-};
-
-Client.prototype.authenticate = function authenticate(callback) {
-    callback = callback || function() {
-        return true;
-    };
-
-    var self = this;
-
-    this.send('user.authenticate', {
-        'user': this.user,
-        'password': this.password
-    }, function(err, data) {
-        if (!err) {
-            self.authid = data.result;
-
-            callback(null, data);
-        } else {
-            callback(err, data);
         }
     });
 };

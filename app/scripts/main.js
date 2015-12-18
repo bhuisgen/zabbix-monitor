@@ -33,7 +33,7 @@ function connectClients(callback) {
 
         client.config = server;
 
-        client.authenticate(function(err, data) {
+        client.login(function(err, data) {
             if (err) {
                 return callback(err);
             }
