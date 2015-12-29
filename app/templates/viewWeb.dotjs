@@ -24,32 +24,30 @@
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <ul class="httptests-alerts list-inline">
-                        {{? it.httptests.alerts && (it.httptests.alerts !== '0') }}
-                        <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.httptests.alerts }}</span></li>
+                        {{? it.alerts.httptests && (it.alerts.httptests !== '0') }}
+                        <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.alerts.httptests }}</span></li>
                         {{?}}
                     </ul>
                 </div>
             </div>
        </div>
-   </div>
-    {{ for (var server in it.httptests) { }}
+    </div>
     <div class="httptests">
         <div class="httptests-header">
         </div>
-        {{ for (var i = 0; i < it.httptests[server].length; i++) { }}
-        <div id="httptest-data-{{= server }}-{{= it.httptests[server][i].httptestid }}" class="row httptests-row">
+        {{ for (var i = 0; i < it.httptests.length; i++) { }}
+        <div id="httptest-data-{{= it.httptests[i].httptestid }}" class="row httptests-row">
             <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
-            {{? it.httptests[server][i].lastvalue === '0' }}
+            {{? it.httptests[i].lastvalue === '0' }}
             <span class="httptest-status-ok label hide-overflow">OK</span>
             {{??}}
             <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
             {{?}}
             </div>
-            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests[server][i].name }}</div>
-            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests[server][i].hosts[0].name }}</div>
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date((it.httptests[server][i].nextcheck - it.httptests[server][i].delay) * 1000).toLocaleDateString() + ' ' + new Date((it.httptests[server][i].nextcheck - it.httptests[server][i].delay) * 1000).toLocaleTimeString()}}</div>
+            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests[i].name }}</div>
+            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests[i].hosts[0].name }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date((it.httptests[i].nextcheck - it.httptests[i].delay) * 1000).toLocaleDateString() + ' ' + new Date((it.httptests[i].nextcheck - it.httptests[i].delay) * 1000).toLocaleTimeString()}}</div>
         </div>
         {{ } }}
     </div>
-    {{ } }}
 </section>

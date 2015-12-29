@@ -1,95 +1,91 @@
 var env = 'production';
 
-var config = {	
-	production: {
-		debug: false,
+var config = {  
+  production: {
+    debug: false,
 
-		refresh: 30,
-		alerts: true,
+    server: {
+      url: 'https://zabbix.my.domain/api_jsonrpc.php',
+      user: 'zabbix-monitor',
+      password: 'secret123'
+    },
 
-		triggers: {
-			severity: 2,
-			status: 1,
-			age: 7,
-			sortField: 'priority',
-			sortOrder: 'DESC',
+    refresh: 30,
+    alerts: true,
 
-			selectInMaintenance: false,
-			selectWithUnacknowledgedEvents: false,
-			selectWithAcknowledgedEvents: false,
-			selectWithLastEventUnacknowledged: true,
-			selectSkipDependent: true,
-			selectMinimalSeverity: 0,
+    triggers: {
+      status: 1,
+      severity: 2,
+      age: 1,
+      sortField: 'priority',
+      sortOrder: 'DESC',
 
-			filterGroup: null,
-			filterHost: null,
-			filterSeverity: null,
-		},
+      selectInMaintenance: false,
+      selectWithUnacknowledgedEvents: false,
+      selectWithAcknowledgedEvents: false,
+      selectWithLastEventUnacknowledged: true,
+      selectSkipDependent: true,
+      selectMinimalSeverity: 0,
 
-		events: {
-			period: 3600,
-			sortField: 'clock',
-			sortOrder: 'DESC'
-		},
+      filterGroup: null,
+      filterHost: null,
+      filterSeverity: null
+    },
 
-		httptests: {
-			sortField: 'name',
-			sortOrder: 'ASC'
-		},
+    events: {
+      period: 3600,
+      sortField: 'clock',
+      sortOrder: 'DESC'
+    },
 
-		servers: [{
-			name: 'zabbix.my.domain',
+    httptests: {
+      sortField: 'name',
+      sortOrder: 'ASC'
+    }
+  },
 
-			url: 'https://zabbix.my.domain/api_jsonrpc.php',
-			user: 'zabbix-monitor',
-			password: 'secret123',
-		}]
-	},
+  development: {
+    debug: true,
 
-	development: {
-		debug: true,
+    server: {
+      url: 'https://zabbix.my.domain/api_jsonrpc.php',
+      user: 'zabbix-monitor',
+      password: 'secret123'
+    },
 
-		refresh: 30,
-		alerts: true,
+    refresh: 30,
+    alerts: true,
 
-		triggers: {
-			severity: 2,
-			status: 1,
-			age: 7,
-			sortField: 'priority',
-			sortOrder: 'DESC',
+    triggers: {
+      status: 1,
+      severity: 2,
+      age: 1,
+      sortField: 'priority',
+      sortOrder: 'DESC',
 
-			selectInMaintenance: false,
-			selectWithUnacknowledgedEvents: false,
-			selectWithAcknowledgedEvents: false,
-			selectWithLastEventUnacknowledged: true,
-			selectSkipDependent: true,
-			selectMinimalSeverity: 0,
+      selectInMaintenance: false,
+      selectWithUnacknowledgedEvents: false,
+      selectWithAcknowledgedEvents: false,
+      selectWithLastEventUnacknowledged: true,
+      selectSkipDependent: true,
+      selectMinimalSeverity: 0,
 
-			filterGroup: null,
-			filterHost: null,
-			filterSeverity: null,
-		},
+      filterGroup: null,
+      filterHost: null,
+      filterSeverity: null
+    },
 
-		events: {
-			period: 3600,
-			sortField: 'clock',
-			sortOrder: 'DESC'
-		},
+    events: {
+      period: 3600,
+      sortField: 'clock',
+      sortOrder: 'DESC'
+    },
 
-		httptests: {
-			sortField: 'name',
-			sortOrder: 'ASC'
-		},
-
-		servers: [{
-			name: 'zabbix.my.domain',
-
-			url: 'https://zabbix.my.domain/api_jsonrpc.php',
-			user: 'zabbix-monitor',
-			password: 'secret123',
-		}]
-	}
+    httptests: {
+      sortField: 'name',
+      sortOrder: 'ASC'
+    }
+  }
 };
 
 module.exports = config[env];
