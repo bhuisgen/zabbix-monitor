@@ -11,7 +11,11 @@ var config = {
     },
 
     refresh: 30,
-    alerts: true,
+
+    alerts: {
+      enable: true,
+      showOnlyProblems: true
+    },
 
     triggers: {
       status: 1,
@@ -54,7 +58,11 @@ var config = {
     },
 
     refresh: 30,
-    alerts: true,
+    
+    alerts: {
+      enable: true,
+      showOnlyProblems: true
+    },
 
     triggers: {
       status: 1,

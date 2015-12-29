@@ -58,6 +58,7 @@
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <ul class="triggers-alerts list-inline">
+                        {{? it.config.alerts.enable && it.alerts.triggers }}
                         {{? it.alerts.triggers.disaster && (it.alerts.triggers.disaster > '0') }}
                         <li><span class="triggers-alert trigger-priority-disaster label hide-overflow">{{= it.alerts.triggers.disaster }}</span></li>
                         {{?}}
@@ -75,6 +76,10 @@
                         {{?}}
                         {{? it.alerts.triggers.notclassified && (it.alerts.triggers.notclassified > '0') }}
                         <li><span class="triggers-alert trigger-priority-notclassified label hide-overflow">{{= it.alerts.triggers.notclassified }}</span></li>
+                        {{?}}
+                        {{? it.alerts.triggers.ok && (it.alerts.triggers.ok> '0') }}
+                        <li><span class="triggers-alert trigger-status-ok label hide-overflow">{{= it.alerts.triggers.ok }}</span></li>
+                        {{?}}
                         {{?}}
                     </ul>
                 </div>
