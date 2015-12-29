@@ -28,13 +28,13 @@ Copy the configuration file template and edit the file:
 
 Declare your Zabbix server and the user account which will be used to make API calls:
 
-    servers: [{
+    server: {
         name: 'zabbix.my.domain',
 
         url: 'https://zabbix.my.domain/api_jsonrpc.php',
         user: 'zabbix-monitor',
         password: 'secret123',
-    }]
+    }
 
 ## Running
 
@@ -46,7 +46,7 @@ You can now copy all files in the *dist/* directory into your web server directo
 
 ## Development
 
-You can start a local web server with *grunt* :
+You can start a local web server with *grunt*:
 
     $ grunt serve
 
