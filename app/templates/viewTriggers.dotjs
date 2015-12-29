@@ -59,25 +59,25 @@
                 <div class="btn-group">
                     <ul class="triggers-alerts list-inline">
                         {{? it.config.alerts.enable && it.alerts.triggers }}
-                        {{? it.alerts.triggers.disaster && (it.alerts.triggers.disaster > '0') }}
+                        {{? it.alerts.triggers.disaster && (it.alerts.triggers.disaster > 0) }}
                         <li><span class="triggers-alert trigger-priority-disaster label hide-overflow">{{= it.alerts.triggers.disaster }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.high && (it.alerts.triggers.high > '0') }}
+                        {{? it.alerts.triggers.high && (it.alerts.triggers.high > 0) }}
                         <li><span class="triggers-alert trigger-priority-high label hide-overflow">{{= it.alerts.triggers.high }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.average && (it.alerts.triggers.average > '0') }}
+                        {{? it.alerts.triggers.average && (it.alerts.triggers.average > 0) }}
                         <li><span class="triggers-alert trigger-priority-average label hide-overflow">{{= it.alerts.triggers.average }}</span></li
                         >{{?}}
-                        {{? it.alerts.triggers.warning && (it.alerts.triggers.warning > '0') }}
+                        {{? it.alerts.triggers.warning && (it.alerts.triggers.warning > 0) }}
                         <li><span class="triggers-alert trigger-priority-warning label hide-overflow">{{= it.alerts.triggers.warning }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.information && (it.alerts.triggers.information > '0') }}
+                        {{? it.alerts.triggers.information && (it.alerts.triggers.information > 0) }}
                         <li><span class="triggers-alert trigger-priority-information label hide-overflow">{{= it.alerts.triggers.information }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.notclassified && (it.alerts.triggers.notclassified > '0') }}
+                        {{? it.alerts.triggers.notclassified && (it.alerts.triggers.notclassified > 0) }}
                         <li><span class="triggers-alert trigger-priority-notclassified label hide-overflow">{{= it.alerts.triggers.notclassified }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.ok && (it.alerts.triggers.ok> '0') }}
+                        {{? (it.config.alerts.showOnlyProblems === false) && it.alerts.triggers.ok && (it.alerts.triggers.ok > 0) }}
                         <li><span class="triggers-alert trigger-status-ok label hide-overflow">{{= it.alerts.triggers.ok }}</span></li>
                         {{?}}
                         {{?}}

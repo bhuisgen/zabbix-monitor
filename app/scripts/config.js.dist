@@ -14,7 +14,7 @@ var config = {
 
     alerts: {
       enable: true,
-      showOnlyProblems: true
+      showOnlyProblems: false
     },
 
     triggers: {
@@ -61,7 +61,7 @@ var config = {
     
     alerts: {
       enable: true,
-      showOnlyProblems: true
+      showOnlyProblems: false
     },
 
     triggers: {
