@@ -31,10 +31,7 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: ['<%= config.app %>/scripts/{,*/}*.js'],
-                tasks: ['jshint', 'browserify'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['jshint', 'browserify']
             },
             jstest: {
                 files: ['test/spec/{,*/}*.js'],
@@ -45,10 +42,7 @@ module.exports = function(grunt) {
             },
             less: {
                 files: ['<%= config.app %>/theme/{,*/}*.less'],
-                tasks: ['less'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['less']
             },
             styles: {
                 files: ['<%= config.app %>/styles/{,*/}*.css'],
@@ -56,20 +50,7 @@ module.exports = function(grunt) {
             },
             templates: {
                 files: ['<%= config.app %>/templates/{,*/}*.dotjs'],
-                tasks: ['dot'],
-                options: {
-                    livereload: true
-                }
-            },
-            livereload: {
-                options: {
-                    livereload: '<%= connect.options.livereload %>'
-                },
-                files: [
-                    '<%= config.app %>/{,*/}*.html',
-                    '.tmp/styles/{,*/}*.css',
-                    '<%= config.app %>/images/{,*/}*'
-                ]
+                tasks: ['dot']
             }
         },
 
