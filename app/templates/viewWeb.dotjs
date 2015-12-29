@@ -24,7 +24,7 @@
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <ul class="httptests-alerts list-inline">
-                        {{? it.alerts.httptests && (it.alerts.httptests !== '0') }}
+                        {{? it.config.alerts.enable && it.alerts.httptests && (it.alerts.httptests !== '0') }}
                         <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.alerts.httptests }}</span></li>
                         {{?}}
                     </ul>

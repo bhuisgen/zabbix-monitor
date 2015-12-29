@@ -273,6 +273,7 @@ function showTriggersView() {
 
     triggers = data;
     alerts.triggers = {
+      ok: 0,
       disaster: 0,
       high: 0,
       average: 0,
@@ -281,40 +282,40 @@ function showTriggersView() {
       notclassified: 0
     };
 
-    if (config.alerts) {
-      for (var i = 0, j = triggers.length; i < j; i++) {
-        if (triggers[i].value === '0') {
-          continue;
-        }
+    for (var i = 0, j = triggers.length; i < j; i++) {
+      if (triggers[i].value === '0') {
+        alerts.triggers.ok++;
 
-        switch (triggers[i].priority) {
-        case '5':
-          alerts.triggers.disaster++;
-          break;
+        continue;
+      }
 
-        case '4':
-          alerts.triggers.high++;
-          break;
+      switch (triggers[i].priority) {
+      case '5':
+        alerts.triggers.disaster++;
+        break;
 
-        case '3':
-          alerts.triggers.average++;
-          break;
+      case '4':
+        alerts.triggers.high++;
+        break;
 
-
-        case '2':
-          alerts.triggers.warning++;
-          break;
+      case '3':
+        alerts.triggers.average++;
+        break;
 
 
-        case '1':
-          alerts.triggers.information++;
-          break;
+      case '2':
+        alerts.triggers.warning++;
+        break;
 
 
-        case '0':
-          alerts.triggers.notclassified++;
-          break;
-        }
+      case '1':
+        alerts.triggers.information++;
+        break;
+
+
+      case '0':
+        alerts.triggers.notclassified++;
+        break;
       }
     }
 
@@ -374,11 +375,9 @@ function showWebView() {
     httptests = data;
     alerts.httptests = 0;
 
-    if (config.alerts) {
-      for (var i = 0, j = httptests.length; i < j; i++) {
-        if (httptests[i].lastvalue !== '0') {
-          alerts.httptests++;
-        }
+    for (var i = 0, j = httptests.length; i < j; i++) {
+      if (httptests[i].lastvalue !== '0') {
+        alerts.httptests++;
       }
     }
 
