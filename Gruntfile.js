@@ -8,7 +8,7 @@
 // 'test/spec/**/*.js'
 
 module.exports = function(grunt) {
-
+  
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
@@ -74,44 +74,52 @@ module.exports = function(grunt) {
         },
 
         // The actual grunt server settings
-        connect: {
-            options: {
-                port: 9000,
-                livereload: 35729,
-                // Change this to '0.0.0.0' to access the server from outside
-                hostname: 'localhost'
-            },
-            livereload: {
-                options: {
-                    middleware: function(connect) {
-                        return [
-                            connect.static('.tmp'),
-                            connect().use('/bower_components', connect.static('<%= config.app %>/bower_components')),
-                            connect.static(config.app)
-                        ];
-                    }
-                }
-            },
-            test: {
-                options: {
-                    open: false,
-                    port: 9001,
-                    middleware: function(connect) {
-                        return [
-                            connect.static('.tmp'),
-                            connect.static('test'),
-                            connect().use('/bower_components', connect.static('<%= config.app %>/bower_components')),
-                            connect.static(config.app)
-                        ];
-                    }
-                }
-            },
-            dist: {
-                options: {
-                    base: '<%= config.dist %>',
-                    livereload: false
-                }
+        browserSync: {
+          options: {
+            notify: false,
+            background: true,
+            watchOptions: {
+              ignored: ''
             }
+          },
+          livereload: {
+            options: {
+              files: [
+                '<%= config.app %>/{,*/}*.html',
+                '.tmp/styles/{,*/}*.css',
+                '<%= config.app %>/images/{,*/}*',
+                '.tmp/scripts/{,*/}*.js'
+              ],
+              port: 9000,
+              open: false,
+              server: {
+                baseDir: ['.tmp', config.app],
+                routes: {
+                  '/bower_components': './bower_components'
+                }
+              }
+            }
+          },
+          test: {
+            options: {
+              port: 9001,
+              open: false,
+              logLevel: 'silent',
+              host: 'localhost',
+              server: {
+                baseDir: ['.tmp', './test', config.app],
+                routes: {
+                  '/bower_components': './bower_components'
+                }
+              }
+            }
+          },
+          dist: {
+            options: {
+              background: false,
+              server: '<%= config.dist %>'
+            }
+          }
         },
 
         // Empties folders to start fresh
@@ -144,12 +152,19 @@ module.exports = function(grunt) {
             ]
         },
 
+        browserify: {
+            basic: {
+                src: ['<%= config.app %>/scripts/{,*/}*.js'],
+                dest: '.tmp/scripts/main.js'
+            }
+        },
+
         // Mocha testing framework configuration options
         mocha: {
             all: {
                 options: {
                     run: true,
-                    urls: ['http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/index.html']
+                    urls: ['http://<%= browserSync.test.options.host %>:<%= browserSync.test.options.port %>/index.html']
                 }
             }
         },
@@ -318,7 +333,7 @@ module.exports = function(grunt) {
                 }, {
                     expand: true,
                     dot: true,
-                    cwd: '<%= config.app %>/bower_components/bootstrap/dist',
+                    cwd: './bower_components/bootstrap/dist',
                     src: ['fonts/*.*'],
                     dest: '<%= config.dist %>'
                 }]
@@ -333,17 +348,10 @@ module.exports = function(grunt) {
             fonts: {
                 expand: true,
                 dot: true,
-                cwd: '<%= config.app %>/bower_components/bootstrap/dist/fonts',
+                cwd: './bower_components/bootstrap/dist/fonts',
                 dest: '.tmp/fonts/',
                 src: ['{,*/}*']
             },
-        },
-
-        browserify: {
-            basic: {
-                src: ['<%= config.app %>/scripts/*.js'],
-                dest: '.tmp/scripts/main.js'
-            }
         },
 
         // Run some tasks in parallel to speed up build process
@@ -369,7 +377,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('serve', function(target) {
         if (target === 'dist') {
-            return grunt.task.run(['build', 'connect:dist:keepalive']);
+            return grunt.task.run(['build', 'browserSync:dist']);
         }
 
         grunt.task.run([
@@ -378,7 +386,7 @@ module.exports = function(grunt) {
             'less',
             'concurrent:server',
             'autoprefixer',
-            'connect:livereload',
+            'browserSync:livereload',
             'watch'
         ]);
     });
@@ -393,7 +401,7 @@ module.exports = function(grunt) {
         }
 
         grunt.task.run([
-            'connect:test',
+            'browserSync:test',
             'mocha'
         ]);
     });
