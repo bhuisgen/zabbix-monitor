@@ -34,7 +34,7 @@ module.exports = function(grunt) {
     watch: {
       js: {
         files: ['<%= config.app %>/scripts/{,*/}*.js'],
-        tasks: ['jshint', 'browserify']
+        tasks: ['eslint', 'browserify']
       },
       jstest: {
         files: ['test/spec/{,*/}*.js'],
