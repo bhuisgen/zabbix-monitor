@@ -25,7 +25,7 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Age <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
-                            <li{{? it.config.triggers.age === 0 }} class="active"{{?}}><a href="#triggers-age-0">All</a></li>
+                            <li{{? !it.config.triggers.age }} class="active"{{?}}><a href="#triggers-age">All</a></li>
                             <li role="separator" class="divider"></li>
                             <li{{? it.config.triggers.age === 1 }} class="active"{{?}}><a href="#triggers-age-1">1 day</a></li>
                             <li{{? it.config.triggers.age === 2 }} class="active"{{?}}><a href="#triggers-age-2">2 days</a></li>

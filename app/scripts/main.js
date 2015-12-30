@@ -471,6 +471,13 @@ $('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
   e.preventDefault();  
 });
 
+$('body').on('click', 'a[href="#triggers-age"]', function(e) {
+  delete config.triggers.age;
+
+  refresh();
+  e.preventDefault();
+});
+
 $('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
   var m = $(this).attr('href').match(/^#triggers-age-(\d+)/) || [""];
   if (m[1]) {
@@ -513,8 +520,8 @@ $('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
   e.preventDefault();  
 });
 
-$('body').on('click', 'a[href^="#triggers-group"]', function(e) {
-  config.triggers.groupids = null;
+$('body').on('click', 'a[href="#triggers-group"]', function(e) {
+  delete config.triggers.groupids;
 
   refresh();
   e.preventDefault();
@@ -559,8 +566,8 @@ $('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
   e.preventDefault();  
 });
 
-$('body').on('click', 'a[href^="#events-group"]', function(e) {
-  config.events.groupids = null;
+$('body').on('click', 'a[href="#events-group"]', function(e) {
+  delete config.events.groupids;
 
   refresh();
   e.preventDefault();
@@ -605,8 +612,8 @@ $('body').on('click', 'a[href^="#httptests-sortorder-"]', function(e) {
   e.preventDefault();  
 });
 
-$('body').on('click', 'a[href^="#httptests-group"]', function(e) {
-  config.httptests.groupids = null;
+$('body').on('click', 'a[href="#httptests-group"]', function(e) {
+  delete config.httptests.groupids;
 
   refresh();
   e.preventDefault();
