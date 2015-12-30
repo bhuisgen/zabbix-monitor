@@ -13,10 +13,20 @@ var client = null;
 var groups = {};
 var hosts = {};
 
-var triggers = {};
-var events = {};
-var httptests = {};
-var alerts = {};
+var triggers = {
+  data: null,
+  alerts: null
+};
+
+var events = {
+  data: null,
+  alerts: null
+};
+
+var httptests = {
+  data: null,
+  alerts: null
+};
 
 var view = 'triggers';
 var timeoutId;
@@ -33,47 +43,41 @@ function connectClient(callback) {
       return callback(err, null);
     }
 
-    client.config = config.server;
-
     return callback(null, client);
   });
 }
 
 function getHostGroups(client, callback) {
-  var groups = {};
+  var params = {
+    output: 'extend',
+    sortfield: 'name'
+  };
 
-  client.send('hostgroup.get', {
-    output: 'extend'
-  }, function(err, data) {
+  client.send('hostgroup.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
 
-    groups = data.result;
-
-    return callback(null, groups);
+    return callback(null, data.result);
   });
 }
 
-function getHosts(client, groups, callback) {
-  var hosts = {};
+function getHosts(client, callback) {
+  var params = {
+    output: 'extend',
+    sortfield: 'name'
+  };
 
-  client.send('host.get', {
-    output: 'extend'
-  }, function(err, data) {
+  client.send('host.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
 
-    hosts = data.result;
-
-    return callback(null, hosts);
+    return callback(null, data.result);
   });
 }
 
-function getTriggers(client, groups, hosts, callback) {
-  var triggers = {};
-
+function getTriggers(client, callback) {
   var params = {
     output: ['triggerid', 'description', 'expression', 'lastchange', 'priority', 'value', 'host'],
     expandData: 1,
@@ -82,6 +86,14 @@ function getTriggers(client, groups, hosts, callback) {
     monitored: 1,
     min_severity: config.triggers.severity
   };
+
+  if (config.triggers.groupids) {
+    params.groupids = config.triggers.groupids;
+  }
+
+  if (config.triggers.hostids) {
+    params.hostids = config.triggers.hostids;
+  }
 
   if (config.triggers.status == 1) {
     params.only_true = 1;
@@ -140,15 +152,11 @@ function getTriggers(client, groups, hosts, callback) {
       return callback(err, null);
     }
 
-    triggers = data.result;
-
-    return callback(null, triggers);
+    return callback(null, data.result);
   });
 }
 
-function getEvents(client, groups, hosts, callback) {
-  var events = {};
-
+function getEvents(client, callback) {
   var params = {
     output: ['eventid', 'acknowledged', 'clock', 'object', 'source', 'value'],
     expandData: 1,
@@ -158,6 +166,14 @@ function getEvents(client, groups, hosts, callback) {
     selectHosts: 'extend',
     selectRelatedObject: 'extend'
   };
+
+  if (config.events.groupids) {
+    params.groupids = config.events.groupids;
+  }
+
+  if (config.events.hostids) {
+    params.hostids = config.events.hostids;
+  }
 
   if (config.events.sortField) {
     params.sortfield = config.events.sortField;
@@ -172,15 +188,11 @@ function getEvents(client, groups, hosts, callback) {
       return callback(err, null);
     }
 
-    events = data.result;
-
-    return callback(null, events);
+    return callback(null, data.result);
   });
 }
 
-function getHTTPTests(client, groups, hosts, callback) {
-  var httptests = {};
-
+function getHTTPTests(client, callback) {
   var params = {
     output: ['httptestid', 'status', 'name', 'description', 'nextcheck', 'delay'],
     monitored: 1,
@@ -189,6 +201,14 @@ function getHTTPTests(client, groups, hosts, callback) {
     selectSteps: 'extend',
     selectHosts: 'extend'
   };
+
+  if (config.httptests.groupids) {
+    params.groupids = config.httptests.groupids;
+  }
+
+  if (config.httptests.hostids) {
+    params.hostids = config.httptests.hostids;
+  }
 
   if (config.httptests.sortField) {
     params.sortfield = config.httptests.sortField;
@@ -203,9 +223,7 @@ function getHTTPTests(client, groups, hosts, callback) {
       return callback(err);
     }
 
-    httptests = data.result;
-
-    async.each(httptests, function(test, callback) {
+    async.each(data.result, function(test, callback) {
       client.send('item.get', {
         output: ['lastvalue'],
         hostids: test.hosts[0].hostid,
@@ -227,40 +245,13 @@ function getHTTPTests(client, groups, hosts, callback) {
         return callback(err, null, null);
       }
 
-      return callback(null, httptests);
+      return callback(null, data.result);
     });
   });
 }
 
-function showSystemView() {
-  $('#menu').html(templates.menu({
-    config: config,
-    view: view
-  }));
-
-  $('#view').html(templates.viewSystem({}));
-}
-
-function showHostsView() {
-  $('#menu').html(templates.menu({
-    config: config,
-    view: view
-  }));
-
-  $('#view').html(templates.viewHosts({}));
-}
-
-function showIssuesView() {
-  $('#menu').html(templates.menu({
-    config: config,
-    view: view
-  }));
-
-  $('#view').html(templates.viewIssues({}));
-}
-
 function showTriggersView() {
-  getTriggers(client, null, null, function(err, data) {
+  getTriggers(client, function(err, data) {
     if (err) {
       console.error(err); // eslint-disable-line no-console
 
@@ -271,8 +262,8 @@ function showTriggersView() {
       return;
     }
 
-    triggers = data;
-    alerts.triggers = {
+    triggers.data = data;
+    triggers.alerts = {
       ok: 0,
       disaster: 0,
       high: 0,
@@ -282,39 +273,38 @@ function showTriggersView() {
       notclassified: 0
     };
 
-    for (var i = 0, j = triggers.length; i < j; i++) {
-      if (triggers[i].value === '0') {
-        alerts.triggers.ok++;
+    for (var i = 0, j = triggers.data.length; i < j; i++) {
+      if (triggers.data[i].value === '0') {
+        triggers.alerts.ok++;
 
         continue;
       }
 
-      switch (triggers[i].priority) {
+      switch (triggers.data[i].priority) {
       case '5':
-        alerts.triggers.disaster++;
+        triggers.alerts.disaster++;
         break;
 
       case '4':
-        alerts.triggers.high++;
+        triggers.alerts.high++;
         break;
 
       case '3':
-        alerts.triggers.average++;
+        triggers.alerts.average++;
         break;
 
 
       case '2':
-        alerts.triggers.warning++;
+        triggers.alerts.warning++;
         break;
 
 
       case '1':
-        alerts.triggers.information++;
+        triggers.alerts.information++;
         break;
 
-
       case '0':
-        alerts.triggers.notclassified++;
+        triggers.alerts.notclassified++;
         break;
       }
     }
@@ -326,8 +316,9 @@ function showTriggersView() {
 
     $('#view').html(templates.viewTriggers({
       config: config,
-      triggers: triggers,
-      alerts: alerts
+      groups: groups,
+      hosts: hosts,
+      triggers: triggers
     }));
   });
 }
@@ -335,7 +326,7 @@ function showTriggersView() {
 function showEventsView() {
   view = 'events';
 
-  getEvents(client, null, null, function(err, data) {
+  getEvents(client, function(err, data) {
     if (err) {
       console.error(err); // eslint-disable-line no-console
 
@@ -346,7 +337,7 @@ function showEventsView() {
       return;
     }
 
-    events = data;
+    events.data = data;
 
     $('#menu').html(templates.menu({
       config: config,
@@ -355,13 +346,15 @@ function showEventsView() {
 
     $('#view').html(templates.viewEvents({
       config: config,
+      groups: groups,
+      hosts: hosts,
       events: events
     }));
   });
 }
 
 function showWebView() {
-  getHTTPTests(client, null, null, function(err, data) {
+  getHTTPTests(client, function(err, data) {
     if (err) {
       console.error(err); // eslint-disable-line no-console
 
@@ -372,12 +365,12 @@ function showWebView() {
       return;
     }
 
-    httptests = data;
-    alerts.httptests = 0;
+    httptests.data = data;
+    httptests.alerts = 0;
 
-    for (var i = 0, j = httptests.length; i < j; i++) {
-      if (httptests[i].lastvalue !== '0') {
-        alerts.httptests++;
+    for (var i = 0, j = httptests.data.length; i < j; i++) {
+      if (httptests.data[i].lastvalue !== '0') {
+        httptests.alerts++;
       }
     }
 
@@ -388,8 +381,9 @@ function showWebView() {
 
     $('#view').html(templates.viewWeb({
       config: config,
-      httptests: httptests,
-      alerts: alerts
+      groups: groups,
+      hosts: hosts,
+      httptests: httptests
     }));
   });
 }
@@ -400,18 +394,6 @@ function refresh() {
   }
 
   switch (view) {
-  case 'system':
-    showSystemView();
-    break;
-
-  case 'hosts':
-    showHostsView();
-    break;
-
-  case 'issues':
-    showIssuesView();
-    break;
-
   case 'triggers':
     showTriggersView();
     break;
@@ -433,46 +415,15 @@ function refresh() {
   }
 }
 
-$('body').on('click', 'a[href="#system"]', function(e) {
-  view = 'system';
-  refresh();
+$('body').on('click', 'a[href^="#view-"]', function(e) {
+  var m = $(this).attr('href').match(/^#view-(.+)/) || [""];
+  if (m[1]) {
+    view = m[1];
 
-  e.preventDefault();
-});
+    refresh();
+  }
 
-$('body').on('click', 'a[href="#hosts"]', function(e) {
-  view = 'hosts';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#issues"]', function(e) {
-  view = 'issues';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers"]', function(e) {
-  view = 'triggers';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events"]', function(e) {
-  view = 'events';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#web"]', function(e) {
-  view = 'web';
-  refresh();
-
-  e.preventDefault();
+  e.preventDefault();  
 });
 
 $('body').on('click', 'a[href="#refresh"]', function(e) {
@@ -481,355 +432,193 @@ $('body').on('click', 'a[href="#refresh"]', function(e) {
   e.preventDefault();
 });
 
-$('body').on('click', 'a[href="#refresh-0"]', function(e) {
-  $('a[href="#refresh-' + config.refresh + '"]').parent().removeClass('active');
-  $('a[href="#refresh-0"]').parent().addClass('active');
+$('body').on('click', 'a[href^="#refresh-"]', function(e) {
+  var m = $(this).attr('href').match(/^#refresh-(\d+)/) || [""];
+  if (m[1]) {
+    config.refresh = parseInt(m[1]);
 
-  config.refresh = 0;
+    refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-status-(\d+)/) || [""];
+  if (m[1]) {
+     config.triggers.status = parseInt(m[1]);
+
+     $('a[href^="#triggers-status-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-severity-(\d+)/) || [""];
+  if (m[1]) {
+     config.triggers.severity = parseInt(m[1]);
+
+     $('a[href^="#triggers-severity-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-age-(\d+)/) || [""];
+  if (m[1]) {
+     config.triggers.age = parseInt(m[1]);
+
+     $('a[href^="#triggers-age-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-sortfield-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-sortfield-(.+)/) || [""];
+  if (m[1]) {
+     config.triggers.sortField = m[1];
+
+     $('a[href^="#triggers-sortfield-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-sortorder-(.+)/) || [""];
+  if (m[1]) {
+     config.triggers.sortOrder = m[1];
+
+     $('a[href^="#triggers-sortorder-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#triggers-group"]', function(e) {
+  config.triggers.groupids = null;
+
   refresh();
+  e.preventDefault();
+});
+
+$('body').on('click', 'a[href^="#triggers-group-"]', function(e) {
+  var m = $(this).attr('href').match(/^#triggers-group-(\d+)/) || [""];
+  if (m[1]) {
+    config.triggers.groupids = m[1];
+
+    refresh();
+  }
 
   e.preventDefault();
 });
 
-$('body').on('click', 'a[href="#refresh-30"]', function(e) {
-  $('a[href="#refresh-' + config.refresh + '"]').parent().removeClass('active');
-  $('a[href="#refresh-30"]').parent().addClass('active');
+$('body').on('click', 'a[href^="#events-sortfield-"]', function(e) {
+  var m = $(this).attr('href').match(/^#events-sortfield-(.+)/) || [""];
+  if (m[1]) {
+     config.events.sortField = m[1];
 
-  config.refresh = 30;
+     $('a[href^="#events-sortfield-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
+  var m = $(this).attr('href').match(/^#events-sortorder-(.+)/) || [""];
+  if (m[1]) {
+     config.events.sortOrder = m[1];
+
+     $('a[href^="#events-sortorder-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#events-group"]', function(e) {
+  config.events.groupids = null;
+
   refresh();
+  e.preventDefault();
+});
+
+$('body').on('click', 'a[href^="#events-group-"]', function(e) {
+  var m = $(this).attr('href').match(/^#events-group-(\d+)/) || [""];
+  if (m[1]) {
+    config.events.groupids = m[1];
+
+    refresh();
+  }
 
   e.preventDefault();
 });
 
-$('body').on('click', 'a[href="#refresh-60"]', function(e) {
-  $('a[href="#refresh-' + config.refresh + '"]').parent().removeClass('active');
-  $('a[href="#refresh-60"]').parent().addClass('active');
+$('body').on('click', 'a[href^="#httptests-sortfield-"]', function(e) {
+  var m = $(this).attr('href').match(/^#httptests-sortfield-(.+)/) || [""];
+  if (m[1]) {
+     config.httptests.sortField = m[1];
 
-  config.refresh = 60;
+     $('a[href^="#httptests-sortfield-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#httptests-sortorder-"]', function(e) {
+  var m = $(this).attr('href').match(/^#httptests-sortorder-(.+)/) || [""];
+  if (m[1]) {
+     config.httptests.sortOrder = m[1];
+
+     $('a[href^="#httptests-sortorder-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
+  }
+
+  e.preventDefault();  
+});
+
+$('body').on('click', 'a[href^="#httptests-group"]', function(e) {
+  config.httptests.groupids = null;
+
   refresh();
-
   e.preventDefault();
 });
 
-$('body').on('click', 'a[href="#refresh-300"]', function(e) {
-  $('a[href="#refresh-' + config.refresh + '"]').parent().removeClass('active');
-  $('a[href="#refresh-300"]').parent().addClass('active');
-
-  config.refresh = 300;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#refresh-900"]', function(e) {
-  $('a[href="#refresh-' + config.refresh + '"]').parent().removeClass('active');
-  $('a[href="#refresh-900"]').parent().addClass('active');
-
-  config.refresh = 900;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-status-any"]', function(e) {
-  $('a[href="#triggers-status-recent-problem"]').parent().removeClass('active');
-  $('a[href="#triggers-status-problem"]').parent().removeClass('active');
-  $('a[href="#triggers-status-any"]').parent().addClass('active');
-
-  config.triggers.status = 0;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-status-recent-problem"]', function(e) {
-  $('a[href="#triggers-status-any"]').parent().removeClass('active');
-  $('a[href="#triggers-status-problem"]').parent().removeClass('active');
-  $('a[href="#triggers-status-recent-problem"]').parent().addClass('active');
-
-  config.triggers.status = 1;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-status-problem"]', function(e) {
-  $('a[href="#triggers-status-any"]').parent().removeClass('active');
-  $('a[href="#triggers-status-recent-problem"]').parent().removeClass('active');
-  $('a[href="#triggers-status-problem"]').parent().addClass('active');
-
-  config.triggers.status = 2;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-0"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-0"]').parent().addClass('active');
-
-  config.triggers.severity = 0;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-1"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-1"]').parent().addClass('active');
-
-  config.triggers.severity = 1;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-2"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-2"]').parent().addClass('active');
-
-  config.triggers.severity = 2;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-3"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-3"]').parent().addClass('active');
-
-  config.triggers.severity = 3;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-4"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-4"]').parent().addClass('active');
-
-  config.triggers.severity = 4;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-severity-5"]', function(e) {
-  $('a[href="#triggers-severity-' + config.triggers.selectMinimalSeverity + '"]').parent().removeClass('active');
-  $('a[href="#triggers-severity-5"]').parent().addClass('active');
-
-  config.triggers.severity = 5;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age-0"]', function(e) {
-  $('a[href="#triggers-age-' + config.triggers.age + '"]').parent().removeClass('active');
-  $('a[href="#triggers-age-0"]').parent().addClass('active');
-
-  config.triggers.age = 0;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age-1"]', function(e) {
-  $('a[href="#triggers-age-' + config.triggers.age + '"]').parent().removeClass('active');
-  $('a[href="#triggers-age-1"]').parent().addClass('active');
-
-  config.triggers.age = 1;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age-2"]', function(e) {
-  $('a[href="#triggers-age-' + config.triggers.age + '"]').parent().removeClass('active');
-  $('a[href="#triggers-age-2"]').parent().addClass('active');
-
-  config.triggers.age = 2;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age-7"]', function(e) {
-  $('a[href="#triggers-age-' + config.triggers.age + '"]').parent().removeClass('active');
-  $('a[href="#triggers-age-7"]').parent().addClass('active');
-
-  config.triggers.age = 7;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age-30"]', function(e) {
-  $('a[href="#triggers-age-' + config.triggers.age + '"]').parent().removeClass('active');
-  $('a[href="#triggers-age-30"]').parent().addClass('active');
-
-  config.triggers.age = 30;
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortfield-triggerid"]', function(e) {
-  $('a[href="#triggers-sortfield-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortfield-triggerid"]').parent().addClass('active');
-
-  config.triggers.sortField = 'triggerid';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortfield-priority"]', function(e) {
-  $('a[href="#triggers-sortfield-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortfield-priority"]').parent().addClass('active');
-
-  config.triggers.sortField = 'priority';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortfield-lastchange"]', function(e) {
-  $('a[href="#triggers-sortfield-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortfield-lastchange"]').parent().addClass('active');
-
-  config.triggers.sortField = 'lastchange';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortfield-hostname"]', function(e) {
-  $('a[href="#triggers-sort-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sort-hostname"]').parent().addClass('active');
-
-  config.triggers.sortField = 'hostname';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortfield-description"]', function(e) {
-  $('a[href="#triggers-sortfield-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortfield-description"]').parent().addClass('active');
-
-  config.triggers.sortField = 'description';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortorder-ASC"]', function(e) {
-  $('a[href="#triggers-sortorder-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortorder-ASC"]').parent().addClass('active');
-
-  config.triggers.sortOrder = 'ASC';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-sortorder-DESC"]', function(e) {
-  $('a[href="#triggers-sortorder-' + config.triggers.sortField + '"]').parent().removeClass('active');
-  $('a[href="#triggers-sortorder-DESC"]').parent().addClass('active');
-
-  config.triggers.sortOrder = 'DESC';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-sortfield-eventid"]', function(e) {
-  $('a[href="#events-sortfield-' + config.events.sortField + '"]').parent().removeClass('active');
-  $('a[href="#events-sortfield-eventid"]').parent().addClass('active');
-
-  config.events.sortField = 'eventid';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-sortfield-objectid"]', function(e) {
-  $('a[href="#events-objectid-' + config.events.sortField + '"]').parent().removeClass('active');
-  $('a[href="#events-objectid-eventid"]').parent().addClass('active');
-
-  config.events.sortField = 'objectid';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-sortfield-clock"]', function(e) {
-  $('a[href="#events-sort-' + config.events.sortField + '"]').parent().removeClass('active');
-  $('a[href="#events-sort-clock"]').parent().addClass('active');
-
-  config.events.sortField = 'clock';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-sortorder-ASC"]', function(e) {
-  $('a[href="#events-sortorder-' + config.events.sortField + '"]').parent().removeClass('active');
-  $('a[href="#events-sortorder-ASC"]').parent().addClass('active');
-
-  config.events.sortOrder = 'ASC';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-sortorder-DESC"]', function(e) {
-  $('a[href="#events-sortorder-' + config.events.sortField + '"]').parent().removeClass('active');
-  $('a[href="#events-sortorder-DESC"]').parent().addClass('active');
-
-  config.events.sortOrder = 'DESC';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#httptests-sortfield-httptestid"]', function(e) {
-  $('a[href="#httptests-sortfield-' + config.httptests.sortField + '"]').parent().removeClass('active');
-  $('a[href="#httptests-sortfield-httptestid"]').parent().addClass('active');
-
-  config.httptests.sortField = 'httptestid';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#httptests-sortfield-name"]', function(e) {
-  $('a[href="#httptests-sort-' + config.httptests.sortField + '"]').parent().removeClass('active');
-  $('a[href="#httptests-sort-name"]').parent().addClass('active');
-
-  config.httptests.sortField = 'name';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#httptests-sortorder-ASC"]', function(e) {
-  $('a[href="#httptests-sortorder-' + config.httptests.sortField + '"]').parent().removeClass('active');
-  $('a[href="#httptests-sortorder-ASC"]').parent().addClass('active');
-
-  config.httptests.sortOrder = 'ASC';
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#httptests-sortorder-DESC"]', function(e) {
-  $('a[href="#httptests-sortorder-' + config.httptests.sortField + '"]').parent().removeClass('active');
-  $('a[href="#httptests-sortorder-DESC"]').parent().addClass('active');
-
-  config.httptests.sortOrder = 'DESC';
-  refresh();
+$('body').on('click', 'a[href^="#httptests-group-"]', function(e) {
+  var m = $(this).attr('href').match(/^#httptests-group-(\d+)/) || [""];
+  if (m[1]) {
+    config.httptests.groupids = m[1];
+
+    refresh();
+  }
 
   e.preventDefault();
 });
@@ -857,7 +646,7 @@ connectClient(function(err, data) {
     groups = data;
   });
 
-  getHosts(client, null, function(err, data) {
+  getHosts(client, function(err, data) {
     if (err) {
       console.error(err); // eslint-disable-line no-console
 

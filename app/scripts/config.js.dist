@@ -29,11 +29,7 @@ var config = {
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0,
-
-      filterGroup: null,
-      filterHost: null,
-      filterSeverity: null
+      selectMinimalSeverity: 0
     },
 
     events: {
@@ -76,11 +72,7 @@ var config = {
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0,
-
-      filterGroup: null,
-      filterHost: null,
-      filterSeverity: null
+      selectMinimalSeverity: 0
     },
 
     events: {
