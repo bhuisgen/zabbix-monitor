@@ -162,7 +162,6 @@ function getEvents(client, callback) {
     expandData: 1,
     expandDescription: 1,
     expandExpression: 1,
-    time_from: (Number(new Date().getTime() / 1000).toFixed() - config.events.period),
     selectHosts: 'extend',
     selectRelatedObject: 'extend'
   };
@@ -173,6 +172,10 @@ function getEvents(client, callback) {
 
   if (config.events.hostids) {
     params.hostids = config.events.hostids;
+  }
+
+  if (config.events.period) {
+      params.time_from = moment().subtract(config.events.period, 'hours').unix();
   }
 
   if (config.events.sortField) {
@@ -315,6 +318,7 @@ function showTriggersView() {
     }));
 
     $('#view').html(templates.viewTriggers({
+      moment: moment,
       config: config,
       groups: groups,
       hosts: hosts,
@@ -345,6 +349,7 @@ function showEventsView() {
     }));
 
     $('#view').html(templates.viewEvents({
+      moment: moment,
       config: config,
       groups: groups,
       hosts: hosts,
@@ -380,6 +385,7 @@ function showWebView() {
     }));
 
     $('#view').html(templates.viewWeb({
+      moment: moment,
       config: config,
       groups: groups,
       hosts: hosts,
@@ -533,6 +539,27 @@ $('body').on('click', 'a[href^="#triggers-group-"]', function(e) {
     config.triggers.groupids = m[1];
 
     refresh();
+  }
+
+  e.preventDefault();
+});
+
+$('body').on('click', 'a[href="#events-period"]', function(e) {
+  delete config.events.period;
+
+  refresh();
+  e.preventDefault();
+});
+
+$('body').on('click', 'a[href^="#events-period-"]', function(e) {
+  var m = $(this).attr('href').match(/^#events-period-(\d+)/) || [""];
+  if (m[1]) {
+     config.events.period = parseInt(m[1]);
+
+     $('a[href^="#events-period-"]').parent().removeClass('active');
+     $(this).parent().addClass('active')
+
+     refresh();
   }
 
   e.preventDefault();

@@ -48,15 +48,21 @@
         {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
         <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
             <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
-            {{? it.httptests.data[i].lastvalue === '0' }}
-            <span class="httptest-status-ok label hide-overflow">OK</span>
-            {{??}}
-            <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
-            {{?}}
-            </div>
-            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests.data[i].name }}</div>
+                {{? it.httptests.data[i].lastvalue === '0' }}
+                <span class="httptest-status-ok label hide-overflow">OK</span>
+                {{??}}
+                <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
+                {{?}}
+                </div>
             <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests.data[i].hosts[0].name }}</div>
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).toLocaleDateString() + ' ' + new Date((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).toLocaleTimeString()}}</div>
+            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests.data[i].name }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
+                {{? !it.config.httptests.showHumanTimes }}
+                {{= new Date((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).toLocaleString() }}
+                {{??}}
+                {{= it.moment((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).fromNow() }}
+                {{?}}
+            </div>
         </div>
         {{ } }}
     </div>

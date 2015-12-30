@@ -23,24 +23,29 @@ var config = {
       age: 1,
       sortField: 'priority',
       sortOrder: 'DESC',
-
       selectInMaintenance: false,
       selectWithUnacknowledgedEvents: false,
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0
+      selectMinimalSeverity: 0,
+
+      showHumanTimes: true
     },
 
     events: {
-      period: 3600,
+      period: 1,
       sortField: 'clock',
-      sortOrder: 'DESC'
+      sortOrder: 'DESC',
+
+      showHumanTimes: false
     },
 
     httptests: {
       sortField: 'name',
-      sortOrder: 'ASC'
+      sortOrder: 'ASC',
+
+      showHumanTimes: false
     }
   },
 
@@ -63,27 +68,32 @@ var config = {
     triggers: {
       status: 1,
       severity: 2,
-      age: 1,
+      age: 24,
       sortField: 'priority',
       sortOrder: 'DESC',
-
       selectInMaintenance: false,
       selectWithUnacknowledgedEvents: false,
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0
+      selectMinimalSeverity: 0,
+
+      showHumanTimes: true
     },
 
     events: {
-      period: 3600,
+      period: 1,
       sortField: 'clock',
-      sortOrder: 'DESC'
+      sortOrder: 'DESC',
+
+      showHumanTimes: false
     },
 
     httptests: {
       sortField: 'name',
-      sortOrder: 'ASC'
+      sortOrder: 'ASC',
+
+      showHumanTimes: false
     }
   }
 };

@@ -123,7 +123,12 @@
             </div>
             <div class="col-xs-8 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers.data[i].hostname }}</div>
             <div class="hidden-xs col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.triggers.data[i].description }}</div>
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date(it.triggers.data[i].lastchange * 1000).toLocaleDateString() + ' ' + new Date(it.triggers.data[i].lastchange * 1000).toLocaleTimeString() }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
+                {{? !it.config.triggers.showHumanTimes }}
+                {{= new Date(it.triggers.data[i].lastchange * 1000).toLocaleString() }}</div>
+                {{??}}
+                {{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
+                {{?}}
             </div>
         {{ } }}
         </div>
