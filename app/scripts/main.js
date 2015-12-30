@@ -296,7 +296,6 @@ function showTriggersView() {
         triggers.alerts.average++;
         break;
 
-
       case '2':
         triggers.alerts.warning++;
         break;
