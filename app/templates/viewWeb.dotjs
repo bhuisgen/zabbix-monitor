@@ -18,14 +18,24 @@
                         </ul>
                     </div>
                 </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Group <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li{{? !it.config.httptests.groupids }} class="active"{{?}}><a href="#httptests-group">All</a></li>
+                        <li role="separator" class="divider"></li>
+                        {{ for (var i = 0; i < it.groups.length; i++) { }}
+                        <li{{? it.config.httptests.groupids && it.config.httptests.groupids === it.groups[i].groupid }} class="active"{{?}}><a href="#httptests-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a></li>
+                        {{ } }}
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <ul class="httptests-alerts list-inline">
-                        {{? it.config.alerts.enable && it.alerts.httptests && (it.alerts.httptests !== '0') }}
-                        <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.alerts.httptests }}</span></li>
+                        {{? it.config.alerts.enable && it.httptests.alerts && (it.httptests.alerts !== '0') }}
+                        <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.httptests.alerts }}</span></li>
                         {{?}}
                     </ul>
                 </div>
@@ -35,18 +45,24 @@
     <div class="httptests">
         <div class="httptests-header">
         </div>
-        {{ for (var i = 0; i < it.httptests.length; i++) { }}
-        <div id="httptest-data-{{= it.httptests[i].httptestid }}" class="row httptests-row">
+        {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
+        <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
             <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
-            {{? it.httptests[i].lastvalue === '0' }}
-            <span class="httptest-status-ok label hide-overflow">OK</span>
-            {{??}}
-            <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
-            {{?}}
+                {{? it.httptests.data[i].lastvalue === '0' }}
+                <span class="httptest-status-ok label hide-overflow">OK</span>
+                {{??}}
+                <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
+                {{?}}
+                </div>
+            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests.data[i].hosts[0].name }}</div>
+            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests.data[i].name }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
+                {{? !it.config.httptests.showHumanTimes }}
+                {{= new Date((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).toLocaleString() }}
+                {{??}}
+                {{= it.moment((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).fromNow() }}
+                {{?}}
             </div>
-            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests[i].name }}</div>
-            <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests[i].hosts[0].name }}</div>
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date((it.httptests[i].nextcheck - it.httptests[i].delay) * 1000).toLocaleDateString() + ' ' + new Date((it.httptests[i].nextcheck - it.httptests[i].delay) * 1000).toLocaleTimeString()}}</div>
         </div>
         {{ } }}
     </div>

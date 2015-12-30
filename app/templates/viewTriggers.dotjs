@@ -6,9 +6,9 @@
                     <div class="btn-group">
                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Status <span class="caret"></span></button>
                        <ul class="dropdown-menu" role="menu">
-                           <li{{? it.config.triggers.status === 0 }} class="active"{{?}}><a href="#triggers-status-any">Any</a></li>
-                           <li{{? it.config.triggers.status === 1 }} class="active"{{?}}><a href="#triggers-status-recent-problem">Recent problem</a></li>
-                           <li{{? it.config.triggers.status === 2 }} class="active"{{?}}><a href="#triggers-status-problem">Problem</a></li>
+                           <li{{? it.config.triggers.status === 0 }} class="active"{{?}}><a href="#triggers-status-0">Any</a></li>
+                           <li{{? it.config.triggers.status === 1 }} class="active"{{?}}><a href="#triggers-status-1">Recent problem</a></li>
+                           <li{{? it.config.triggers.status === 2 }} class="active"{{?}}><a href="#triggers-status-2">Problem</a></li>
                        </ul>
                     </div>
                     <div class="btn-group">
@@ -25,7 +25,8 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Age <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
-                            <li{{? it.config.triggers.age === 0 }} class="active"{{?}}><a href="#triggers-age-0">All</a></li>
+                            <li{{? !it.config.triggers.age }} class="active"{{?}}><a href="#triggers-age">All</a></li>
+                            <li role="separator" class="divider"></li>
                             <li{{? it.config.triggers.age === 1 }} class="active"{{?}}><a href="#triggers-age-1">1 day</a></li>
                             <li{{? it.config.triggers.age === 2 }} class="active"{{?}}><a href="#triggers-age-2">2 days</a></li>
                             <li{{? it.config.triggers.age === 7 }} class="active"{{?}}><a href="#triggers-age-7">1 week</a></li>
@@ -52,33 +53,43 @@
                         </ul>
                     </div>
                 </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Group <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li{{? !it.config.triggers.groupids }} class="active"{{?}}><a href="#triggers-group">All</a></li>
+                        <li role="separator" class="divider"></li>
+                        {{ for (var i = 0; i < it.groups.length; i++) { }}
+                        <li{{? it.config.triggers.groupids && it.config.triggers.groupids === it.groups[i].groupid }} class="active"{{?}}><a href="#triggers-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a></li>
+                        {{ } }}
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <ul class="triggers-alerts list-inline">
-                        {{? it.config.alerts.enable && it.alerts.triggers }}
-                        {{? it.alerts.triggers.disaster && (it.alerts.triggers.disaster > 0) }}
-                        <li><span class="triggers-alert trigger-priority-disaster label hide-overflow">{{= it.alerts.triggers.disaster }}</span></li>
+                        {{? it.config.alerts.enable && it.triggers.alerts }}
+                        {{? it.triggers.alerts.disaster && (it.triggers.alerts.disaster > 0) }}
+                        <li><span class="triggers-alert trigger-priority-disaster label hide-overflow">{{= it.triggers.alerts.disaster }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.high && (it.alerts.triggers.high > 0) }}
-                        <li><span class="triggers-alert trigger-priority-high label hide-overflow">{{= it.alerts.triggers.high }}</span></li>
+                        {{? it.triggers.alerts.high && (it.triggers.alerts.high > 0) }}
+                        <li><span class="triggers-alert trigger-priority-high label hide-overflow">{{= it.triggers.alerts.high }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.average && (it.alerts.triggers.average > 0) }}
-                        <li><span class="triggers-alert trigger-priority-average label hide-overflow">{{= it.alerts.triggers.average }}</span></li
+                        {{? it.triggers.alerts.average && (it.triggers.alerts.average > 0) }}
+                        <li><span class="triggers-alert trigger-priority-average label hide-overflow">{{= it.triggers.alerts.average }}</span></li
                         >{{?}}
-                        {{? it.alerts.triggers.warning && (it.alerts.triggers.warning > 0) }}
-                        <li><span class="triggers-alert trigger-priority-warning label hide-overflow">{{= it.alerts.triggers.warning }}</span></li>
+                        {{? it.triggers.alerts.warning && (it.triggers.alerts.warning > 0) }}
+                        <li><span class="triggers-alert trigger-priority-warning label hide-overflow">{{= it.triggers.alerts.warning }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.information && (it.alerts.triggers.information > 0) }}
-                        <li><span class="triggers-alert trigger-priority-information label hide-overflow">{{= it.alerts.triggers.information }}</span></li>
+                        {{? it.triggers.alerts.information && (it.triggers.alerts.information > 0) }}
+                        <li><span class="triggers-alert trigger-priority-information label hide-overflow">{{= it.triggers.alerts.information }}</span></li>
                         {{?}}
-                        {{? it.alerts.triggers.notclassified && (it.alerts.triggers.notclassified > 0) }}
-                        <li><span class="triggers-alert trigger-priority-notclassified label hide-overflow">{{= it.alerts.triggers.notclassified }}</span></li>
+                        {{? it.triggers.alerts.notclassified && (it.triggers.alerts.notclassified > 0) }}
+                        <li><span class="triggers-alert trigger-priority-notclassified label hide-overflow">{{= it.triggers.alerts.notclassified }}</span></li>
                         {{?}}
-                        {{? (it.config.alerts.showOnlyProblems === false) && it.alerts.triggers.ok && (it.alerts.triggers.ok > 0) }}
-                        <li><span class="triggers-alert trigger-status-ok label hide-overflow">{{= it.alerts.triggers.ok }}</span></li>
+                        {{? (it.config.alerts.showOnlyProblems === false) && it.triggers.alerts.ok && (it.triggers.alerts.ok > 0) }}
+                        <li><span class="triggers-alert trigger-status-ok label hide-overflow">{{= it.triggers.alerts.ok }}</span></li>
                         {{?}}
                         {{?}}
                     </ul>
@@ -89,30 +100,35 @@
     <div class="triggers">
         <div class="triggers-header">
         </div>
-        {{ for (var i = 0; i < it.triggers.length; i++) { }}
-        <div id="trigger-data-{{= it.triggers[i].triggerid }}" class="row triggers-row">
+        {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
+        <div id="trigger-data-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
             <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
-            {{? it.triggers[i].value === '0' }}
+            {{? it.triggers.data[i].value === '0' }}
             <span class="trigger-label trigger-status-ok label hide-overflow">OK</span>
-            {{?? it.triggers[i].value === '1' }}
-            {{? it.triggers[i].priority === '5' }}
+            {{?? it.triggers.data[i].value === '1' }}
+            {{? it.triggers.data[i].priority === '5' }}
             <span class="trigger-label trigger-priority-disaster label hide-overflow">DISASTER</span>
-            {{?? it.triggers[i].priority === '4' }}
+            {{?? it.triggers.data[i].priority === '4' }}
             <span class="trigger-label trigger-priority-high label hide-overflow">HIGH</span>
-            {{?? it.triggers[i].priority === '3' }}
+            {{?? it.triggers.data[i].priority === '3' }}
             <span class="trigger-label trigger-priority-average label hide-overflow">AVERAGE</span>
-            {{?? it.triggers[i].priority === '2' }}
+            {{?? it.triggers.data[i].priority === '2' }}
             <span class="trigger-label trigger-priority-warning label hide-overflow">WARNING</span>
-            {{?? it.triggers[i].priority === '1' }}
+            {{?? it.triggers.data[i].priority === '1' }}
             <span class="trigger-label trigger-priority-information label hide-overflow">INFORMATION</span>
             {{??}}
             <span class="trigger-label trigger-priority-notclassified label hide-overflow">NOT CLASSIFIED</span>
             {{?}}
             {{?}}
             </div>
-            <div class="col-xs-8 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers[i].hostname }}</div>
-            <div class="hidden-xs col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.triggers[i].description }}</div>
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">{{= new Date(it.triggers[i].lastchange * 1000).toLocaleDateString() + ' ' + new Date(it.triggers[i].lastchange * 1000).toLocaleTimeString() }}</div>
+            <div class="col-xs-8 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers.data[i].hostname }}</div>
+            <div class="hidden-xs col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.triggers.data[i].description }}</div>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
+                {{? !it.config.triggers.showHumanTimes }}
+                {{= new Date(it.triggers.data[i].lastchange * 1000).toLocaleString() }}</div>
+                {{??}}
+                {{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
+                {{?}}
             </div>
         {{ } }}
         </div>
