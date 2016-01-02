@@ -4,7 +4,7 @@ var defaultOptions = {
     debug: false
 }
 
-var Client = function(url, user, password, options) {
+var Zabbix = function(url, user, password, options) {
   this.url = url;
   this.user = user;
   this.password = password;
@@ -13,7 +13,7 @@ var Client = function(url, user, password, options) {
   this.options = typeof options === 'undefined' ? defaultOptions : options;
 };
 
-Client.prototype.login = function login(callback) {
+Zabbix.prototype.login = function login(callback) {
   callback = callback || function() {
     return true;
   };
@@ -34,7 +34,7 @@ Client.prototype.login = function login(callback) {
   });
 };
 
-Client.prototype.logout = function logout(callback) {
+Zabbix.prototype.logout = function logout(callback) {
   callback = callback || function() {
     return true;
   };
@@ -52,7 +52,7 @@ Client.prototype.logout = function logout(callback) {
   });
 };
 
-Client.prototype.send = function send(method, params, callback) {
+Zabbix.prototype.send = function send(method, params, callback) {
   callback = callback || function() {
     return true;
   };
@@ -100,4 +100,4 @@ Client.prototype.send = function send(method, params, callback) {
   });
 };
 
-module.exports = Client;
+module.exports = Zabbix;
