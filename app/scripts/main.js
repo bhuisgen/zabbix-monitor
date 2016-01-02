@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var lodash = require('lodash');
+var _ = require('lodash');
 var moment = require('moment');
 
 var config = require('./config');
@@ -410,7 +410,7 @@ $('body').on('click', 'a[href^="#view-"]', function(e) {
     refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href="#refresh"]', function(e) {
@@ -427,7 +427,7 @@ $('body').on('click', 'a[href^="#refresh-"]', function(e) {
     refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
@@ -441,7 +441,7 @@ $('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
@@ -455,7 +455,7 @@ $('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href="#triggers-age"]', function(e) {
@@ -476,7 +476,7 @@ $('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#triggers-sortfield-"]', function(e) {
@@ -490,7 +490,7 @@ $('body').on('click', 'a[href^="#triggers-sortfield-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
@@ -504,7 +504,7 @@ $('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href="#triggers-group"]', function(e) {
@@ -557,7 +557,7 @@ $('body').on('click', 'a[href^="#events-sortfield-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
@@ -571,7 +571,7 @@ $('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href="#events-group"]', function(e) {
@@ -603,7 +603,7 @@ $('body').on('click', 'a[href^="#httptests-sortfield-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#httptests-sortorder-"]', function(e) {
@@ -617,7 +617,7 @@ $('body').on('click', 'a[href^="#httptests-sortorder-"]', function(e) {
      refresh();
   }
 
-  e.preventDefault();  
+  e.preventDefault();
 });
 
 $('body').on('click', 'a[href="#httptests-group"]', function(e) {
@@ -643,6 +643,48 @@ $('body').on('click', 'a[href^="#httptests-group-"]', function(e) {
  */
 
 function init() {
+  config = _.defaults(config, {
+    server: {},
+
+    refresh: 30,
+
+    alerts: {
+      enable: true,
+      showOnlyProblems: false
+    },
+
+    triggers: {
+      status: 1,
+      severity: 2,
+      age: 24,
+      sortField: 'priority',
+      sortOrder: 'DESC',
+      selectInMaintenance: false,
+      selectWithUnacknowledgedEvents: false,
+      selectWithAcknowledgedEvents: false,
+      selectWithLastEventUnacknowledged: true,
+      selectSkipDependent: true,
+      selectMinimalSeverity: 0,
+
+      showHumanTimes: true
+    },
+
+    events: {
+      period: 1,
+      sortField: 'clock',
+      sortOrder: 'DESC',
+
+      showHumanTimes: false
+    },
+
+    httptests: {
+      sortField: 'name',
+      sortOrder: 'ASC',
+
+      showHumanTimes: false
+    }
+  });
+
   $('#app').html(templates.app());
 
   connectClient(function(err, data) {
