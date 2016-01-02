@@ -1,15 +1,19 @@
 'use strict';
 
-var Client = function(url, user, password, debug) {
+var defaultOptions = {
+    debug: false
+}
+
+var Zabbix = function(url, user, password, options) {
   this.url = url;
   this.user = user;
   this.password = password;
   this.rpcid = 0;
   this.authid = null;
-  this.debug = (typeof debug === 'undefined' ? false : debug);
+  this.options = typeof options === 'undefined' ? defaultOptions : options;
 };
 
-Client.prototype.login = function login(callback) {
+Zabbix.prototype.login = function login(callback) {
   callback = callback || function() {
     return true;
   };
@@ -30,7 +34,7 @@ Client.prototype.login = function login(callback) {
   });
 };
 
-Client.prototype.logout = function logout(callback) {
+Zabbix.prototype.logout = function logout(callback) {
   callback = callback || function() {
     return true;
   };
@@ -48,14 +52,14 @@ Client.prototype.logout = function logout(callback) {
   });
 };
 
-Client.prototype.send = function send(method, params, callback) {
+Zabbix.prototype.send = function send(method, params, callback) {
   callback = callback || function() {
     return true;
   };
 
   var self = this;
 
-  if (this.debug) {
+  if (this.options.debug) {
     console.log('::zabbix-api method: ' + method + ' params: ' + JSON.stringify(params)); // eslint-disable-line no-console
   }
 
@@ -78,8 +82,12 @@ Client.prototype.send = function send(method, params, callback) {
     },
     success: function(data, textStatus, jqXHR) {
       if ((jqXHR.status === 200) && data) {
-        if (self.debug) {
+        if (self.options.debug) {
           console.log('::zabbix-api method: ' + method + ' result: ' + JSON.stringify(data)); // eslint-disable-line no-console
+        }
+
+        if (data.error) {
+          return callback(new Error(data.error.data));
         }
 
         return callback(null, data);
@@ -92,4 +100,4 @@ Client.prototype.send = function send(method, params, callback) {
   });
 };
 
-module.exports = Client;
+module.exports = Zabbix;
