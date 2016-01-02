@@ -1,17 +1,26 @@
 'use strict';
 
 var async = require('async');
-var doT = require('dot'); // eslint-disable-line no-unused-vars
+var lodash = require('lodash');
 var moment = require('moment');
 
+var config = require('./config');
+
+var doT = require('dot'); // eslint-disable-line no-unused-vars
 var Zabbix = require('./zabbix');
 
-var config = require('./config');
 var templates = require('./templates');
+
+/*
+ * Variables
+ */
 
 var client = null;
 var groups = {};
 var hosts = {};
+var view = 'triggers';
+var timeoutId = null;
+var error = null;
 
 var triggers = {
   data: null,
@@ -28,15 +37,12 @@ var httptests = {
   alerts: null
 };
 
-var view = 'triggers';
-var timeoutId;
-
 /*
- * Functions
+ * API functions
  */
 
 function connectClient(callback) {
-  var client = new Zabbix(config.server.url, config.server.user, config.server.password, config.debug);
+  var client = new Zabbix(config.server.url, config.server.user, config.server.password, config.server.options);
 
   client.login(function(err) {
     if (err) {
@@ -245,7 +251,7 @@ function getHTTPTests(client, callback) {
       });
     }, function(err) {
       if (err) {
-        return callback(err, null, null);
+        return callback(err, null);
       }
 
       return callback(null, data.result);
@@ -253,10 +259,22 @@ function getHTTPTests(client, callback) {
   });
 }
 
+/*
+ * Views
+ */
+
+function showErrorView() {
+  $('#view').html(templates.viewError({
+    config: config,
+    error: error
+  }));
+}
+
 function showTriggersView() {
   getTriggers(client, function(err, data) {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
+      error = new Error("Failed to get triggers (" + err.message + ")");
+      refresh();
 
       return;
     }
@@ -311,11 +329,6 @@ function showTriggersView() {
       }
     }
 
-    $('#menu').html(templates.menu({
-      config: config,
-      view: view
-    }));
-
     $('#view').html(templates.viewTriggers({
       moment: moment,
       config: config,
@@ -331,8 +344,9 @@ function showEventsView() {
 
   getEvents(client, function(err, data) {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
-
+      error = new Error("Failed to get events (" + err.message + ")");
+      refresh();
+      
       return;
     }
 
@@ -341,11 +355,6 @@ function showEventsView() {
     }
 
     events.data = data;
-
-    $('#menu').html(templates.menu({
-      config: config,
-      view: view
-    }));
 
     $('#view').html(templates.viewEvents({
       moment: moment,
@@ -360,7 +369,8 @@ function showEventsView() {
 function showWebView() {
   getHTTPTests(client, function(err, data) {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
+      error = new Error("Failed to get http tests (" + err.message + ")");
+      refresh();
 
       return;
     }
@@ -378,11 +388,6 @@ function showWebView() {
       }
     }
 
-    $('#menu').html(templates.menu({
-      config: config,
-      view: view
-    }));
-
     $('#view').html(templates.viewWeb({
       moment: moment,
       config: config,
@@ -393,32 +398,9 @@ function showWebView() {
   });
 }
 
-function refresh() {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-
-  switch (view) {
-  case 'triggers':
-    showTriggersView();
-    break;
-
-  case 'events':
-    showEventsView();
-    break;
-
-  case 'web':
-    showWebView();
-    break;
-
-  default:
-    break;
-  }
-
-  if (config.refresh > 0) {
-    timeoutId = setTimeout(refresh, config.refresh * 1000);
-  }
-}
+/*
+ * View events
+ */
 
 $('body').on('click', 'a[href^="#view-"]', function(e) {
   var m = $(this).attr('href').match(/^#view-(.+)/) || [""];
@@ -657,43 +639,95 @@ $('body').on('click', 'a[href^="#httptests-group-"]', function(e) {
 });
 
 /*
- * Script
+ * Application
  */
 
-connectClient(function(err, data) {
-  if (err) {
-    console.error(err); // eslint-disable-line no-console
+function init() {
+  $('#app').html(templates.app());
 
-    return;
+  connectClient(function(err, data) {
+    if (err) {
+      error = new Error("Failed to connect to API (" + err.message + ")");
+      refresh();
+
+      return;
+    }
+
+    client = data;
+
+    refresh();
+
+    getHostGroups(client, function(err, data) {
+      if (err) {
+        error = new Error("Failed to get hostgroups (" + err.message + ")");
+        refresh();
+
+        return;
+      }
+
+      groups = data;
+
+      refresh();
+    });
+
+    getHosts(client, function(err, data) {
+      if (err) {
+        error = new Error("Failed to get hosts (" + err.message + ")");
+        refresh();
+
+        return;
+      }
+
+      groups = data;
+
+      refresh();
+    })
+  });
+}
+
+function refresh() {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
   }
 
-  client = data;
-
-  getHostGroups(client, function(err, data) {
-    if (err) {
-      console.error(err); // eslint-disable-line no-console
-
-      return;
-    }
-
-    groups = data;
-  });
-
-  getHosts(client, function(err, data) {
-    if (err) {
-      console.error(err); // eslint-disable-line no-console
-
-      return;
-    }
-
-    hosts = data;
-  });
-
-  $('#app').html(templates.app({
+  $('#menu').html(templates.menu({
     config: config,
-    groups: groups,
-    hosts: hosts
+    view: view
   }));
 
-  refresh();
-});
+  if (error) {
+    showErrorView();
+
+    error = null;
+    client = null;
+  } else {
+    if (!client) {
+      init();
+
+      return;
+    }
+
+    switch (view) {
+    case 'triggers':
+      showTriggersView();
+      break;
+
+    case 'events':
+      showEventsView();
+      break;
+
+    case 'web':
+      showWebView();
+      break;
+
+    default:
+      break;
+    }
+  }
+
+  if (config.refresh > 0) {
+    timeoutId = setTimeout(refresh, config.refresh * 1000);
+  }
+}
+
+init();
