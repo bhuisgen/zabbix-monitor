@@ -33,7 +33,7 @@ Declare your Zabbix server and the user account which will be used to make API c
 
         url: 'https://zabbix.my.domain/api_jsonrpc.php',
         user: 'zabbix-monitor',
-        password: 'secret123',
+        password: 'secret123'
     }
 
 ## Running
