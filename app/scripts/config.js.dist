@@ -2,8 +2,6 @@ var env = 'production';
 
 var config = {  
   production: {
-    debug: false,
-
     server: {
       url: 'https://zabbix.my.domain/api_jsonrpc.php',
       user: 'zabbix-monitor',
@@ -50,12 +48,13 @@ var config = {
   },
 
   development: {
-    debug: true,
-
     server: {
       url: 'https://zabbix.my.domain/api_jsonrpc.php',
       user: 'zabbix-monitor',
-      password: 'secret123'
+      password: 'secret123',
+      options: {
+        debug: true
+      }
     },
 
     refresh: 30,
