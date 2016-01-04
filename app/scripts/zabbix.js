@@ -1,7 +1,7 @@
 'use strict';
 
 var defaultOptions = {
-    debug: false
+  debug: false
 }
 
 var Zabbix = function(url, user, password, options) {
@@ -87,14 +87,14 @@ Zabbix.prototype.send = function send(method, params, callback) {
         }
 
         if (data.error) {
-          return callback(new Error(data.error.data));
+          return callback(new Error(data.error.data), data);
         }
 
         return callback(null, data);
       } else if (jqXHR.status === 412) {
-        return callback(new Error('Invalid parameters'));
+        return callback(new Error('Invalid parameters'), data);
       } else {
-        return callback(new Error('Unknown method'));
+        return callback(new Error('Unknown method'), data);
       }
     }
   });
