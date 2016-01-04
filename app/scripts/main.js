@@ -12,13 +12,20 @@ var Zabbix = require('./zabbix');
 var templates = require('./templates');
 
 /*
+ * Defines
+ */
+
+var DEFAULT_VIEW = 'triggers';
+var LOCALSTORAGE_KEY_CONFIG = 'zabbix-monitor.config';
+
+/*
  * Variables
  */
 
-var client = null;
+var zabbix = null;
 var groups = {};
 var hosts = {};
-var view = 'triggers';
+var view = DEFAULT_VIEW;
 var timeoutId = null;
 var error = null;
 
@@ -41,25 +48,33 @@ var httptests = {
  * API functions
  */
 
-function connectClient(callback) {
-  var client = new Zabbix(config.server.url, config.server.user, config.server.password, config.server.options);
+function connectToServer(callback) {
+  callback = callback || function() {
+    return true;
+  };
 
-  client.login(function(err) {
+  var zabbix = new Zabbix(config.server.url, config.server.user, config.server.password, config.server.options);
+
+  zabbix.login(function(err) {
     if (err) {
       return callback(err, null);
     }
 
-    return callback(null, client);
+    return callback(null, zabbix);
   });
 }
 
-function getHostGroups(client, callback) {
+function getHostGroups(zabbix, callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   var params = {
     output: 'extend',
     sortfield: 'name'
   };
 
-  client.send('hostgroup.get', params, function(err, data) {
+  zabbix.send('hostgroup.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
@@ -68,13 +83,17 @@ function getHostGroups(client, callback) {
   });
 }
 
-function getHosts(client, callback) {
+function getHosts(zabbix, callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   var params = {
     output: 'extend',
     sortfield: 'name'
   };
 
-  client.send('host.get', params, function(err, data) {
+  zabbix.send('host.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
@@ -83,7 +102,11 @@ function getHosts(client, callback) {
   });
 }
 
-function getTriggers(client, callback) {
+function getTriggers(zabbix, callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   var params = {
     output: ['triggerid', 'description', 'expression', 'lastchange', 'priority', 'value', 'host'],
     expandData: 1,
@@ -153,7 +176,7 @@ function getTriggers(client, callback) {
     params.limit = config.triggers.limit;
   }
 
-  client.send('trigger.get', params, function(err, data) {
+  zabbix.send('trigger.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
@@ -162,7 +185,11 @@ function getTriggers(client, callback) {
   });
 }
 
-function getEvents(client, callback) {
+function getEvents(zabbix, callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   var params = {
     output: ['eventid', 'acknowledged', 'clock', 'object', 'source', 'value'],
     expandData: 1,
@@ -181,7 +208,7 @@ function getEvents(client, callback) {
   }
 
   if (config.events.period) {
-      params.time_from = moment().subtract(config.events.period, 'hours').unix();
+    params.time_from = moment().subtract(config.events.period, 'hours').unix();
   }
 
   if (config.events.sortField) {
@@ -192,7 +219,7 @@ function getEvents(client, callback) {
     params.sortorder = config.events.sortOrder;
   }
 
-  client.send('event.get', params, function(err, data) {
+  zabbix.send('event.get', params, function(err, data) {
     if (err) {
       return callback(err, null);
     }
@@ -201,7 +228,11 @@ function getEvents(client, callback) {
   });
 }
 
-function getHTTPTests(client, callback) {
+function getHTTPTests(zabbix, callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   var params = {
     output: ['httptestid', 'status', 'name', 'description', 'nextcheck', 'delay'],
     monitored: 1,
@@ -227,13 +258,13 @@ function getHTTPTests(client, callback) {
     params.sortorder = config.httptests.sortOrder;
   }
 
-  client.send('httptest.get', params, function(err, data) {
+  zabbix.send('httptest.get', params, function(err, data) {
     if (err) {
       return callback(err);
     }
 
     async.each(data.result, function(test, callback) {
-      client.send('item.get', {
+      zabbix.send('item.get', {
         output: ['lastvalue'],
         hostids: test.hosts[0].hostid,
         webitems: 1,
@@ -263,6 +294,477 @@ function getHTTPTests(client, callback) {
  * Views
  */
 
+function showStartupModal() {
+  $('#app').html(templates.app());
+  $('#modal').html(templates.modalStartup({
+    config: config
+  }));
+
+  $('#modalStartup').modal({
+    backdrop: 'static',
+    keyboard: false
+  });
+}
+
+$('body').on('keyup', '#modalStartup #serverHostname', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalStartup').find('#serverHostname').val()) {
+    return;
+  }
+
+  $('#modalStartup').find('#serverHostname')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalStartup').find('#serverHostname')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+
+$('body').on('keyup', '#modalStartup #serverUser', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalStartup').find('#serverUser').val()) {
+    return;
+  }
+
+  $('#modalStartup').find('#serverUser')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalStartup').find('#serverUser')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+
+$('body').on('keyup', '#modalStartup #serverPassword', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalStartup').find('#serverPassword').val()) {
+    return;
+  }
+
+  $('#modalStartup').find('#serverPassword')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalStartup').find('#serverPassword')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+
+$('body').on('click', '#modalStartup #startupConnect', function(e) {
+  e.preventDefault();
+
+  var hostname = $('#modalStartup').find('#serverHostname').val();
+  var server = {
+    url:'https://' + hostname + '/api_jsonrpc.php',
+    user: $('#modalStartup').find('#serverUser').val(),
+    password: $('#modalStartup').find('#serverPassword').val()
+  };
+
+  if (!hostname || !server.url.match(/^http(s)?\:\/\/.+$/)) {
+    $('#modalStartup').find('#serverHostname')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalStartup').find('#serverHostname')
+      .attr('aria-describedby', 'serveurURLErrorStatus')
+      .closest('div')
+      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+      .append('<span id="serveurURLErrorStatus" class="sr-only">(error)</span>');
+  }
+
+  if (!server.user) {
+    $('#modalStartup').find('#serverUser')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalStartup').find('#serverUser')
+      .attr('aria-describedby', 'serveurUserErrorStatus')
+      .closest('div')
+      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+      .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
+  }
+
+  if (!server.password) {
+    $('#modalStartup').find('#serverPassword')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalStartup').find('#serverPassword')
+    .attr('aria-describedby', 'serveurPasswordErrorStatus')
+    .closest('div')
+    .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+    .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+  }
+
+  if (!hostname || !server.url.match(/^http(s)?\:\/\/.+$/) || !server.user || !server.password) {
+    return;
+  }
+
+  config.server.url = server.url;
+  config.server.user = server.user;
+  config.server.password = server.password;
+
+  zabbix = new Zabbix(server.url, server.user, server.password);
+
+  zabbix.login(function(err) {
+    if (err) {
+      $('#modalStartup').find('.form-group').addClass('has-error');
+      $('#modalStartup').find('#serverHostname')
+        .attr('aria-describedby', 'serveurHostnameErrorStatus')
+        .closest('div')
+        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+        .append('<span id="serveurHostnamerrorStatus" class="sr-only">(error)</span>');
+      $('#modalStartup').find('#serverUser')
+        .attr('aria-describedby', 'serveurUserErrorStatus')
+        .closest('div')
+        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+        .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
+      $('#modalStartup').find('#serverPassword')
+        .attr('aria-describedby', 'serveurPasswordErrorStatus')
+        .closest('div')
+        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+        .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+
+      return;
+    }
+
+    $('#modalStartup').find('.form-group').removeClass('has-error');
+    $('#modalStartup').find('#serverURL')
+      .closest('div')
+      .find('span').remove();
+    $('#modalStartup').find('#serverUser')
+      .closest('div')
+      .find('span').remove();
+    $('#modalStartup').find('#serverPassword')
+      .closest('div')
+      .find('span').remove();
+
+    if ($('#modalStartup').find('#rememberMe').is(':checked')) {
+      saveLocalStorage();
+    } else {
+      clearLocalStorage();
+    }
+
+    $('#modalStartup').modal('hide');
+
+    refresh();
+  });
+});
+
+function render() {
+  $('#app').html(templates.app());
+
+  connectToServer(function(err, data) {
+    if (err) {
+      error = new Error('Failed to connect to API (' + err.message + ')');
+      refresh();
+
+      return;
+    }
+
+    zabbix = data;
+
+    refresh();
+
+    getHostGroups(zabbix, function(err, data) {
+      if (err) {
+        error = new Error('Failed to get hostgroups (' + err.message + ')');
+        refresh();
+
+        return;
+      }
+
+      groups = data;
+
+      refresh();
+    });
+
+    getHosts(zabbix, function(err, data) {
+      if (err) {
+        error = new Error('Failed to get hosts (' + err.message + ')');
+        refresh();
+
+        return;
+      }
+
+      hosts = data;
+
+      refresh();
+    })
+  });
+}
+
+function refresh(state = true) {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+
+  if (!state) {
+    return;
+  }
+
+  $('#menu').html(templates.menu({
+    config: config,
+    view: view
+  }));
+
+  if (error) {
+    showErrorView();
+
+    error = null;
+    zabbix = null;
+  } else {
+    if (!zabbix) {
+      render();
+
+      return;
+    }
+
+    switch (view) {
+    case 'triggers':
+      showTriggersView();
+      break;
+
+    case 'events':
+      showEventsView();
+      break;
+
+    case 'web':
+      showWebView();
+      break;
+
+    default:
+      break;
+    }
+  }
+
+  if (config.refresh > 0) {
+    timeoutId = setTimeout(refresh, config.refresh * 1000);
+  }
+}
+
+$('body').on('click', 'a[href^="#view-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#view-(.+)/) || [''];
+  if (m[1]) {
+    view = m[1];
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href="#refresh"]', function(e) {
+  e.preventDefault();
+
+  refresh();
+});
+
+$('body').on('click', 'a[href^="#refresh-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#refresh-(\d+)/) || [''];
+  if (m[1]) {
+    config.refresh = parseInt(m[1]);
+
+    refresh();
+  }
+});
+
+function showSettingsModal() {
+  refresh(false);
+
+  $('#modal').html(templates.modalSettings({
+    config: config
+  }));
+
+  $('#modalSettings').modal();
+}
+
+$('body').on('click', 'a[href="#settings"]', function(e) {
+  e.preventDefault();
+
+  showSettingsModal();
+})
+
+$('body').on('focusout', '#modalSettings', function(e) {
+  e.preventDefault();
+
+  var serverURL = $('#modalSettings').find('#serverURL').val();
+  if (!serverURL) {
+    return;
+  }
+
+  var m = serverURL.match(/^(https\:\/\/)?(.[^\/]+){1}(\/api_jsonrpc\.php)?$/) || [''];
+  if (m[0] && m[2]) {
+    var prefix = m[1] ? true : false;
+    var suffix = m[3] ? true : false;
+
+    if (!prefix) {
+      serverURL = 'https://' + serverURL;
+    }
+
+    if (!suffix) {
+      serverURL = serverURL + '/api_jsonrpc.php';
+    }
+
+    $('#modalSettings').find('#serverURL').val(serverURL);
+  }
+})
+
+$('body').on('keyup', '#modalSettings #serverURL', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalSettings').find('#serverURL').val()) {
+    return;
+  }
+
+  $('#modalSettings').find('#serverURL')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalSettings').find('#serverURL')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+
+$('body').on('keyup', '#modalSettings #serverUser', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalSettings').find('#serverUser').val()) {
+    return;
+  }
+
+  $('#modalSettings').find('#serverUser')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalSettings').find('#serverUser')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+$('body').on('keyup', '#modalSettings #serverPassword', function(e) {
+  e.preventDefault();
+
+  if (!$('#modalSettings').find('#serverPassword').val()) {
+    return;
+  }
+
+  $('#modalSettings').find('#serverPassword')
+    .closest('.form-group')
+    .removeClass('has-error');
+  $('#modalSettings').find('#serverPassword')
+    .removeAttr('aria-describedby')
+    .closest('div')
+    .find('span').remove();
+})
+
+$('body').on('keyup', '#modalSettings', function(e) {
+  e.preventDefault();
+
+  $('#modalSettings').find('#settingsTestSuccess').hide();
+  $('#modalSettings').find('#settingsTestFailed').hide();
+  $('#modalSettings').find('#settingsTest').closest('div').removeClass('has-error', 'has-success');
+})
+
+$('body').on('click', '#modalSettings #settingsTest', function(e) {
+  e.preventDefault();
+
+  var server = {
+    url: $('#modalSettings').find('#serverURL').val(),
+    user: $('#modalSettings').find('#serverUser').val(),
+    password: $('#modalSettings').find('#serverPassword').val()
+  };
+
+  $('#modalSettings').find('#settingsTestMessage').text('');
+  $('#modalSettings').find('#settingsTestMessage').removeClass('text-danger text-success');
+
+  if (!server.url || !server.url.match(/^http(s)?\:\/\/.+$/)) {
+    $('#modalSettings').find('#serverURL')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalSettings').find('#serverURL')
+      .attr('aria-describedby', 'serveurURLErrorStatus')
+      .closest('div')
+      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+      .append('<span id="serveurURLErrorStatus" class="sr-only">(error)</span>');
+  }
+
+  if (!server.user) {
+    $('#modalSettings').find('#serverUser')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalSettings').find('#serverUser')
+      .attr('aria-describedby', 'serveurUserErrorStatus')
+      .closest('div')
+      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+      .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
+
+  }
+
+  if (!server.password) {
+    $('#modalSettings').find('#serverPassword')
+      .closest('.form-group')
+      .addClass('has-error');
+    $('#modalSettings').find('#serverPassword')
+    .attr('aria-describedby', 'serveurPasswordErrorStatus')
+    .closest('div')
+    .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+    .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+  }
+
+  if (!server.url || !server.user || !server.password) {
+    return;
+  }
+
+  var test = new Zabbix(server.url, server.user, server.password);
+
+  test.login(function(err) {
+    if (err) {
+      if (!err.message) {
+        err.message = 'Unknown error';
+      }
+
+      $('#modalSettings').find('#settingsTestMessage').text(err.message);
+      $('#modalSettings').find('#settingsTestMessage').addClass('text-danger').removeClass('text-success');
+
+      return;
+    }
+
+    $('#modalSettings').find('#settingsTestMessage').text('Succesfully connected');
+    $('#modalSettings').find('#settingsTestMessage').addClass('text-success').removeClass('text-danger');
+  });
+});
+
+$('body').on('click', '#settingsSave', function(e) {
+  e.preventDefault();
+
+  var server = {
+    url: $('#modalSettings').find('#serverURL').val(),
+    user: $('#modalSettings').find('#serverUser').val(),
+    password: $('#modalSettings').find('#serverPassword').val()
+  };
+
+  config.server.url = server.url;
+  config.server.user = server.user;
+  config.server.password = server.password;
+
+  if ($('#modalSettings').find('#storeConfiguration').is(':checked')) {
+    saveLocalStorage();
+  } else {
+    clearLocalStorage();
+  }
+
+  zabbix = null;
+
+  $('#modalSettings').modal('hide');
+});
+
+$('body').on('hide.bs.modal','#modalSettings', function() {
+  refresh();
+})
+
 function showErrorView() {
   $('#view').html(templates.viewError({
     config: config,
@@ -271,9 +773,9 @@ function showErrorView() {
 }
 
 function showTriggersView() {
-  getTriggers(client, function(err, data) {
+  getTriggers(zabbix, function(err, data) {
     if (err) {
-      error = new Error("Failed to get triggers (" + err.message + ")");
+      error = new Error('Failed to get triggers (' + err.message + ')');
       refresh();
 
       return;
@@ -339,14 +841,111 @@ function showTriggersView() {
   });
 }
 
+$('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-status-(\d+)/) || [''];
+  if (m[1]) {
+    config.triggers.status = parseInt(m[1]);
+
+    $('a[href^="#triggers-status-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-severity-(\d+)/) || [''];
+  if (m[1]) {
+    config.triggers.severity = parseInt(m[1]);
+
+    $('a[href^="#triggers-severity-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href="#triggers-age"]', function(e) {
+  e.preventDefault();
+
+  delete config.triggers.age;
+
+  refresh();
+});
+
+$('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-age-(\d+)/) || [''];
+  if (m[1]) {
+    config.triggers.age = parseInt(m[1]);
+
+    $('a[href^="#triggers-age-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href^="#triggers-sortfield-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-sortfield-(.+)/) || [''];
+  if (m[1]) {
+    config.triggers.sortField = m[1];
+
+    $('a[href^="#triggers-sortfield-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-sortorder-(.+)/) || [''];
+  if (m[1]) {
+    config.triggers.sortOrder = m[1];
+
+    $('a[href^="#triggers-sortorder-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href="#triggers-group"]', function(e) {
+  e.preventDefault();
+
+  delete config.triggers.groupids;
+
+  refresh();
+});
+
+$('body').on('click', 'a[href^="#triggers-group-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#triggers-group-(\d+)/) || [''];
+  if (m[1]) {
+    config.triggers.groupids = m[1];
+
+    refresh();
+  }
+});
+
 function showEventsView() {
   view = 'events';
 
-  getEvents(client, function(err, data) {
+  getEvents(zabbix, function(err, data) {
     if (err) {
-      error = new Error("Failed to get events (" + err.message + ")");
+      error = new Error('Failed to get events (' + err.message + ')');
       refresh();
-      
+
       return;
     }
 
@@ -366,10 +965,79 @@ function showEventsView() {
   });
 }
 
+$('body').on('click', 'a[href="#events-period"]', function(e) {
+  e.preventDefault();
+
+  delete config.events.period;
+
+  refresh();
+});
+
+$('body').on('click', 'a[href^="#events-period-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#events-period-(\d+)/) || [''];
+  if (m[1]) {
+    config.events.period = parseInt(m[1]);
+
+    $('a[href^="#events-period-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href^="#events-sortfield-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#events-sortfield-(.+)/) || [''];
+  if (m[1]) {
+    config.events.sortField = m[1];
+
+    $('a[href^="#events-sortfield-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#events-sortorder-(.+)/) || [''];
+  if (m[1]) {
+    config.events.sortOrder = m[1];
+
+    $('a[href^="#events-sortorder-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
+});
+
+$('body').on('click', 'a[href="#events-group"]', function(e) {
+  e.preventDefault();
+
+  delete config.events.groupids;
+
+  refresh();
+});
+
+$('body').on('click', 'a[href^="#events-group-"]', function(e) {
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#events-group-(\d+)/) || [''];
+  if (m[1]) {
+    config.events.groupids = m[1];
+
+    refresh();
+  }
+});
+
 function showWebView() {
-  getHTTPTests(client, function(err, data) {
+  getHTTPTests(zabbix, function(err, data) {
     if (err) {
-      error = new Error("Failed to get http tests (" + err.message + ")");
+      error = new Error('Failed to get http tests (' + err.message + ')');
       refresh();
 
       return;
@@ -398,251 +1066,62 @@ function showWebView() {
   });
 }
 
-/*
- * View events
- */
-
-$('body').on('click', 'a[href^="#view-"]', function(e) {
-  var m = $(this).attr('href').match(/^#view-(.+)/) || [""];
-  if (m[1]) {
-    view = m[1];
-
-    refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#refresh"]', function(e) {
-  refresh();
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#refresh-"]', function(e) {
-  var m = $(this).attr('href').match(/^#refresh-(\d+)/) || [""];
-  if (m[1]) {
-    config.refresh = parseInt(m[1]);
-
-    refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-status-(\d+)/) || [""];
-  if (m[1]) {
-     config.triggers.status = parseInt(m[1]);
-
-     $('a[href^="#triggers-status-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-severity-(\d+)/) || [""];
-  if (m[1]) {
-     config.triggers.severity = parseInt(m[1]);
-
-     $('a[href^="#triggers-severity-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-age"]', function(e) {
-  delete config.triggers.age;
-
-  refresh();
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-age-(\d+)/) || [""];
-  if (m[1]) {
-     config.triggers.age = parseInt(m[1]);
-
-     $('a[href^="#triggers-age-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-sortfield-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-sortfield-(.+)/) || [""];
-  if (m[1]) {
-     config.triggers.sortField = m[1];
-
-     $('a[href^="#triggers-sortfield-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-sortorder-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-sortorder-(.+)/) || [""];
-  if (m[1]) {
-     config.triggers.sortOrder = m[1];
-
-     $('a[href^="#triggers-sortorder-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#triggers-group"]', function(e) {
-  delete config.triggers.groupids;
-
-  refresh();
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#triggers-group-"]', function(e) {
-  var m = $(this).attr('href').match(/^#triggers-group-(\d+)/) || [""];
-  if (m[1]) {
-    config.triggers.groupids = m[1];
-
-    refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-period"]', function(e) {
-  delete config.events.period;
-
-  refresh();
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#events-period-"]', function(e) {
-  var m = $(this).attr('href').match(/^#events-period-(\d+)/) || [""];
-  if (m[1]) {
-     config.events.period = parseInt(m[1]);
-
-     $('a[href^="#events-period-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#events-sortfield-"]', function(e) {
-  var m = $(this).attr('href').match(/^#events-sortfield-(.+)/) || [""];
-  if (m[1]) {
-     config.events.sortField = m[1];
-
-     $('a[href^="#events-sortfield-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#events-sortorder-"]', function(e) {
-  var m = $(this).attr('href').match(/^#events-sortorder-(.+)/) || [""];
-  if (m[1]) {
-     config.events.sortOrder = m[1];
-
-     $('a[href^="#events-sortorder-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href="#events-group"]', function(e) {
-  delete config.events.groupids;
-
-  refresh();
-  e.preventDefault();
-});
-
-$('body').on('click', 'a[href^="#events-group-"]', function(e) {
-  var m = $(this).attr('href').match(/^#events-group-(\d+)/) || [""];
-  if (m[1]) {
-    config.events.groupids = m[1];
-
-    refresh();
-  }
-
-  e.preventDefault();
-});
-
 $('body').on('click', 'a[href^="#httptests-sortfield-"]', function(e) {
-  var m = $(this).attr('href').match(/^#httptests-sortfield-(.+)/) || [""];
-  if (m[1]) {
-     config.httptests.sortField = m[1];
-
-     $('a[href^="#httptests-sortfield-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
   e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#httptests-sortfield-(.+)/) || [''];
+  if (m[1]) {
+    config.httptests.sortField = m[1];
+
+    $('a[href^="#httptests-sortfield-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
 });
 
 $('body').on('click', 'a[href^="#httptests-sortorder-"]', function(e) {
-  var m = $(this).attr('href').match(/^#httptests-sortorder-(.+)/) || [""];
-  if (m[1]) {
-     config.httptests.sortOrder = m[1];
-
-     $('a[href^="#httptests-sortorder-"]').parent().removeClass('active');
-     $(this).parent().addClass('active')
-
-     refresh();
-  }
-
   e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#httptests-sortorder-(.+)/) || [''];
+  if (m[1]) {
+    config.httptests.sortOrder = m[1];
+
+    $('a[href^="#httptests-sortorder-"]').parent().removeClass('active');
+    $(this).parent().addClass('active');
+
+    refresh();
+  }
 });
 
 $('body').on('click', 'a[href="#httptests-group"]', function(e) {
+  e.preventDefault();
+
   delete config.httptests.groupids;
 
   refresh();
-  e.preventDefault();
 });
 
 $('body').on('click', 'a[href^="#httptests-group-"]', function(e) {
-  var m = $(this).attr('href').match(/^#httptests-group-(\d+)/) || [""];
+  e.preventDefault();
+
+  var m = $(this).attr('href').match(/^#httptests-group-(\d+)/) || [''];
   if (m[1]) {
     config.httptests.groupids = m[1];
 
     refresh();
   }
-
-  e.preventDefault();
 });
 
 /*
- * Application
+ * Functions
  */
 
-function init() {
+function loadConfiguration(callback) {
+  callback = callback || function() {
+    return true;
+  };
+
   config = _.defaults(config, {
     server: {},
 
@@ -685,91 +1164,66 @@ function init() {
     }
   });
 
-  $('#app').html(templates.app());
+  var localConfig;
 
-  connectClient(function(err, data) {
+  try {
+    localConfig = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_CONFIG));
+  }
+  catch (e) {
+    localConfig = null;
+  }
+
+  if (localConfig) {
+    config = _.defaults(localConfig, config);
+  }
+
+  if (!config.server.url || !config.server.user || !config.server.password) {
+    return callback(new Error('Missing server configuration'));
+  }
+
+  return callback(null);
+}
+
+function saveLocalStorage(callback) {
+  callback = callback || function() {
+    return true;
+  };
+
+  try {
+    localStorage.setItem(LOCALSTORAGE_KEY_CONFIG, JSON.stringify(config));
+  } catch (e) {
+    return callback(new Error('Failed to save in local storage'))
+  }
+
+  return callback(null);
+}
+
+function clearLocalStorage(callback) {
+  callback = callback || function() {
+    return true;
+  };
+
+  localStorage.removeItem(LOCALSTORAGE_KEY_CONFIG);
+
+  return callback(null);
+}
+
+function start(callback) {
+  callback = callback || function() {
+    return true;
+  };
+
+  loadConfiguration(function(err) {
     if (err) {
-      error = new Error("Failed to connect to API (" + err.message + ")");
-      refresh();
+      showStartupModal();
 
-      return;
+      return callback(err);
     }
 
-    client = data;
+    render();
 
-    refresh();
-
-    getHostGroups(client, function(err, data) {
-      if (err) {
-        error = new Error("Failed to get hostgroups (" + err.message + ")");
-        refresh();
-
-        return;
-      }
-
-      groups = data;
-
-      refresh();
-    });
-
-    getHosts(client, function(err, data) {
-      if (err) {
-        error = new Error("Failed to get hosts (" + err.message + ")");
-        refresh();
-
-        return;
-      }
-
-      groups = data;
-
-      refresh();
-    })
+    return callback(null);
   });
 }
 
-function refresh() {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-
-  $('#menu').html(templates.menu({
-    config: config,
-    view: view
-  }));
-
-  if (error) {
-    showErrorView();
-
-    error = null;
-    client = null;
-  } else {
-    if (!client) {
-      init();
-
-      return;
-    }
-
-    switch (view) {
-    case 'triggers':
-      showTriggersView();
-      break;
-
-    case 'events':
-      showEventsView();
-      break;
-
-    case 'web':
-      showWebView();
-      break;
-
-    default:
-      break;
-    }
-  }
-
-  if (config.refresh > 0) {
-    timeoutId = setTimeout(refresh, config.refresh * 1000);
-  }
-}
-
-init();
+start();
