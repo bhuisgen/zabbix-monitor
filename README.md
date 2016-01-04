@@ -26,7 +26,7 @@ Copy the configuration file template and edit the file:
     $ cp app/scripts/config.js.dist app/scripts/config.js
     $ vim app/scripts/config.js
 
-Declare your Zabbix server and the user account which will be used to make API calls:
+**Optional**: you can declare your Zabbix API server like this:
 
     server: {
         name: 'zabbix.my.domain',
@@ -35,6 +35,8 @@ Declare your Zabbix server and the user account which will be used to make API c
         user: 'zabbix-monitor',
         password: 'secret123'
     }
+
+If no server is found in the configuration file, *zabbix-monitor* will show you a startup modal to declare it.
 
 ## Running
 
