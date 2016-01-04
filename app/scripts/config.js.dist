@@ -1,13 +1,7 @@
 var env = 'production';
 
-var config = {  
+var config = {
   production: {
-    server: {
-      url: 'https://zabbix.my.domain/api_jsonrpc.php',
-      user: 'zabbix-monitor',
-      password: 'secret123'
-    },
-
     refresh: 30,
 
     alerts: {
@@ -58,7 +52,7 @@ var config = {
     },
 
     refresh: 30,
-    
+
     alerts: {
       enable: true,
       showOnlyProblems: false
