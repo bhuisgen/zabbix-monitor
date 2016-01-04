@@ -204,9 +204,9 @@ module.exports = function(grunt) {
           sourceMapFilename: 'app/styles/bootstrap.css.map'
         },
         files: {
-          'app/styles/bootstrap.css': 'app/theme/bootstrap.less',
+          'app/styles/bootstrap.css': 'app/theme/bootstrap.less'
         }
-      },
+      }
     },
 
     // Reads HTML for usemin blocks to enable smart builds that automatically
@@ -334,7 +334,7 @@ module.exports = function(grunt) {
         cwd: './bower_components/bootstrap/dist/fonts',
         dest: '.tmp/fonts/',
         src: ['{,*/}*']
-      },
+      }
     },
 
     // Run some tasks in parallel to speed up build process
@@ -346,7 +346,7 @@ module.exports = function(grunt) {
       ],
       test: [
         'copy:styles',
-        'copy:fonts',
+        'copy:fonts'
       ],
       dist: [
         'copy:styles',

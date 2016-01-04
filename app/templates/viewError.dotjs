@@ -1,9 +1,6 @@
 <section id="error" class="container">
-    <div class="row">
-        <div class="col-6">
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <strong>Error:</strong> {{= it.error.message }}
-            </div>
-        </div>
-    </div>
+  <div class="alert alert-danger" role="alert">
+    <p><strong>Error</strong></p>
+    <p>{{= it.error.message }}</p>
+  </div>
 </section>
