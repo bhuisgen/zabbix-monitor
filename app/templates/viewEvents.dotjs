@@ -5,8 +5,6 @@
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Period <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu">
-              <li{{? !it.config.events.period }} class="active"{{?}}><a href="#events-age">All</a></li>
-              <li role="separator" class="divider"></li>
               <li{{? it.config.events.period === 1 }} class="active"{{?}}><a href="#events-period-1">1 hour</a></li>
               <li{{? it.config.events.period === 6 }} class="active"{{?}}><a href="#events-period-6">6 hours</a></li>
               <li{{? it.config.events.period === 12 }} class="active"{{?}}><a href="#events-period-12">12 hours</a></li>

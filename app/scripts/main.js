@@ -700,7 +700,6 @@ $('body').on('click', '#modalSettings #settingsTest', function(e) {
       .closest('div')
       .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
       .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
-
   }
 
   if (!server.password) {
@@ -869,14 +868,6 @@ $('body').on('click', 'a[href^="#triggers-severity-"]', function(e) {
   }
 });
 
-$('body').on('click', 'a[href="#triggers-age"]', function(e) {
-  e.preventDefault();
-
-  delete config.triggers.age;
-
-  refresh();
-});
-
 $('body').on('click', 'a[href^="#triggers-age-"]', function(e) {
   e.preventDefault();
 
@@ -964,14 +955,6 @@ function showEventsView() {
     }));
   });
 }
-
-$('body').on('click', 'a[href="#events-period"]', function(e) {
-  e.preventDefault();
-
-  delete config.events.period;
-
-  refresh();
-});
 
 $('body').on('click', 'a[href^="#events-period-"]', function(e) {
   e.preventDefault();
