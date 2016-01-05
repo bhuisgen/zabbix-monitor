@@ -71,7 +71,8 @@ function getHostGroups(zabbix, callback) {
 
   var params = {
     output: 'extend',
-    sortfield: 'name'
+    sortfield: 'name',
+    monitored_hosts: true
   };
 
   zabbix.send('hostgroup.get', params, function(err, data) {
@@ -90,7 +91,8 @@ function getHosts(zabbix, callback) {
 
   var params = {
     output: 'extend',
-    sortfield: 'name'
+    sortfield: 'name',
+    monitored_hosts: true
   };
 
   zabbix.send('host.get', params, function(err, data) {
