@@ -1,8 +1,13 @@
 {
   "name": "zabbix-monitor",
+  "description": "a monitoring panel for zabbix",
   "version": "0.2.0",
   "author": "Boris HUISGEN <bhuisgen@hbis.fr>",
   "license": "GPL-3.0",
+  "homepage": "https://github.com/bhuisgen/zabbix-monitor",
+  "bugs": {
+    "url": "https://github.com/bhuisgen/zabbix-monitor/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/bhuisgen/zabbix-monitor"
@@ -13,15 +18,18 @@
   "dependencies": {},
   "devDependencies": {
     "async": "~1.5.0",
+    "browserify": "~13.0.0",
+    "browserify-shim": "~3.7.0",
+    "debowerify": "~1.3.1",
     "dot": "~1.0.3",
     "grunt": "~0.4.5",
-    "grunt-autoprefixer": "~3.0.0",
+    "grunt-autoprefixer": "~3.0.3",
     "grunt-browser-sync": "~2.2.0",
     "grunt-browserify": "~4.0.1",
     "grunt-concurrent": "~2.1.0",
     "grunt-contrib-clean": "~0.7.0",
     "grunt-contrib-concat": "~0.5.1",
-    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-copy": "~0.8.2",
     "grunt-contrib-cssmin": "~0.14.0",
     "grunt-contrib-htmlmin": "~0.6.0",
     "grunt-contrib-imagemin": "~1.0.0",
@@ -30,14 +38,17 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-dot-compiler": "~0.5.12",
     "grunt-eslint": "~17.3.1",
-    "grunt-mocha": "~0.4.12",
-    "grunt-newer": "~1.1.0",
+    "grunt-mocha": "~0.4.15",
+    "grunt-newer": "~1.1.1",
     "grunt-rev": "~0.1.0",
-    "grunt-svgmin": "~3.1.0",
+    "grunt-svgmin": "~3.1.2",
     "grunt-usemin": "~3.1.1",
+    "grunt-wiredep": "~2.0.0",
     "jit-grunt": "~0.9.1",
-    "lodash": "~3.10.1",
-    "moment": "~2.11.0",
+    "lodash": "~4.0.0",
+    "mocha": "~2.3.4",
+    "moment": "~2.11.1",
+    "should": "~8.1.1",
     "time-grunt": "~1.3.0"
   },
   "eslintConfig": {

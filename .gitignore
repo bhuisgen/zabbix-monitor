@@ -5,5 +5,3 @@ node_modules
 .sass-cache
 app/scripts/config.js
 app/scripts/templates.js
-app/styles/bootstrap.css
-app/styles/bootstrap.css.map
