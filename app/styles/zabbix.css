@@ -19,8 +19,8 @@
 }
 
 .events-row {
-    padding: 4px;
-    color: #FFFFFF;
+	padding: 4px;
+	color: #FFFFFF;
 }
 
 .httptests-header {
@@ -28,8 +28,8 @@
 }
 
 .httptests-row {
-    padding: 4px;
-    color: #FFFFFF;
+	padding: 4px;
+	color: #FFFFFF;
 }
 
 .httptest-status-ok {
@@ -41,7 +41,7 @@
 }
 
 .httptest-alert {
-    display: block;
+	display: block;
 }
 
 .triggers-header {
@@ -90,12 +90,12 @@
 }
 
 .trigger-alert {
-    display: block;
+	display: block;
 }
 
 @media screen {
-    .events-row, .httptests-row, .triggers-row {   
-    	font-size: 18px;
+	.events-row, .httptests-row, .triggers-row {
+		font-size: 18px;
 	}
 
 	.httptests-alert, .triggers-alert {
@@ -104,8 +104,8 @@
 }
 
 @media screen and (max-width: 1200px) {
-    .events-rows, .httptests-row, .triggers-row {   
-    	font-size: 16px;
+	.events-rows, .httptests-row, .triggers-row {
+		font-size: 16px;
 	}
 
 	.httptests-alert, .triggers-alert {
@@ -115,15 +115,15 @@
 }
 
 @media screen and (max-width: 992px) {
-    .events-row, .httptests-row, .triggers-row {   
-    	font-size: 14px;
+	.events-row, .httptests-row, .triggers-row {
+		font-size: 14px;
 	}
 }
 
 .hide-overflow
 {
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-    display:block;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	display:block;
 }

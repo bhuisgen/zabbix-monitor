@@ -13,7 +13,7 @@ var Zabbix = function(url, user, password, options) {
   this.options = typeof options === 'undefined' ? defaultOptions : options;
 };
 
-Zabbix.prototype.login = function login(callback) {
+Zabbix.prototype.login = function(callback) {
   callback = callback || function() {
     return true;
   };
@@ -34,7 +34,7 @@ Zabbix.prototype.login = function login(callback) {
   });
 };
 
-Zabbix.prototype.logout = function logout(callback) {
+Zabbix.prototype.logout = function(callback) {
   callback = callback || function() {
     return true;
   };
@@ -52,7 +52,7 @@ Zabbix.prototype.logout = function logout(callback) {
   });
 };
 
-Zabbix.prototype.send = function send(method, params, callback) {
+Zabbix.prototype.send = function(method, params, callback) {
   callback = callback || function() {
     return true;
   };
