@@ -3,7 +3,8 @@
   "private": true,
   "dependencies": {
     "pace": "~1.0.1",
-    "bootstrap": "3.2.0"
+    "bootstrap": "~3.2.0",
+    "jquery": "~2.2.0"
   },
   "devDependencies": {
     "chai": "~3.4.2",

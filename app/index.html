@@ -4,18 +4,19 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" href="/favicon.ico">
         <title>zabbix-monitor</title>
-        <meta name="description" content="">
+        <meta name="description" content="Monitoring panel for Zabbix">
+        <meta name="author" content="Boris HUISGEN">
+        <link rel="shortcut icon" href="/favicon.ico">
         <!-- build:css styles/vendor.css -->
         <!-- bower:css -->
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
         <!-- endbower -->
         <!-- endbuild -->
-        <!-- build:css(.tmp) styles/main.css -->
-        <link rel="stylesheet" href="styles/bootstrap.css" />
-        <link rel="stylesheet" href="styles/main.css">
+        <!-- build:css({.tmp,app}) styles/main.css -->
+        <link rel="stylesheet" href="styles/app.css">
         <link rel="stylesheet" href="styles/pace.css">
+        <link rel="stylesheet" href="styles/zabbix.css">
         <!-- endbuild -->
     </head>
     <body>
@@ -31,16 +32,16 @@
         </script>
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
-        <script src="bower_components/jquery/dist/jquery.js"></script>
-        <script src="bower_components/pace/pace.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.js"></script>
+        <script src="../bower_components/pace/pace.js"></script>
+        <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
 
         <!-- build:js scripts/plugins.js -->
-        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <!-- endbuild -->
 
-        <!-- build:js({app,.tmp}) scripts/main.js -->
+        <!-- build:js({app,.tmp}) scripts/app.js -->
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>
