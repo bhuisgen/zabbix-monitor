@@ -758,6 +758,8 @@ App.prototype.render = function() {
 App.prototype.refresh = function(state) {
   state = (typeof state === 'undefined' ? true : state);
 
+  var self = this;
+
   if (this.timeoutId) {
     clearTimeout(this.timeoutId);
   }
@@ -802,7 +804,9 @@ App.prototype.refresh = function(state) {
   }
 
   if (this.config.refresh > 0) {
-    this.timeoutId = setTimeout(this.refresh, this.config.refresh * 1000);
+    this.timeoutId = setTimeout(function() {
+      self.refresh();
+    }, this.config.refresh * 1000);
   }
 }
 
