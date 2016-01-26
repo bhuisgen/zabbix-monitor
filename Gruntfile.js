@@ -246,7 +246,7 @@ module.exports = function(grunt) {
             '<%= config.dist %>/styles/{,*/}*.css',
             '<%= config.dist %>/images/{,*/}*.*',
             '<%= config.dist %>/styles/fonts/{,*/}*.*',
-            '<%= config.dist %>/*.{ico,png}'
+            '!<%= config.dist %>/*.{ico,png}'
           ]
         }
       }
