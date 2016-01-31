@@ -1,16 +1,16 @@
 {
   "name": "zabbix-monitor",
-  "description": "a monitoring panel for zabbix",
+  "description": "Monitoring panel for zabbix",
   "version": "0.2.0",
   "author": "Boris HUISGEN <bhuisgen@hbis.fr>",
   "license": "GPL-3.0",
   "homepage": "https://github.com/bhuisgen/zabbix-monitor",
-  "bugs": {
-    "url": "https://github.com/bhuisgen/zabbix-monitor/issues"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/bhuisgen/zabbix-monitor"
+  },
+  "bugs": {
+    "url": "https://github.com/bhuisgen/zabbix-monitor/issues"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -45,10 +45,10 @@
     "grunt-usemin": "~3.1.1",
     "grunt-wiredep": "~2.0.0",
     "jit-grunt": "~0.9.1",
-    "lodash": "~4.0.0",
-    "mocha": "~2.3.4",
+    "lodash": "~4.1.0",
+    "mocha": "~2.4.5",
     "moment": "~2.11.1",
-    "should": "~8.1.1",
+    "should": "~8.2.1",
     "time-grunt": "~1.3.0"
   },
   "eslintConfig": {

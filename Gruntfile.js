@@ -234,7 +234,7 @@ module.exports = function(grunt) {
     wiredep: {
       app: {
         src: '<%= config.app %>/index.html',
-        ignorePath: '<%= config.app %>/'
+        ignorePath: '<%= config.app %>'
       }
     },
 
@@ -245,7 +245,7 @@ module.exports = function(grunt) {
             '<%= config.dist %>/scripts/{,*/}*.js',
             '<%= config.dist %>/styles/{,*/}*.css',
             '<%= config.dist %>/images/{,*/}*.*',
-            '<%= config.dist %>/styles/fonts/{,*/}*.*',
+            '<%= config.dist %>/fonts/{,*/}*.*',
             '!<%= config.dist %>/*.{ico,png}'
           ]
         }
@@ -336,16 +336,18 @@ module.exports = function(grunt) {
           cwd: '<%= config.app %>',
           dest: '<%= config.dist %>',
           src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            'images/{,*/}*.webp'
+            '*.txt',
+            'images/{,*/}*.webp',
+            '{,*/}*.html',
+            'fonts/{,*/}*.*'
           ]
         }, {
           expand: true,
           dot: true,
-          cwd: './bower_components/bootstrap/dist',
-          src: ['fonts/*.*'],
-          dest: '<%= config.dist %>'
+          flatten: true,
+          cwd: '.',
+          dest: '<%= config.dist %>/fonts',
+          src: 'bower_components/bootstrap/dist/fonts/*'
         }]
       },
       styles: {
@@ -356,36 +358,45 @@ module.exports = function(grunt) {
         src: '{,*/}*.css'
       },
       fonts: {
-        expand: true,
-        dot: true,
-        cwd: './bower_components/bootstrap/dist/fonts',
-        dest: '.tmp/fonts/',
-        src: [
-          '<%= config.app %>/styles/fonts/{,*/}*.*',
-          'bower_components/bootstrap/dist/fonts/{,*/}*.*'
+        files: [
+          {
+            expand: true,
+            dot: true,
+            cwd: '<%= config.app %>/fonts',
+            dest: '.tmp/fonts/',
+            src: '{,*/}*.*'
+          }, {
+            expand: true,
+            dot: true,
+            flatten: true,
+            cwd: '.',
+            dest: '.tmp/fonts/',
+            src: 'bower_components/bootstrap/dist/fonts/*'
+          }
         ]
       }
     },
 
     concurrent: {
       server: [
-        'less:dev',
+        'eslint',
         'browserify:dev',
         'browserify:vendor',
+        'less:dev',
         'copy:styles',
         'copy:fonts'
       ],
       test: [
-        'copy:styles',
-        'copy:fonts',
         'eslint',
         'browserify:vendor',
         'browserify:dev',
-        'browserify:test'
+        'browserify:test',
+        'copy:styles',
+        'copy:fonts'
       ],
       dist: [
-        'less',
         'browserify',
+        'less',
         'copy:styles',
         'copy:fonts',
         'imagemin',
@@ -394,25 +405,6 @@ module.exports = function(grunt) {
       ]
     }
   });
-
-  grunt.registerTask('build', [
-    'clean:dist',
-    'wiredep',
-    'dot',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'cssmin',
-    'uglify',
-    'copy:dist',
-    'rev',
-    'usemin'
-  ]);
-
-  grunt.registerTask('lint', [
-    'eslint'
-  ]);
 
   grunt.registerTask('serve', function(target) {
     if (target === 'dist') {
@@ -443,6 +435,25 @@ module.exports = function(grunt) {
     'browserSync:test',
     'mocha',
     'watch'
+  ]);
+
+  grunt.registerTask('lint', [
+    'eslint'
+  ]);
+
+  grunt.registerTask('build', [
+    'clean:dist',
+    'wiredep',
+    'dot',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat',
+    'cssmin',
+    'uglify',
+    'copy:dist',
+    'rev',
+    'usemin'
   ]);
 
   grunt.registerTask('default', [
