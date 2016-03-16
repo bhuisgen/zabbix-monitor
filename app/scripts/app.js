@@ -243,9 +243,9 @@ App.prototype.run = function(callback) {
     self.config.server.user = server.user;
     self.config.server.password = server.password;
 
-    self.zabbix = new Zabbix(server.url, server.user, server.password);
+    var test = new Zabbix(server.url, server.user, server.password);
 
-    self.zabbix.login(function(err) {
+    test.login(function(err) {
       if (err) {
         $('#modalStartup').find('.form-group').addClass('has-error');
         $('#modalStartup').find('#serverHostname')
@@ -284,11 +284,15 @@ App.prototype.run = function(callback) {
         self.clearLocalStorage();
       }
 
-      $('#modalStartup').modal('hide');
+      self.zabbix = null;
 
-      self.refresh();
+      $('#modalStartup').modal('hide');
     });
   });
+
+  $('body').on('hide.bs.modal','#modalStartup', function() {
+    self.refresh();
+  })
 
   $('body').on('click', 'a[href^="#view-"]', function(e) {
     e.preventDefault();
