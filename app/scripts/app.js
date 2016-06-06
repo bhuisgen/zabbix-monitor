@@ -9,6 +9,8 @@ var Zabbix = require('./zabbix');
 
 var templates = require('./templates');
 
+var globalConfig = require('./config');
+
 var App = function() {
   this.DEFAULT_VIEW = 'triggers';
   this.LOCALSTORAGE_KEY_CONFIG = 'zabbix-monitor.config';
@@ -38,7 +40,7 @@ App.prototype.loadConfiguration = function(callback) {
     return true;
   };
 
-  this.config = _.defaults(this.config, {
+  var defaultConfig = {
     server: {},
 
     refresh: 30,
@@ -78,20 +80,7 @@ App.prototype.loadConfiguration = function(callback) {
 
       showHumanTimes: false
     }
-  });
-
-  var staticConfig;
-
-  try {
-    staticConfig = require.resolve('./config');
-  }
-  catch (e) {
-    staticConfig = null;
-  }
-
-  if (staticConfig) {
-    this.config = _.defaults(this.config, staticConfig);
-  }
+  };
 
   var localConfig;
 
@@ -102,9 +91,7 @@ App.prototype.loadConfiguration = function(callback) {
     localConfig = null;
   }
 
-  if (localConfig) {
-    this.config = _.defaults(localConfig, this.config);
-  }
+  this.config = _.defaultsDeep(this.config, defaultConfig, globalConfig, localConfig);
 
   if (!this.config.server.url || !this.config.server.user || !this.config.server.password) {
     return callback(new Error('Missing server configuration'));
