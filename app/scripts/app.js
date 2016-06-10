@@ -91,7 +91,7 @@ App.prototype.loadConfiguration = function(callback) {
     localConfig = null;
   }
 
-  this.config = _.defaultsDeep(this.config, defaultConfig, globalConfig, localConfig);
+  this.config = _.defaultsDeep(localConfig, globalConfig, defaultConfig);
 
   if (!this.config.server.url || !this.config.server.user || !this.config.server.password) {
     return callback(new Error('Missing server configuration'));
