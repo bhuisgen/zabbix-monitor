@@ -15,6 +15,11 @@
   "engines": {
     "node": ">=0.10.0"
   },
+  "scripts": {
+    "build": "grunt build",
+    "postinstall": "bower install",
+    "test": "grunt test"
+  },
   "dependencies": {},
   "devDependencies": {
     "async": "2.0.0-rc.6",
