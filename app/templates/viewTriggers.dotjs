@@ -1,6 +1,6 @@
 <section id="triggers" class="container-fluid">
   <div class="row">
-    <div class="hidden-xs col-sm-6 col-md-6 col-lg-6">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
       <div class="btn-toolbar">
         <div class="btn-group">
           <div class="btn-group">
@@ -100,7 +100,7 @@
     </div>
     {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
     <div id="trigger-data-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
-      <div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-center">
+      <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-center">
         {{? it.triggers.data[i].value === '0' }}
         <span class="trigger-label trigger-status-ok label hide-overflow">OK</span>
         {{?? it.triggers.data[i].value === '1' }}
@@ -119,7 +119,7 @@
         {{?}}
         {{?}}
       </div>
-      <div class="col-xs-8 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers.data[i].hostname }}</div>
+      <div class="col-xs-9 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers.data[i].hostname }}</div>
       <div class="hidden-xs col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.triggers.data[i].description }}</div>
       <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
         {{? !it.config.triggers.showHumanTimes }}
