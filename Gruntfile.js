@@ -67,6 +67,10 @@ module.exports = function(grunt) {
 			}
 		},
 
+		clean: {
+			build: ['dist'],
+		},
+
     browserSync: {
       options: {
         notify: false,

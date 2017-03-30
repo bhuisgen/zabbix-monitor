@@ -16,6 +16,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
+    "clean": "grunt clean",
     "build": "grunt build",
     "test": "grunt test"
   },
