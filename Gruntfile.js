@@ -54,22 +54,18 @@ module.exports = function(grunt) {
       }
     },
 
-		'bower-install-simple': {
-		  prod: {
-				options: {
-					production: true
-				}
-			},
-			dev: {
-				options: {
-					production: false
-				}
-			}
-		},
-
-		clean: {
-			build: ['dist'],
-		},
+    'bower-install-simple': {
+      prod: {
+        options: {
+          production: true
+        }
+      },
+      dev: {
+        options: {
+          production: false
+        }
+      }
+    },
 
     browserSync: {
       options: {
@@ -120,6 +116,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
+      build: ['dist'],
       dist: {
         files: [{
           dot: true,
