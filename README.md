@@ -13,13 +13,10 @@ Under GNU GPL licence
 
 ## Building
 
+Clone the project:
+
     $ git clone https://github.com/bhuisgen/zabbix-monitor.git
-
     $ cd zabbix-monitor
-    $ bower install
-    $ npm install
-
-## Configuration
 
 Copy the configuration file template and edit the file:
 
@@ -38,18 +35,9 @@ Copy the configuration file template and edit the file:
 
 If no server is found in the configuration file, *zabbix-monitor* will show you a startup modal to declare it.
 
-## Running
+Install the package dependencies and run the build:
 
-This application is client side and must be rebuilded after each configuration change:
-
+    $ npm install
     $ grunt build
 
 You can now copy all files in the *dist/* directory into your web server directory and browse the web page *index.html*.
-
-## Development
-
-You can start a local web server with *grunt*:
-
-    $ grunt serve
-
-Each code change will make a rebuild of the application.

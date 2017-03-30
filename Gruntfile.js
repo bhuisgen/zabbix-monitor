@@ -54,6 +54,19 @@ module.exports = function(grunt) {
       }
     },
 
+    'bower-install-simple': {
+      prod: {
+        options: {
+          production: true
+        }
+      },
+      dev: {
+        options: {
+          production: false
+        }
+      }
+    },
+
     browserSync: {
       options: {
         notify: false,
@@ -103,6 +116,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
+      build: ['dist'],
       dist: {
         files: [{
           dot: true,
@@ -442,6 +456,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'bower-install-simple',
     'clean:dist',
     'wiredep',
     'dot',
