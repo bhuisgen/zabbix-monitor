@@ -1025,10 +1025,11 @@ App.prototype.getTriggers = function(zabbix, callback) {
   };
 
   var params = {
-    output: ['triggerid', 'description', 'expression', 'lastchange', 'priority', 'value', 'host'],
+    output: ['triggerid', 'description', 'expression', 'lastchange', 'priority', 'value'],
     expandData: 1,
     expandDescription: 1,
     expandExpression: 1,
+    selectHosts: 'extend',
     monitored: 1,
     min_severity: this.config.triggers.severity
   };
