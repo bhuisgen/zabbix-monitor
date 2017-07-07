@@ -128,7 +128,7 @@
         {{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
         {{?}}
       </div>
-    {{ } }}
+    {{ } }}
     </div>
   </div>
 </section>
