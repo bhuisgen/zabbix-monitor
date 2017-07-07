@@ -45,7 +45,7 @@
   <div class="httptests">
     <div class="httptests-header">
     </div>
-    {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
+    {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
     <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
       <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-center">
         {{? it.httptests.data[i].lastvalue === '0' }}
