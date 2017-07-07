@@ -194,7 +194,7 @@ App.prototype.run = function(callback) {
       password: $('#modalStartup').find('#serverPassword').val()
     };
 
-    if (!hostname || !server.url.match(/^http(s)?\:\/\/.+$/)) {
+    if (!hostname || !server.url.match(/^http(s)?:\/\/.+$/)) {
       $('#modalStartup').find('#serverHostname')
         .closest('.form-group')
         .addClass('has-error');
@@ -221,13 +221,13 @@ App.prototype.run = function(callback) {
         .closest('.form-group')
         .addClass('has-error');
       $('#modalStartup').find('#serverPassword')
-      .attr('aria-describedby', 'serveurPasswordErrorStatus')
-      .closest('div')
-      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-      .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+        .attr('aria-describedby', 'serveurPasswordErrorStatus')
+        .closest('div')
+        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+        .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
     }
 
-    if (!hostname || !server.url.match(/^http(s)?\:\/\/.+$/) || !server.user || !server.password) {
+    if (!hostname || !server.url.match(/^http(s)?:\/\/.+$/) || !server.user || !server.password) {
       return;
     }
 
@@ -328,7 +328,7 @@ App.prototype.run = function(callback) {
       return;
     }
 
-    var m = serverURL.match(/^(https\:\/\/)?(.[^\/]+){1}(\/api_jsonrpc\.php)?$/) || [''];
+    var m = serverURL.match(/^(https:\/\/)?(.[^/]+){1}(\/api_jsonrpc\.php)?$/) || [''];
     if (m[0] && m[2]) {
       var prefix = m[1] ? true : false;
       var suffix = m[3] ? true : false;
@@ -412,7 +412,7 @@ App.prototype.run = function(callback) {
     $('#modalSettings').find('#settingsTestMessage').text('');
     $('#modalSettings').find('#settingsTestMessage').removeClass('text-danger text-success');
 
-    if (!server.url || !server.url.match(/^http(s)?\:\/\/.+$/)) {
+    if (!server.url || !server.url.match(/^http(s)?:\/\/.+$/)) {
       $('#modalSettings').find('#serverURL')
         .closest('.form-group')
         .addClass('has-error');
@@ -439,10 +439,10 @@ App.prototype.run = function(callback) {
         .closest('.form-group')
         .addClass('has-error');
       $('#modalSettings').find('#serverPassword')
-      .attr('aria-describedby', 'serveurPasswordErrorStatus')
-      .closest('div')
-      .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-      .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+        .attr('aria-describedby', 'serveurPasswordErrorStatus')
+        .closest('div')
+        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
+        .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
     }
 
     if (!server.url || !server.user || !server.password) {
