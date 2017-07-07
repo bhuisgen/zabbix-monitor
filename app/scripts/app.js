@@ -1,15 +1,20 @@
 'use strict';
 
-var async = require('async');
 var _ = require('lodash');
+var async = require('async');
 var moment = require('moment');
-
 var doT = require('dot'); // eslint-disable-line no-unused-vars
 var Zabbix = require('./zabbix');
 
 var templates = require('./templates');
 
-var globalConfig = require('./config');
+var globalConfig;
+
+try {
+  globalConfig = require('./config');
+} catch (ex) {
+  globalConfig = {};
+}
 
 var App = function() {
   this.DEFAULT_VIEW = 'triggers';

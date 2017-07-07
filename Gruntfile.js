@@ -194,6 +194,7 @@ module.exports = function(grunt) {
         src: ['<%= config.app %>/scripts/main.js'],
         dest: '.tmp/scripts/main.js',
         options: {
+          transform: [ 'browserify-optional' ],
           debug: true
         }
       },
@@ -201,6 +202,7 @@ module.exports = function(grunt) {
         src: ['test/{,*/}*.js'],
         dest: '.tmp/test/test.js',
         options: {
+          transform: [ 'browserify-optional' ],
           debug: true
         }
       }
