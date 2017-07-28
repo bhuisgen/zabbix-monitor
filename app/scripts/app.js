@@ -1031,9 +1031,7 @@ App.prototype.getTriggers = function(zabbix, callback) {
 
   var params = {
     output: ['triggerid', 'description', 'expression', 'lastchange', 'priority', 'value'],
-    expandData: 1,
     expandDescription: 1,
-    expandExpression: 1,
     selectHosts: 'extend',
     monitored: 1,
     min_severity: this.config.triggers.severity
@@ -1115,9 +1113,7 @@ App.prototype.getEvents = function(zabbix, callback) {
 
   var params = {
     output: ['eventid', 'acknowledged', 'clock', 'object', 'source', 'value'],
-    expandData: 1,
     expandDescription: 1,
-    expandExpression: 1,
     selectHosts: 'extend',
     selectRelatedObject: 'extend'
   };
