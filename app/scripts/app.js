@@ -3,10 +3,8 @@
 var _ = require('lodash');
 var async = require('async');
 var moment = require('moment');
-var doT = require('dot'); // eslint-disable-line no-unused-vars
+var doT = require('dot');
 var Zabbix = require('./zabbix');
-
-var templates = require('./templates');
 
 var globalConfig;
 
@@ -15,6 +13,8 @@ try {
 } catch (ex) {
   globalConfig = {};
 }
+
+var templates = require('./templates');
 
 var App = function() {
   this.DEFAULT_VIEW = 'triggers';
@@ -38,7 +38,7 @@ var App = function() {
     data: null,
     alerts: null
   };
-}
+};
 
 App.prototype.loadConfiguration = function(callback) {
   callback = callback || function() {
@@ -103,7 +103,7 @@ App.prototype.loadConfiguration = function(callback) {
   }
 
   return callback(null);
-}
+};
 
 App.prototype.saveLocalStorage = function(callback) {
   callback = callback || function() {
@@ -113,11 +113,11 @@ App.prototype.saveLocalStorage = function(callback) {
   try {
     localStorage.setItem(this.LOCALSTORAGE_KEY_CONFIG, JSON.stringify(this.config));
   } catch (e) {
-    return callback(new Error('Failed to save in local storage'))
+    return callback(new Error('Failed to save in local storage'));
   }
 
   return callback(null);
-}
+};
 
 App.prototype.clearLocalStorage = function(callback) {
   callback = callback || function() {
@@ -127,7 +127,7 @@ App.prototype.clearLocalStorage = function(callback) {
   localStorage.removeItem(this.LOCALSTORAGE_KEY_CONFIG);
 
   return callback(null);
-}
+};
 
 App.prototype.run = function(callback) {
   callback = callback || function() {
@@ -150,7 +150,7 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
 
   $('body').on('keyup', '#modalStartup #serverUser', function(e) {
     e.preventDefault();
@@ -166,7 +166,7 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
 
   $('body').on('keyup', '#modalStartup #serverPassword', function(e) {
     e.preventDefault();
@@ -182,7 +182,7 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
 
   $('body').on('click', '#modalStartup #startupConnect', function(e) {
     e.preventDefault();
@@ -284,7 +284,7 @@ App.prototype.run = function(callback) {
 
   $('body').on('hide.bs.modal','#modalStartup', function() {
     self.refresh();
-  })
+  });
 
   $('body').on('click', 'a[href^="#view-"]', function(e) {
     e.preventDefault();
@@ -318,7 +318,7 @@ App.prototype.run = function(callback) {
     e.preventDefault();
 
     self.showSettingsModal();
-  })
+  });
 
   $('body').on('focusout', '#modalSettings', function(e) {
     e.preventDefault();
@@ -343,7 +343,7 @@ App.prototype.run = function(callback) {
 
       $('#modalSettings').find('#serverURL').val(serverURL);
     }
-  })
+  });
 
   $('body').on('keyup', '#modalSettings #serverURL', function(e) {
     e.preventDefault();
@@ -359,7 +359,7 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
 
   $('body').on('keyup', '#modalSettings #serverUser', function(e) {
     e.preventDefault();
@@ -375,7 +375,8 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
+
   $('body').on('keyup', '#modalSettings #serverPassword', function(e) {
     e.preventDefault();
 
@@ -390,7 +391,7 @@ App.prototype.run = function(callback) {
       .removeAttr('aria-describedby')
       .closest('div')
       .find('span').remove();
-  })
+  });
 
   $('body').on('keyup', '#modalSettings', function(e) {
     e.preventDefault();
@@ -398,7 +399,7 @@ App.prototype.run = function(callback) {
     $('#modalSettings').find('#settingsTestSuccess').hide();
     $('#modalSettings').find('#settingsTestFailed').hide();
     $('#modalSettings').find('#settingsTest').closest('div').removeClass('has-error', 'has-success');
-  })
+  });
 
   $('body').on('click', '#modalSettings #settingsTest', function(e) {
     e.preventDefault();
@@ -494,7 +495,7 @@ App.prototype.run = function(callback) {
 
   $('body').on('hide.bs.modal','#modalSettings', function() {
     self.refresh();
-  })
+  });
 
   $('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
     e.preventDefault();
@@ -704,7 +705,7 @@ App.prototype.run = function(callback) {
 
     return callback(null);
   });
-}
+};
 
 App.prototype.render = function() {
   var self = this;
@@ -747,9 +748,9 @@ App.prototype.render = function() {
       self.hosts = data;
 
       self.refresh();
-    })
+    });
   });
-}
+};
 
 App.prototype.refresh = function(state) {
   state = (typeof state === 'undefined' ? true : state);
@@ -804,7 +805,7 @@ App.prototype.refresh = function(state) {
       self.refresh();
     }, this.config.refresh * 1000);
   }
-}
+};
 
 App.prototype.showStartupModal = function() {
   $('#app').html(templates.app());
@@ -816,7 +817,7 @@ App.prototype.showStartupModal = function() {
     backdrop: 'static',
     keyboard: false
   });
-}
+};
 
 App.prototype.showSettingsModal = function() {
   this.refresh(false);
@@ -826,14 +827,14 @@ App.prototype.showSettingsModal = function() {
   }));
 
   $('#modalSettings').modal();
-}
+};
 
 App.prototype.showErrorView = function() {
   $('#view').html(templates.viewError({
     config: this.config,
     error: this.error
   }));
-}
+};
 
 App.prototype.showTriggersView = function() {
   var self = this;
@@ -903,7 +904,7 @@ App.prototype.showTriggersView = function() {
       triggers: self.triggers
     }));
   });
-}
+};
 
 App.prototype.showEventsView = function() {
   var self = this;
@@ -932,7 +933,7 @@ App.prototype.showEventsView = function() {
       events: self.events
     }));
   });
-}
+};
 
 App.prototype.showWebView = function() {
   var self = this;
@@ -966,7 +967,7 @@ App.prototype.showWebView = function() {
       httptests: self.httptests
     }));
   });
-}
+};
 
 App.prototype.connectToServer = function(callback) {
   callback = callback || function() {
@@ -982,7 +983,7 @@ App.prototype.connectToServer = function(callback) {
 
     return callback(null, zabbix);
   });
-}
+};
 
 App.prototype.getHostGroups = function(zabbix, callback) {
   callback = callback || function() {
@@ -1002,7 +1003,7 @@ App.prototype.getHostGroups = function(zabbix, callback) {
 
     return callback(null, data.result);
   });
-}
+};
 
 App.prototype.getHosts = function(zabbix, callback) {
   callback = callback || function() {
@@ -1022,7 +1023,7 @@ App.prototype.getHosts = function(zabbix, callback) {
 
     return callback(null, data.result);
   });
-}
+};
 
 App.prototype.getTriggers = function(zabbix, callback) {
   callback = callback || function() {
@@ -1045,12 +1046,12 @@ App.prototype.getTriggers = function(zabbix, callback) {
     params.hostids = this.config.triggers.hostids;
   }
 
-  if (this.config.triggers.status == 1) {
+  if (this.config.triggers.status === 1) {
     params.only_true = 1;
-  } else if (this.config.triggers.status == 2) {
+  } else if (this.config.triggers.status === 2) {
     params.filter = {
       value: 1
-    }
+    };
   }
 
   if (this.config.triggers.sortField) {
@@ -1104,7 +1105,7 @@ App.prototype.getTriggers = function(zabbix, callback) {
 
     return callback(null, data.result);
   });
-}
+};
 
 App.prototype.getEvents = function(zabbix, callback) {
   callback = callback || function() {
@@ -1145,7 +1146,7 @@ App.prototype.getEvents = function(zabbix, callback) {
 
     return callback(null, data.result);
   });
-}
+};
 
 App.prototype.getHTTPTests = function(zabbix, callback) {
   callback = callback || function() {
@@ -1207,6 +1208,6 @@ App.prototype.getHTTPTests = function(zabbix, callback) {
       return callback(null, data.result);
     });
   });
-}
+};
 
 module.exports = App;
