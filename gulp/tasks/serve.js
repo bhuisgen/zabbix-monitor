@@ -10,7 +10,7 @@ gulp.task('serve', function() {
     notify: false,
     port: config.port,
     server: {
-      baseDir: ['.tmp', 'app'],
+      baseDir: ['.tmp', 'app', 'node_modules/bootstrap/dist/'],
       routes: {
         '/node_modules': 'node_modules'
       }
