@@ -9,13 +9,11 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    bowerrc: grunt.file.readJSON('.bowerrc'),
 
     config: {
       app: 'app',
       dist: 'dist',
-      vendor: '<%= bowerrc.directory %>',
-      node: 'node_modules'
+      vendor: 'node_modules'
     },
 
     banner: '/*!\n' +
@@ -25,10 +23,6 @@ module.exports = function(grunt) {
             ' */\n\n',
 
     watch: {
-      bower: {
-        files: ['bower.json'],
-        tasks: ['wiredep']
-      },
       gruntfile: {
         files: ['Gruntfile.js']
       },
@@ -54,19 +48,6 @@ module.exports = function(grunt) {
       }
     },
 
-    'bower-install-simple': {
-      prod: {
-        options: {
-          production: true
-        }
-      },
-      dev: {
-        options: {
-          production: false
-        }
-      }
-    },
-
     browserSync: {
       options: {
         notify: false,
@@ -88,7 +69,7 @@ module.exports = function(grunt) {
           server: {
             baseDir: ['.tmp', '<%= config.app %>' ],
             routes: {
-              '/bower_components': './bower_components'
+              '/vendor': './node_modules'
             }
           }
         }
@@ -102,7 +83,7 @@ module.exports = function(grunt) {
           server: {
             baseDir: ['.tmp', './test', '<%= config.app %>'],
             routes: {
-              '/bower_components': './bower_components'
+              '/vendor': './node_modules'
             }
           }
         }
@@ -247,13 +228,6 @@ module.exports = function(grunt) {
       dist: {}
     },*/
 
-    wiredep: {
-      app: {
-        src: '<%= config.app %>/index.html',
-        ignorePath: '<%= config.app %>'
-      }
-    },
-
     rev: {
       dist: {
         files: {
@@ -363,7 +337,7 @@ module.exports = function(grunt) {
           flatten: true,
           cwd: '.',
           dest: '<%= config.dist %>/fonts',
-          src: 'bower_components/bootstrap/dist/fonts/*'
+          src: '<%= config.node %>/bootstrap/dist/fonts/*'
         }]
       },
       styles: {
@@ -387,7 +361,7 @@ module.exports = function(grunt) {
             flatten: true,
             cwd: '.',
             dest: '.tmp/fonts/',
-            src: 'bower_components/bootstrap/dist/fonts/*'
+            src: '<%= config.node %>/bootstrap/dist/fonts/*'
           }
         ]
       }
@@ -429,7 +403,6 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'clean:server',
-      'wiredep',
       'dot',
       'concurrent:server',
       'concat:dev',
@@ -458,9 +431,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'bower-install-simple',
     'clean:dist',
-    'wiredep',
     'dot',
     'useminPrepare',
     'concurrent:dist',
