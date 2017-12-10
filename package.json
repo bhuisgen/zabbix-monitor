@@ -17,71 +17,72 @@
     "yarn": ">= 1.0.0"
   },
   "scripts": {
-    "clean": "grunt clean",
-    "build": "grunt build",
-    "test": "grunt test",
-    "serve": "grunt serve"
+    "clean": "gulp clean",
+    "build": "gulp build",
+    "dist": "gulp dist",
+    "test": "gulp test"
   },
   "dependencies": {
+    "async": "2.6.0",
     "bootstrap": "3.3.7",
-    "chai": "4.0.2",
+    "dot": "1.1.2",
     "jquery": "1.9.1",
-    "mocha": "4.0.1",
+    "lodash": "4.17.4",
+    "moment": "2.19.3",
     "pace": "0.0.4"
   },
   "devDependencies": {
-    "async": "2.5.0",
+    "envify": "4.1.0",
+    "gulp": "3.9.1",
+    "gulp-autoprefixer": "4.0.0",
+    "gulp-cache": "1.0.1",
+    "gulp-changed": "3.1.1",
+    "gulp-concat": "2.6.1",
+    "gulp-csso": "3.0.0",
+    "gulp-debug": "3.1.0",
+    "gulp-dotjs-compiler": "1.0.7",
+    "gulp-fingerprint": "0.3.2",
+    "gulp-footer": "1.0.5",
+    "gulp-header": "1.8.9",
+    "gulp-htmlmin": "3.0.0",
+    "gulp-if": "2.0.2",
+    "gulp-imagemin": "4.0.0",
+    "gulp-jshint": "2.0.4",
+    "gulp-less": "3.3.2",
+    "gulp-livereload": "3.8.1",
+    "gulp-load-plugins": "1.5.0",
+    "gulp-rename": "1.2.2",
+    "gulp-rev": "8.1.0",
+    "gulp-rimraf": "0.2.1",
+    "gulp-size": "2.1.0",
+    "gulp-uglify": "3.0.0",
+    "gulp-useref": "3.1.3",
+    "gulp-util": "3.0.8",
+    "browser-sync": "2.18.13",
+    "partialify": "3.1.6",
+    "vinyl-source-stream": "1.1.0",
     "browserify": "14.5.0",
-    "browserify-optional": "1.0.1",
     "browserify-shim": "3.8.14",
-    "dot": "1.1.2",
-    "grunt": "1.0.1",
-    "grunt-autoprefixer": "3.0.4",
-    "grunt-browser-sync": "2.2.0",
-    "grunt-browserify": "5.2.0",
-    "grunt-concurrent": "2.3.1",
-    "grunt-contrib-clean": "1.1.0",
-    "grunt-contrib-concat": "1.0.1",
-    "grunt-contrib-copy": "1.0.0",
-    "grunt-contrib-cssmin": "2.2.1",
-    "grunt-contrib-htmlmin": "2.4.0",
-    "grunt-contrib-imagemin": "2.0.1",
-    "grunt-contrib-less": "1.4.1",
-    "grunt-contrib-uglify": "3.1.0",
-    "grunt-contrib-watch": "1.0.0",
-    "grunt-dot-compiler": "0.5.12",
-    "grunt-eslint": "20.1.0",
-    "grunt-mocha": "1.0.4",
-    "grunt-newer": "1.3.0",
-    "grunt-rev": "0.1.0",
-    "grunt-svgmin": "4.0.0",
-    "grunt-usemin": "3.1.1",
-    "jit-grunt": "0.10.0",
-    "lodash": "4.17.4",
+    "debowerify": "1.5.0",
     "mocha": "4.0.1",
-    "moment": "2.19.1",
     "should": "13.1.3",
-    "time-grunt": "1.4.0"
+    "jshint": "2.9.5",
+    "jshint-stylish": "2.2.1"
   },
   "eslintConfig": {
     "extends": [
       "eslint:recommended"
     ],
     "env": {
+      "es6": true,
       "node": true,
       "browser": true,
-      "es6": true,
-      "jquery": true,
-      "mocha": true
+      "jquery": true
     },
     "rules": {
       "quotes": [
         2,
         "single"
-      ],
-      "indent": [
-        2,
-        2
       ]
     }
   }

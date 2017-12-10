@@ -2,7 +2,7 @@
 
 var defaultOptions = {
   debug: false
-}
+};
 
 var Zabbix = function(url, user, password, options) {
   this.url = url;

@@ -112,7 +112,5 @@ typings/
 
 dist
 .tmp
-.sass-cache
 app/scripts/config.js
 app/scripts/templates.js
-
