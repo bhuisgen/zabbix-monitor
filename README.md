@@ -35,9 +35,9 @@ Copy the configuration file template and edit the file:
 
 If no server is found in the configuration file, *zabbix-monitor* will show you a startup modal to declare it.
 
-Install the package dependencies and run the build:
+Install the package dependencies and build the project:
 
-    $ npm install
-    $ grunt build
+    $ yarn install
+    $ yarn run build
 
 You can now copy all files in the *dist/* directory into your web server directory and browse the web page *index.html*.
