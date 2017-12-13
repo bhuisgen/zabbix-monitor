@@ -1,7 +1,7 @@
 {
   "name": "zabbix-monitor",
   "description": "Monitoring panel for zabbix",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Boris HUISGEN <bhuisgen@hbis.fr>",
   "license": "GPL-3.0",
   "homepage": "https://github.com/bhuisgen/zabbix-monitor",
@@ -14,7 +14,7 @@
   },
   "engines": {
     "node": ">=0.10.0",
-    "yarn": ">= 1.0.0"
+    "yarn": ">=1.0.0"
   },
   "scripts": {
     "clean": "gulp clean",
