@@ -1,5 +1,10 @@
 # ChangeLog
 
+### CURRENT
+
+* Migrate to bootstrap 4
+* Add fullscreen mode
+
 ### 0.3.0 (2017-12-07)
 
 * Use gulp and yarn
