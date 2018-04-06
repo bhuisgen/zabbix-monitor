@@ -5,12 +5,12 @@ var gulp = require('gulp');
 
 var browserSync = require('browser-sync').create();
 
-gulp.task('serve', function() {
+gulp.task('serve', ['browserify'], function() {
   browserSync.init({
     notify: false,
     port: config.port,
     server: {
-      baseDir: ['.tmp', 'app', 'node_modules/bootstrap/dist/'],
+      baseDir: ['.tmp', 'app'],
       routes: {
         '/node_modules': 'node_modules'
       }
@@ -24,8 +24,9 @@ gulp.task('serve', function() {
     '.tmp/fonts/**/*'
   ]).on('change', browserSync.reload);
 
-  gulp.watch('app/templates/**/*.dot', ['templates']);
-  gulp.watch('app/styles/**/*.less', ['less']);
+  gulp.watch('app/templates/**/*.dot', ['dot', 'browserify']);
+  gulp.watch('app/styles/**/*.scss', ['sass']);
+  gulp.watch('app/styles/**/*.css', ['css']);
   gulp.watch('app/scripts/**/*.js', ['browserify']);
   gulp.watch('app/fonts/**/*', ['fonts']);
   gulp.watch('app/images/**/*', ['images']);

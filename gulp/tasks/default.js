@@ -2,4 +2,4 @@
 
 var gulp = require('gulp');
 
-gulp.task('default', ['clean', 'dev']);
+gulp.task('default', ['clean', 'build']);

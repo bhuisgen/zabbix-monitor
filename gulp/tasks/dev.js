@@ -2,4 +2,4 @@
 
 var gulp = require('gulp');
 
-gulp.task('dev', ['clean', 'env', 'templates', 'styles', 'browserify', 'serve']);
+gulp.task('dev', ['env', 'templates', 'styles', 'browserify', 'serve']);
