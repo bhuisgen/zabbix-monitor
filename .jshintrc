@@ -1,4 +1,9 @@
 {
+  "globals": {
+    "$": false,
+    "jquery": false
+  },
+
   "node": true,
   "esnext": true,
   "bitwise": true,
