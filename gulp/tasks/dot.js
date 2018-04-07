@@ -15,6 +15,7 @@ gulp.task('dot', function () {
     }))
     .pipe(concat('templates.js'))
     .pipe(header('var tmpl = {};'))
+    .pipe(header('\'use strict\';'))
     .pipe(footer('module.exports = tmpl;'))
     .pipe(gulp.dest('.tmp/scripts'))
     .pipe(size());

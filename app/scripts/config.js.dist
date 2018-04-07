@@ -14,7 +14,7 @@ var config = {
       severity: 2,
       age: 1,
       sortField: 'priority',
-      sortOrder: 'DESC',
+      sortOrder: 'ASC',
       selectInMaintenance: false,
       selectWithUnacknowledgedEvents: false,
       selectWithAcknowledgedEvents: false,
@@ -35,9 +35,7 @@ var config = {
 
     httptests: {
       sortField: 'name',
-      sortOrder: 'ASC',
-
-      showHumanTimes: false
+      sortOrder: 'ASC'
     }
   },
 
@@ -63,30 +61,24 @@ var config = {
       severity: 2,
       age: 24,
       sortField: 'priority',
-      sortOrder: 'DESC',
+      sortOrder: 'ASC',
       selectInMaintenance: false,
       selectWithUnacknowledgedEvents: false,
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0,
-
-      showHumanTimes: true
+      selectMinimalSeverity: 0
     },
 
     events: {
       period: 1,
       sortField: 'clock',
-      sortOrder: 'DESC',
-
-      showHumanTimes: false
+      sortOrder: 'DESC'
     },
 
     httptests: {
       sortField: 'name',
-      sortOrder: 'ASC',
-
-      showHumanTimes: false
+      sortOrder: 'ASC'
     }
   }
 };

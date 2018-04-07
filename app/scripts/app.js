@@ -24,6 +24,7 @@ var App = function() {
   this.groups = {};
   this.hosts = {};
   this.view = this.DEFAULT_VIEW;
+  this.fullscreen = false;
   this.timeoutId = null;
   this.error = null;
   this.triggers = {
@@ -60,30 +61,24 @@ App.prototype.loadConfiguration = function(callback) {
       severity: 2,
       age: 24,
       sortField: 'priority',
-      sortOrder: 'DESC',
+      sortOrder: 'ASC',
       selectInMaintenance: false,
       selectWithUnacknowledgedEvents: false,
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0,
-
-      showHumanTimes: true
+      selectMinimalSeverity: 0
     },
 
     events: {
       period: 1,
       sortField: 'clock',
-      sortOrder: 'DESC',
-
-      showHumanTimes: false
+      sortOrder: 'DESC'
     },
 
     httptests: {
       sortField: 'name',
-      sortOrder: 'ASC',
-
-      showHumanTimes: false
+      sortOrder: 'ASC'
     }
   };
 
@@ -136,139 +131,41 @@ App.prototype.run = function(callback) {
 
   var self = this;
 
-  $('body').on('keyup', '#modalStartup #serverHostname', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalStartup').find('#serverHostname').val()) {
-      return;
-    }
-
-    $('#modalStartup').find('#serverHostname')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalStartup').find('#serverHostname')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
-  });
-
-  $('body').on('keyup', '#modalStartup #serverUser', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalStartup').find('#serverUser').val()) {
-      return;
-    }
-
-    $('#modalStartup').find('#serverUser')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalStartup').find('#serverUser')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
-  });
-
-  $('body').on('keyup', '#modalStartup #serverPassword', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalStartup').find('#serverPassword').val()) {
-      return;
-    }
-
-    $('#modalStartup').find('#serverPassword')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalStartup').find('#serverPassword')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
-  });
-
   $('body').on('click', '#modalStartup #startupConnect', function(e) {
-    e.preventDefault();
+    var form = document.getElementById('formStartup');
 
-    var hostname = $('#modalStartup').find('#serverHostname').val();
+    form.classList.add('was-validated');
+
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      return;
+    }
+
     var server = {
-      url:'https://' + hostname + '/api_jsonrpc.php',
+      url:'https://' + $('#modalStartup').find('#serverHostname').val() + '/api_jsonrpc.php',
       user: $('#modalStartup').find('#serverUser').val(),
       password: $('#modalStartup').find('#serverPassword').val()
     };
-
-    if (!hostname || !server.url.match(/^http(s)?:\/\/.+$/)) {
-      $('#modalStartup').find('#serverHostname')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalStartup').find('#serverHostname')
-        .attr('aria-describedby', 'serveurURLErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurURLErrorStatus" class="sr-only">(error)</span>');
-    }
-
-    if (!server.user) {
-      $('#modalStartup').find('#serverUser')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalStartup').find('#serverUser')
-        .attr('aria-describedby', 'serveurUserErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
-    }
-
-    if (!server.password) {
-      $('#modalStartup').find('#serverPassword')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalStartup').find('#serverPassword')
-        .attr('aria-describedby', 'serveurPasswordErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
-    }
-
-    if (!hostname || !server.url.match(/^http(s)?:\/\/.+$/) || !server.user || !server.password) {
-      return;
-    }
-
-    self.config.server.url = server.url;
-    self.config.server.user = server.user;
-    self.config.server.password = server.password;
 
     var test = new Zabbix(server.url, server.user, server.password);
 
     test.login(function(err) {
       if (err) {
-        $('#modalStartup').find('.form-group').addClass('has-error');
-        $('#modalStartup').find('#serverHostname')
-          .attr('aria-describedby', 'serveurHostnameErrorStatus')
-          .closest('div')
-          .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-          .append('<span id="serveurHostnamerrorStatus" class="sr-only">(error)</span>');
-        $('#modalStartup').find('#serverUser')
-          .attr('aria-describedby', 'serveurUserErrorStatus')
-          .closest('div')
-          .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-          .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
-        $('#modalStartup').find('#serverPassword')
-          .attr('aria-describedby', 'serveurPasswordErrorStatus')
-          .closest('div')
-          .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-          .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
+        if (!err.message) {
+          err.message = 'Unknown error';
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
 
         return;
       }
 
-      $('#modalStartup').find('.form-group').removeClass('has-error');
-      $('#modalStartup').find('#serverURL')
-        .closest('div')
-        .find('span').remove();
-      $('#modalStartup').find('#serverUser')
-        .closest('div')
-        .find('span').remove();
-      $('#modalStartup').find('#serverPassword')
-        .closest('div')
-        .find('span').remove();
+      self.config.server.url = server.url;
+      self.config.server.user = server.user;
+      self.config.server.password = server.password;
 
       if ($('#modalStartup').find('#rememberMe').is(':checked')) {
         self.saveLocalStorage();
@@ -297,100 +194,10 @@ App.prototype.run = function(callback) {
     }
   });
 
-  $('body').on('click', 'a[href="#refresh"]', function(e) {
-    e.preventDefault();
-
-    self.refresh();
-  });
-
-  $('body').on('click', 'a[href^="#refresh-"]', function(e) {
-    e.preventDefault();
-
-    var m = $(this).attr('href').match(/^#refresh-(\d+)/) || [''];
-    if (m[1]) {
-      self.config.refresh = parseInt(m[1]);
-
-      self.refresh();
-    }
-  });
-
   $('body').on('click', 'a[href="#settings"]', function(e) {
     e.preventDefault();
 
     self.showSettingsModal();
-  });
-
-  $('body').on('focusout', '#modalSettings', function(e) {
-    e.preventDefault();
-
-    var serverURL = $('#modalSettings').find('#serverURL').val();
-    if (!serverURL) {
-      return;
-    }
-
-    var m = serverURL.match(/^(https:\/\/)?(.[^/]+){1}(\/api_jsonrpc\.php)?$/) || [''];
-    if (m[0] && m[2]) {
-      var prefix = m[1] ? true : false;
-      var suffix = m[3] ? true : false;
-
-      if (!prefix) {
-        serverURL = 'https://' + serverURL;
-      }
-
-      if (!suffix) {
-        serverURL = serverURL + '/api_jsonrpc.php';
-      }
-
-      $('#modalSettings').find('#serverURL').val(serverURL);
-    }
-  });
-
-  $('body').on('keyup', '#modalSettings #serverURL', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalSettings').find('#serverURL').val()) {
-      return;
-    }
-
-    $('#modalSettings').find('#serverURL')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalSettings').find('#serverURL')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
-  });
-
-  $('body').on('keyup', '#modalSettings #serverUser', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalSettings').find('#serverUser').val()) {
-      return;
-    }
-
-    $('#modalSettings').find('#serverUser')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalSettings').find('#serverUser')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
-  });
-
-  $('body').on('keyup', '#modalSettings #serverPassword', function(e) {
-    e.preventDefault();
-
-    if (!$('#modalSettings').find('#serverPassword').val()) {
-      return;
-    }
-
-    $('#modalSettings').find('#serverPassword')
-      .closest('.form-group')
-      .removeClass('has-error');
-    $('#modalSettings').find('#serverPassword')
-      .removeAttr('aria-describedby')
-      .closest('div')
-      .find('span').remove();
   });
 
   $('body').on('keyup', '#modalSettings', function(e) {
@@ -402,7 +209,16 @@ App.prototype.run = function(callback) {
   });
 
   $('body').on('click', '#modalSettings #settingsTest', function(e) {
-    e.preventDefault();
+    var form = document.getElementById('formSettings');
+
+    form.classList.add('was-validated');
+
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      return;
+    }
 
     var server = {
       url: $('#modalSettings').find('#serverURL').val(),
@@ -412,39 +228,6 @@ App.prototype.run = function(callback) {
 
     $('#modalSettings').find('#settingsTestMessage').text('');
     $('#modalSettings').find('#settingsTestMessage').removeClass('text-danger text-success');
-
-    if (!server.url || !server.url.match(/^http(s)?:\/\/.+$/)) {
-      $('#modalSettings').find('#serverURL')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalSettings').find('#serverURL')
-        .attr('aria-describedby', 'serveurURLErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurURLErrorStatus" class="sr-only">(error)</span>');
-    }
-
-    if (!server.user) {
-      $('#modalSettings').find('#serverUser')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalSettings').find('#serverUser')
-        .attr('aria-describedby', 'serveurUserErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurUserErrorStatus" class="sr-only">(error)</span>');
-    }
-
-    if (!server.password) {
-      $('#modalSettings').find('#serverPassword')
-        .closest('.form-group')
-        .addClass('has-error');
-      $('#modalSettings').find('#serverPassword')
-        .attr('aria-describedby', 'serveurPasswordErrorStatus')
-        .closest('div')
-        .append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true">')
-        .append('<span id="serveurPasswordErrorStatus" class="sr-only">(error)</span>');
-    }
 
     if (!server.url || !server.user || !server.password) {
       return;
@@ -458,19 +241,28 @@ App.prototype.run = function(callback) {
           err.message = 'Unknown error';
         }
 
-        $('#modalSettings').find('#settingsTestMessage').text(err.message);
+        $('#modalSettings').find('#settingsTestMessage').val(err.message);
         $('#modalSettings').find('#settingsTestMessage').addClass('text-danger').removeClass('text-success');
 
         return;
       }
 
-      $('#modalSettings').find('#settingsTestMessage').text('Succesfully connected');
+      $('#modalSettings').find('#settingsTestMessage').val('Succesfully connected');
       $('#modalSettings').find('#settingsTestMessage').addClass('text-success').removeClass('text-danger');
     });
   });
 
   $('body').on('click', '#settingsSave', function(e) {
-    e.preventDefault();
+    var form = document.getElementById('formSettings');
+
+    form.classList.add('was-validated');
+
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      return;
+    }
 
     var server = {
       url: $('#modalSettings').find('#serverURL').val(),
@@ -495,6 +287,49 @@ App.prototype.run = function(callback) {
 
   $('body').on('hide.bs.modal','#modalSettings', function() {
     self.refresh();
+  });
+
+  $('body').on('click', 'a[href="#fullscreen"]', function(e) {
+    e.preventDefault();
+
+    self.fullscreen = true;
+
+    self.refresh();
+
+    $('#fullscreen-alert').append(
+      '<div class="alert alert-dark alert-dismissible fade show" role="alert">' +
+      'Press [ESC] key or reload this page to quit the fullscreen mode.' +
+      '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+      '<span aria-hidden="true">&times;</span>' +
+      '</button>' +
+      '</div>');
+  });
+
+  document.onkeydown = function(evt) {
+    evt = evt || window.event;
+
+    if (evt.keyCode == 27) {
+      self.fullscreen = false;
+
+      self.refresh();
+    }
+  };
+
+  $('body').on('click', 'a[href="#refresh"]', function(e) {
+    e.preventDefault();
+
+    self.refresh();
+  });
+
+  $('body').on('click', 'a[href^="#refresh-"]', function(e) {
+    e.preventDefault();
+
+    var m = $(this).attr('href').match(/^#refresh-(\d+)/) || [''];
+    if (m[1]) {
+      self.config.refresh = parseInt(m[1]);
+
+      self.refresh();
+    }
   });
 
   $('body').on('click', 'a[href^="#triggers-status-"]', function(e) {
@@ -710,7 +545,13 @@ App.prototype.run = function(callback) {
 App.prototype.render = function() {
   var self = this;
 
-  $('#app').html(templates.app());
+  $('#app').html(templates.app);
+
+  $('#menu').html(templates.menu({
+    config: this.config,
+    view: this.view,
+    fullscreen: this.fullscreen
+  }));
 
   this.connectToServer(function(err, data) {
     if (err) {
@@ -767,7 +608,8 @@ App.prototype.refresh = function(state) {
 
   $('#menu').html(templates.menu({
     config: this.config,
-    view: this.view
+    view: this.view,
+    fullscreen: this.fullscreen
   }));
 
   if (this.error) {
@@ -783,20 +625,20 @@ App.prototype.refresh = function(state) {
     }
 
     switch (this.view) {
-    case 'triggers':
-      this.showTriggersView();
-      break;
+      case 'triggers':
+        this.showTriggersView();
+        break;
 
-    case 'events':
-      this.showEventsView();
-      break;
+      case 'events':
+        this.showEventsView();
+        break;
 
-    case 'web':
-      this.showWebView();
-      break;
+      case 'web':
+        this.showWebView();
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -808,7 +650,11 @@ App.prototype.refresh = function(state) {
 };
 
 App.prototype.showStartupModal = function() {
-  $('#app').html(templates.app());
+  $('#app').html(templates.app({
+    config: this.config,
+    view: this.view
+  }));
+
   $('#modal').html(templates.modalStartup({
     config: this.config
   }));
@@ -870,29 +716,29 @@ App.prototype.showTriggersView = function() {
       }
 
       switch (self.triggers.data[i].priority) {
-      case '5':
-        self.triggers.alerts.disaster++;
-        break;
+        case '5':
+          self.triggers.alerts.disaster++;
+          break;
 
-      case '4':
-        self.triggers.alerts.high++;
-        break;
+        case '4':
+          self.triggers.alerts.high++;
+          break;
 
-      case '3':
-        self.triggers.alerts.average++;
-        break;
+        case '3':
+          self.triggers.alerts.average++;
+          break;
 
-      case '2':
-        self.triggers.alerts.warning++;
-        break;
+        case '2':
+          self.triggers.alerts.warning++;
+          break;
 
-      case '1':
-        self.triggers.alerts.information++;
-        break;
+        case '1':
+          self.triggers.alerts.information++;
+          break;
 
-      case '0':
-        self.triggers.alerts.notclassified++;
-        break;
+        case '0':
+          self.triggers.alerts.notclassified++;
+          break;
       }
     }
 
@@ -901,7 +747,8 @@ App.prototype.showTriggersView = function() {
       config: self.config,
       groups: self.groups,
       hosts: self.hosts,
-      triggers: self.triggers
+      triggers: self.triggers,
+      fullscreen: self.fullscreen
     }));
   });
 };
@@ -930,7 +777,8 @@ App.prototype.showEventsView = function() {
       config: self.config,
       groups: self.groups,
       hosts: self.hosts,
-      events: self.events
+      events: self.events,
+      fullscreen: self.fullscreen
     }));
   });
 };
@@ -960,11 +808,11 @@ App.prototype.showWebView = function() {
     }
 
     $('#view').html(templates.viewWeb({
-      moment: moment,
       config: self.config,
       groups: self.groups,
       hosts: self.hosts,
-      httptests: self.httptests
+      httptests: self.httptests,
+      fullscreen: self.fullscreen
     }));
   });
 };
@@ -1210,4 +1058,6 @@ App.prototype.getHTTPTests = function(zabbix, callback) {
   });
 };
 
-module.exports = App;
+var app = new App();
+
+app.run();

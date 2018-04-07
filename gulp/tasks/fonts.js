@@ -7,7 +7,7 @@ var rev = require('gulp-rev');
 var size = require('gulp-size');
 
 gulp.task('fonts', function() {
-	return gulp.src(['app/fonts/**/*', 'node_modules/bootstrap/dist/fonts/**/*'])
+	return gulp.src(['app/fonts/**/*', 'node_modules/open-iconic/font/fonts/**/*'])
     //.pipe(rev())
     .pipe(gulp.dest('dist/fonts'))
     .pipe(size())

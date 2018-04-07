@@ -1,134 +1,131 @@
 <section id="triggers" class="container-fluid">
   <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-      <div class="btn-toolbar">
-        <div class="btn-group">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Status <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li{{? it.config.triggers.status === 0 }} class="active"{{?}}><a href="#triggers-status-0">Any</a></li>
-              <li{{? it.config.triggers.status === 1 }} class="active"{{?}}><a href="#triggers-status-1">Recent problem</a></li>
-              <li{{? it.config.triggers.status === 2 }} class="active"{{?}}><a href="#triggers-status-2">Problem</a></li>
-            </ul>
+    {{? it.fullscreen === false }}
+    <div class="col-sm-9">
+      <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group mr-2" role="group" aria-label="Triggers">
+          <div class="btn-group" role="group" aria-label="Status">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Status</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.triggers.status === 0 }} active{{?}}" href="#triggers-status-0">History</a>
+              <a class="dropdown-item{{? it.config.triggers.status === 1 }} active{{?}}" href="#triggers-status-1">Recent problem</a>
+              <a class="dropdown-item{{? it.config.triggers.status === 2 }} active{{?}}" href="#triggers-status-2">Problem</a>
+            </div>
           </div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Severity <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li{{? it.config.triggers.severity === 0 }} class="active"{{?}}><a href="#triggers-severity-0">Not classified</a></li>
-              <li{{? it.config.triggers.severity === 1 }} class="active"{{?}}><a href="#triggers-severity-1">Information</a></li>
-              <li{{? it.config.triggers.severity === 2 }} class="active"{{?}}><a href="#triggers-severity-2">Warning</a></li>
-              <li{{? it.config.triggers.severity === 3 }} class="active"{{?}}><a href="#triggers-severity-3">Average</a></li>
-              <li{{? it.config.triggers.severity === 4 }} class="active"{{?}}><a href="#triggers-severity-4">High</a></li>
-              <li{{? it.config.triggers.severity === 5 }} class="active"{{?}}><a href="#triggers-severity-5">Disaster</a></li>
-            </ul>
+          <div class="btn-group" role="group" aria-label="Severity">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Severity</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.triggers.severity === 0 }} active{{?}}" href="#triggers-severity-0">Not classified</a>
+              <a class="dropdown-item{{? it.config.triggers.severity === 1 }} active{{?}}" href="#triggers-severity-1">Information</a>
+              <a class="dropdown-item{{? it.config.triggers.severity === 2 }} active{{?}}" href="#triggers-severity-2">Warning</a>
+              <a class="dropdown-item{{? it.config.triggers.severity === 3 }} active{{?}}" href="#triggers-severity-3">Average</a>
+              <a class="dropdown-item{{? it.config.triggers.severity === 4 }} active{{?}}" href="#triggers-severity-4">High</a>
+              <a class="dropdown-item{{? it.config.triggers.severity === 5 }} active{{?}}" href="#triggers-severity-5">Disaster</a>
+            </div>
           </div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Age <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li{{? it.config.triggers.age === 1 }} class="active"{{?}}><a href="#triggers-age-1">1 day</a></li>
-              <li{{? it.config.triggers.age === 2 }} class="active"{{?}}><a href="#triggers-age-2">2 days</a></li>
-              <li{{? it.config.triggers.age === 7 }} class="active"{{?}}><a href="#triggers-age-7">1 week</a></li>
-              <li{{? it.config.triggers.age === 30 }} class="active"{{?}}><a href="#triggers-age-30">1 month</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="btn-group">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li{{? it.config.triggers.sortField === 'triggerid' }} class="active"{{?}}><a href="#triggers-sortfield-triggerid">Identifier</a></li>
-              <li{{? it.config.triggers.sortField === 'priority' }} class="active"{{?}}><a href="#triggers-sortfield-priority">Severity</a></li>
-              <li{{? it.config.triggers.sortField === 'lastchange' }} class="active"{{?}}><a href="#triggers-sortfield-lastchange">Last change</a></li>
-              <li{{? it.config.triggers.sortField === 'hostname' }} class="active"{{?}}><a href="#triggers-sortfield-hostname">Hostname</a></li>
-              <li{{? it.config.triggers.sortField === 'description' }} class="active"{{?}}><a href="#triggers-sortfield-description">Description</a></li>
-            </ul>
-          </div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Order <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li{{? it.config.triggers.sortOrder === 'ASC' }} class="active"{{?}}><a href="#triggers-sortorder-ASC">Ascending</a></li>
-              <li{{? it.config.triggers.sortOrder === 'DESC' }} class="active"{{?}}><a href="#triggers-sortorder-DESC">Descending</a></li>
-            </ul>
+          <div class="btn-group" role="group" aria-label="Age">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Age</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.triggers.age === 0 }} active{{?}}" href="#triggers-age-1">1 day</a>
+              <a class="dropdown-item{{? it.config.triggers.age === 2 }} active{{?}}" href="#triggers-age-2">2 days</a>
+              <a class="dropdown-item{{? it.config.triggers.age === 7 }} active{{?}}" href="#triggers-age-7">1 week</a>
+              <a class="dropdown-item{{? it.config.triggers.age === 30 }} active{{?}}" href="#triggers-age-30">1 month</a>
+            </div>
           </div>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Group <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
-          <li{{? !it.config.triggers.groupids }} class="active"{{?}}><a href="#triggers-group">All</a></li>
-          <li role="separator" class="divider"></li>
-          {{ for (var i = 0; i < it.groups.length; i++) { }}
-          <li{{? it.config.triggers.groupids && it.config.triggers.groupids === it.groups[i].groupid }} class="active"{{?}}><a href="#triggers-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a></li>
-          {{ } }}
-          </ul>
+        <div class="btn-group mr-2" role="group" aria-label="Sort">
+          <div class="btn-group" role="group" aria-label="Field">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.triggers.sortField === 'triggerid' }} active{{?}}" href="#triggers-sortfield-triggerid">Identifier</a>
+              <a class="dropdown-item{{? it.config.triggers.sortField === 'priority' }} active{{?}}" href="#triggers-sortfield-priority">Severity</a>
+              <a class="dropdown-item{{? it.config.triggers.sortField === 'lastchange' }} active{{?}}" href="#triggers-sortfield-lastchange">Last change</a>
+              <a class="dropdown-item{{? it.config.triggers.sortField === 'hostname' }} active{{?}}" href="#triggers-sortfield-hostname">Hostname</a>
+              <a class="dropdown-item{{? it.config.triggers.sortField === 'description' }} active{{?}}" href="#triggers-sortfield-description">Description</a>
+            </div>
+          </div>
+          <div class="btn-group" role="group" aria-label="Order">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.triggers.sortOrder === 'ASC' }} active{{?}}" href="#triggers-sortorder-ASC">Ascending</a>
+              <a class="dropdown-item{{? it.config.triggers.sortOrder === 'DESC' }} active{{?}}" href="#triggers-sortorder-DESC">Descending</a>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="Group">
+          <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Group</button>
+          <div class="dropdown-menu" role="menu">
+            <a class="dropdown-item{{? !it.config.triggers.groupids }} active{{?}}" href="#triggers-group">All</a>
+            <div class="dropdown-divider"></div>
+            {{ for (var i = 0; i < it.groups.length; i++) { }}
+            <a class="dropdown-item{{? it.config.triggers.groupids && it.config.triggers.groupids === it.groups[i].groupid }} active{{?}}" href="#triggers-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a>
+            {{ } }}
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-      <div class="btn-toolbar pull-right">
-        <div class="btn-group">
-          <ul class="triggers-alerts list-inline">
+    <div class="col-sm-3">
+    {{??}}
+    <div class="col">
+    {{?}}
+      <div class="btn-toolbar float-right" role="toolbar">
+        <div class="btn-group" role="group" aria-label="Alerts">
+          <div class="triggers-alerts list-inline">
             {{? it.config.alerts.enable && it.triggers.alerts }}
             {{? it.triggers.alerts.disaster && (it.triggers.alerts.disaster > 0) }}
-            <li><span class="triggers-alert trigger-priority-disaster label hide-overflow">{{= it.triggers.alerts.disaster }}</span></li>
+            <h5><span class="badge trigger-badge trigger-priority-disaster text-truncate">{{= it.triggers.alerts.disaster }}</span></h5>
             {{?}}
             {{? it.triggers.alerts.high && (it.triggers.alerts.high > 0) }}
-            <li><span class="triggers-alert trigger-priority-high label hide-overflow">{{= it.triggers.alerts.high }}</span></li>
+            <h5><span class="badge trigger-badge trigger-priority-high text-truncate">{{= it.triggers.alerts.high }}</span></h5>
             {{?}}
             {{? it.triggers.alerts.average && (it.triggers.alerts.average > 0) }}
-            <li><span class="triggers-alert trigger-priority-average label hide-overflow">{{= it.triggers.alerts.average }}</span></li
-            >{{?}}
+            <h5><span class="badge trigger-badge trigger-priority-average text-truncate">{{= it.triggers.alerts.average }}</span></h5>
+            {{?}}
             {{? it.triggers.alerts.warning && (it.triggers.alerts.warning > 0) }}
-            <li><span class="triggers-alert trigger-priority-warning label hide-overflow">{{= it.triggers.alerts.warning }}</span></li>
+            <h5><span class="badge trigger-badge trigger-priority-warning text-truncate">{{= it.triggers.alerts.warning }}</span></h5>
             {{?}}
             {{? it.triggers.alerts.information && (it.triggers.alerts.information > 0) }}
-            <li><span class="triggers-alert trigger-priority-information label hide-overflow">{{= it.triggers.alerts.information }}</span></li>
+            <h5><span class="badge trigger-badge trigger-priority-information text-truncate">{{= it.triggers.alerts.information }}</span></h5>
             {{?}}
             {{? it.triggers.alerts.notclassified && (it.triggers.alerts.notclassified > 0) }}
-            <li><span class="triggers-alert trigger-priority-notclassified label hide-overflow">{{= it.triggers.alerts.notclassified }}</span></li>
+            <h5><span class="badge trigger-badge trigger-priority-notclassified text-truncate">{{= it.triggers.alerts.notclassified }}</span></h5>
             {{?}}
             {{? (it.config.alerts.showOnlyProblems === false) && it.triggers.alerts.ok && (it.triggers.alerts.ok > 0) }}
-            <li><span class="triggers-alert trigger-status-ok label hide-overflow">{{= it.triggers.alerts.ok }}</span></li>
+            <h5><span class="badge trigger-badge trigger-status-ok text-truncate">{{= it.triggers.alerts.ok }}</span></h5>
             {{?}}
             {{?}}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <div class="triggers">
-    <div class="triggers-header">
-    </div>
+    <div class="triggers-header"></div>
     {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
     <div id="trigger-data-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
-      <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-center">
+      <div class="col-sm-1 text-center">
         {{? it.triggers.data[i].value === '0' }}
-        <span class="trigger-label trigger-status-ok label hide-overflow">OK</span>
+        <span class="badge trigger-badge trigger-status-ok text-truncate">OK</span>
         {{?? it.triggers.data[i].value === '1' }}
         {{? it.triggers.data[i].priority === '5' }}
-        <span class="trigger-label trigger-priority-disaster label hide-overflow">DISASTER</span>
+        <span class="badge trigger-badge trigger-priority-disaster text-truncate">DISASTER</span>
         {{?? it.triggers.data[i].priority === '4' }}
-        <span class="trigger-label trigger-priority-high label hide-overflow">HIGH</span>
+        <span class="badge trigger-badge trigger-priority-high text-truncate">HIGH</span>
         {{?? it.triggers.data[i].priority === '3' }}
-        <span class="trigger-label trigger-priority-average label hide-overflow">AVERAGE</span>
+        <span class="badge trigger-badge trigger-priority-average text-truncate">AVERAGE</span>
         {{?? it.triggers.data[i].priority === '2' }}
-        <span class="trigger-label trigger-priority-warning label hide-overflow">WARNING</span>
+        <span class="badge trigger-badge trigger-priority-warning text-truncate">WARNING</span>
         {{?? it.triggers.data[i].priority === '1' }}
-        <span class="trigger-label trigger-priority-information label hide-overflow">INFORMATION</span>
+        <span class="badge trigger-badge trigger-priority-information text-truncate">INFORMATION</span>
         {{??}}
-        <span class="trigger-label trigger-priority-notclassified label hide-overflow">NOT CLASSIFIED</span>
+        <span class="badge trigger-badge trigger-priority-notclassified text-truncate">NOT CLASSIFIED</span>
         {{?}}
         {{?}}
       </div>
-      <div class="col-xs-9 col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.triggers.data[i].hosts[0].host }}</div>
-      <div class="hidden-xs col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.triggers.data[i].description }}</div>
-      <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
-        {{? !it.config.triggers.showHumanTimes }}
-        {{= new Date(it.triggers.data[i].lastchange * 1000).toLocaleString() }}</div>
-        {{??}}
-        {{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
-        {{?}}
-      </div>
-    {{ } }}
+      <div class="col-sm-2 text-truncate">{{= it.triggers.data[i].hosts[0].host }}</div>
+      <div class="col-sm-7 text-truncate">{{= it.triggers.data[i].description }}</div>
+      <div class="col-sm-2 text-right text-truncate">{{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
     </div>
+    {{ } }}
   </div>
 </section>

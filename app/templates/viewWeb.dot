@@ -1,68 +1,64 @@
 <section id="httptests" class="container-fluid">
+  {{? it.fullscreen === false }}
   <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-      <div class="btn-toolbar">
-        <div class="btn-group">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-                <li{{? it.config.httptests.sortField === 'httptestid' }} class="active"{{?}}><a href="#httptests-sortfield-httptestid">Identifier</a></li>
-                <li{{? it.config.httptests.sortField === 'name' }} class="active"{{?}}><a href="#httptests-sortfield-name">Name</a></li>
-            </ul>
+    <div class="col-sm-9">
+      <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group mr-2" role="group" aria-label="Sort">
+          <div class="btn-group" role="group" aria-label="Field">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.httptests.sortField === 'httptestid' }} active{{?}}" href="#httptests-sortfield-httptestid">Identifier</a>
+              <a class="dropdown-item{{? it.config.httptests.sortField === 'name' }} active{{?}}>" href="#httptests-sortfield-name">Name</a>
+            </div>
           </div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Order <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-                <li{{? it.config.httptests.sortOrder === 'ASC' }} class="active"{{?}}><a href="#httptests-sortorder-ASC">Ascending</a></li>
-                <li{{? it.config.httptests.sortOrder === 'DESC' }} class="active"{{?}}><a href="#httptests-sortorder-DESC">Descending</a></li>
-            </ul>
+          <div class="btn-group" role="group" aria-label="Order">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order</button>
+            <div class="dropdown-menu" role="menu">
+              <a class="dropdown-item{{? it.config.httptests.sortOrder === 'ASC' }} active{{?}}" href="#httptests-sortorder-ASC">Ascending</a>
+              <a class="dropdown-item{{? it.config.httptests.sortOrder === 'DESC' }} active{{?}}" href="#httptests-sortorder-DESC">Descending</a>
+            </div>
           </div>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">Group <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
-            <li{{? !it.config.httptests.groupids }} class="active"{{?}}><a href="#httptests-group">All</a></li>
-            <li role="separator" class="divider"></li>
+        <div class="btn-group mr-2" role="group" aria-label="Group">
+          <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Group</button>
+          <div class="dropdown-menu" role="menu">
+            <a class="dropdown-item{{? !it.config.httptests.groupids }} active{{?}}" href="#httptests-group">All</a>
+            <div class="dropdown-divider"></div>
             {{ for (var i = 0; i < it.groups.length; i++) { }}
-            <li{{? it.config.httptests.groupids && it.config.httptests.groupids === it.groups[i].groupid }} class="active"{{?}}><a href="#httptests-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a></li>
+            <a class="dropdown-item{{? it.config.httptests.groupids && it.config.httptests.groupids === it.groups[i].groupid }} active{{?}}" href="#httptests-group-{{= it.groups[i].groupid }}">{{= it.groups[i].name }}</a>
             {{ } }}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-      <div class="btn-toolbar pull-right">
-        <div class="btn-group">
-          <ul class="httptests-alerts list-inline">
+    <div class="col-sm-3">
+    {{??}}
+    <div class="col">
+    {{?}}
+      <div class="btn-toolbar float-right">
+        <div class="btn-group" role="group" aria-label="Alerts">
+          <div class="httptests-alerts list-inline">
             {{? it.config.alerts.enable && it.httptests.alerts && (it.httptests.alerts !== '0') }}
-            <li><span class="httptests-alert httptest-status-problem label hide-overflow">{{= it.httptests.alerts }}</span></li>
+            <h5><span class="badge httptest-badge httptest-status-problem text-truncate">{{= it.httptests.alerts }}</span></h5>
             {{?}}
-          </ul>
+          </div>
         </div>
       </div>
    </div>
   </div>
   <div class="httptests">
-    <div class="httptests-header">
-    </div>
+    <div class="httptests-header"></div>
     {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
     <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
-      <div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-center">
+      <div class="col-sm-1 text-center">
         {{? it.httptests.data[i].lastvalue === '0' }}
-        <span class="httptest-status-ok label hide-overflow">OK</span>
+        <span class="badge httptest-badge httptest-status-ok text-truncate">OK</span>
         {{??}}
-        <span class="httptest-status-problem label hide-overflow">PROBLEM</span>
+        <span class="badge httptest-badge httptest-status-problem text-truncate">PROBLEM</span>
         {{?}}
         </div>
-      <div class="hidden-xs col-sm-2 col-md-2 col-lg-2 hide-overflow">{{= it.httptests.data[i].hosts[0].name }}</div>
-      <div class="col-xs-9 col-sm-8 col-md-6 col-lg-7 hide-overflow">{{= it.httptests.data[i].name }}</div>
-      <div class="hidden-xs hidden-sm col-md-2 col-lg-2 text-right hide-overflow">
-        {{? !it.config.httptests.showHumanTimes }}
-        {{= new Date((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).toLocaleString() }}
-        {{??}}
-        {{= it.moment((it.httptests.data[i].nextcheck - it.httptests.data[i].delay) * 1000).fromNow() }}
-        {{?}}
-      </div>
+      <div class="col-sm-2 text-truncate">{{= it.httptests.data[i].hosts[0].name }}</div>
+      <div class="col-sm-9 text-truncate">{{= it.httptests.data[i].name }}</div>
     </div>
     {{ } }}
   </div>
