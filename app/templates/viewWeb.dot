@@ -1,7 +1,7 @@
 <section id="httptests" class="container-fluid">
-  {{? it.fullscreen === false }}
   <div class="row">
-    <div class="col-sm-9">
+    {{? it.fullscreen === false }}
+    <div class="col-sm-9 d-none d-sm-block">
       <div class="btn-toolbar" role="toolbar">
         <div class="btn-group mr-2" role="group" aria-label="Sort">
           <div class="btn-group" role="group" aria-label="Field">
@@ -31,35 +31,62 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-3">
-    {{??}}
-    <div class="col">
     {{?}}
-      <div class="btn-toolbar float-right">
+    <div class="col d-none d-sm-block">
+      <div class="btn-toolbar float-right" role="toolbar">
         <div class="btn-group" role="group" aria-label="Alerts">
-          <div class="httptests-alerts list-inline">
-            {{? it.config.alerts.enable && it.httptests.alerts && (it.httptests.alerts !== '0') }}
-            <h5><span class="badge httptest-badge httptest-status-problem text-truncate">{{= it.httptests.alerts }}</span></h5>
+          <ul class="list-inline">
+            {{? it.config.alerts.enable && it.httptests.alerts }}
+            {{? it.httptests.alerts.problem && (it.httptests.alerts.problem > 0) }}
+            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-problem text-truncate">{{= it.httptests.alerts.problem }}</span></h5></li>
             {{?}}
-          </div>
+            {{? (it.config.alerts.showOnlyProblems === false) && it.httptests.alerts.ok && (it.httptests.alerts.ok > 0) }}
+            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-ok text-truncate">{{= it.httptests.alerts.ok }}</span></h5></li>
+            {{?}}
+            {{?}}
+          </ul>
         </div>
       </div>
    </div>
   </div>
   <div class="httptests">
-    <div class="httptests-header"></div>
-    {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
-    <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
-      <div class="col-sm-1 text-center">
-        {{? it.httptests.data[i].lastvalue === '0' }}
-        <span class="badge httptest-badge httptest-status-ok text-truncate">OK</span>
-        {{??}}
-        <span class="badge httptest-badge httptest-status-problem text-truncate">PROBLEM</span>
-        {{?}}
+    <div class="d-none d-sm-block">
+      {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
+      <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
+        <div class="col-sm-1 text-center">
+          {{? it.httptests.data[i].lastvalue === '0' }}
+          <span class="badge httptest-badge httptest-status-ok text-truncate">OK</span>
+          {{??}}
+          <span class="badge httptest-badge httptest-status-problem text-truncate">PROBLEM</span>
+          {{?}}
         </div>
-      <div class="col-sm-2 text-truncate">{{= it.httptests.data[i].hosts[0].name }}</div>
-      <div class="col-sm-9 text-truncate">{{= it.httptests.data[i].name }}</div>
+        <div class="col-sm-2 text-truncate">{{= it.httptests.data[i].hosts[0].name }}</div>
+        <div class="col-sm-9 text-truncate">{{= it.httptests.data[i].name }}</div>
+      </div>
+      {{ } }}
     </div>
-    {{ } }}
+    <div class="d-block d-sm-none">
+      {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
+      <div id="httptestCard-{{= it.httptests.data[i].httptestid }}" class="card mb-2">
+        <div id="httptestCardHeader-{{= it.httptests.data[i].httptestid }}" class="card-header" data-toggle="collapse" data-target="#collapseHttptest-{{= it.httptests.data[i].httptestid }}" aria-expanded="false" aria-controls="collapseTrigger-{{= it.httptests.data[i].httptestid }}">
+          <div class="row">
+            <div class="col-1">
+              {{? it.httptests.data[i].lastvalue === '0' }}
+              <span class="badge httptest-status-ok">&nbsp;</span>
+              {{??}}
+              <span class="badge httptest-status-problem">&nbsp;</span>
+              {{?}}
+            </div>
+            <div class="col text-truncate">{{= it.httptests.data[i].name }}</div>
+          </div>
+        </div>
+        <div id="collapseHttptest-{{= it.httptests.data[i].httptestid  }}" class="collapse" aria-labelledby="collapseHttptestHeader-{{= it.httptests.data[i].httptestid }}" data-parent="#collapseHttptestCard-{{= it.httptests.data[i].httptestid }}">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Next check {{= it.moment.unix(it.httptests.data[i].nextcheck).fromNow() }}</li>
+          </ul>
+        </div>
+      </div>
+      {{ } }}
+    </div>
   </div>
 </section>

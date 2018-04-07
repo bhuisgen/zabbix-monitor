@@ -1,9 +1,9 @@
 <section id="events" class="container-fluid">
-  {{? it.fullscreen === false }}
   <div class="row">
-    <div class="col">
+    {{? it.fullscreen === false }}
+    <div class="col-9 d-none d-sm-block">
       <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group mr-2" role="group" aria-label="Age">
+        <div class="btn-group mr-2" role="group" aria-label="Period">
           <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Period</button>
           <div class="dropdown-menu" role="menu">
             <a class="dropdown-item{{? it.config.events.period === 1 }} active{{?}}" href="#events-period-1">1 hour</a>
@@ -41,47 +41,125 @@
         </div>
       </div>
     </div>
-  </div>
-  {{?}}
-  <div class="events">
-    <div class="events-header"></div>
-    {{ for (var i = 0; i < it.events.data.length; i++) { }}
-    <div id="events-data-{{= it.events.data[i].eventid }}" class="row events-row">
-      {{? it.events.data[i].object === '0' }}
-      <div class="col-sm-1 text-center">
-        {{? it.events.data[i].value === '0' }}
-        <span class="badge event-badge event-status-resolved text-truncate">TRIGGER</span>
-        {{??}}
-        <span class="badge event-badge event-status-problem text-truncate">TRIGGER</span>
-        {{?}}
+    {{?}}
+    <div class="col d-none d-sm-block">
+      <div class="btn-toolbar float-right" role="toolbar">
+        <div class="btn-group" role="group" aria-label="Alerts">
+          <ul class="list-inline">
+            {{? it.config.alerts.enable && it.events.alerts }}
+            {{? it.events.alerts.problem && (it.events.alerts.problem > 0) }}
+            <li class="list-inline-item"><h5><span class="badge event-badge event-status-problem text-truncate">{{= it.events.alerts.problem }}</span></h5></li>
+            {{?}}
+            {{? (it.config.alerts.showOnlyProblems === false) && it.events.alerts.resolved && (it.events.alerts.resolved > 0) }}
+            <li class="list-inline-item"><h5><span class="badge event-badge event-status-resolved text-truncate">{{= it.events.alerts.resolved }}</span></h5></li>
+            {{?}}
+            {{?}}
+          </ul>
+        </div>
       </div>
-      <div class="col-sm-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
-      <div class="col-sm-7 text-truncate">{{= it.events.data[i].relatedObject.description }}</div>
-      <div class="col-sm-2 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
-      {{?? it.events.data[i].object === '1' }}
-      <div class="col-sm-1 text-center">
-        {{? it.events.data[i].relatedObject.status === '0' }}
-        <span class="badge event-badge event-status-resolved text-truncate">DISCOVERY</span>
-        {{??}}
-        <span class="badge event-badge event-status-problem text-truncate">DISCOVERY</span>
-        {{?}}
-      </div>
-      <div class="col-sm-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
-      <div class="col-sm-7 text-truncate">Host {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}is down{{?}}</div>
-      <div class="col-sm-2 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
-      {{?? it.events.data[i].object === '2' }}
-      <div class="col-sm-1 text-center">
-        {{? it.events.data[i].relatedObject.status === '0' }}
-        <span class="badge event-badge event-status-resolved text-truncate">DISCOVERY</span>
-        {{??}}
-        <span class="badge event-badge event-status-problem text-truncate">DISCOVERY</span>
-        {{?}}
-      </div>
-      <div class="col-sm-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
-      <div class="col-sm-7 text-truncate">Service port {{= it.events.data[i].relatedObject.port }} {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}Host is down{{?}}</div>
-      <div class="col-sm-2 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
-      {{?}}
     </div>
-    {{ } }}
+  </div>
+  <div class="events">
+    <div class="d-none d-sm-block">
+      {{ for (var i = 0; i < it.events.data.length; i++) { }}
+      <div id="events-{{= it.events.data[i].eventid }}" class="row events-row">
+        {{? it.events.data[i].object === '0' }}
+        <div class="col-1 text-center">
+          {{? it.events.data[i].value === '0' }}
+          <span class="badge event-badge event-status-resolved text-truncate">TRIGGER</span>
+          {{??}}
+          <span class="badge event-badge event-status-problem text-truncate">TRIGGER</span>
+          {{?}}
+        </div>
+        <div class="col-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+        <div class="col-6 text-truncate">{{= it.events.data[i].relatedObject.description }}</div>
+        <div class="col-3 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
+        {{?? it.events.data[i].object === '1' }}
+        <div class="col-1 text-center">
+          {{? it.events.data[i].relatedObject.status === '0' }}
+          <span class="badge event-badge event-status-resolved text-truncate">DISCOVERY</span>
+          {{??}}
+          <span class="badge event-badge event-status-problem text-truncate">DISCOVERY</span>
+          {{?}}
+        </div>
+        <div class="col-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+        <div class="col-6 text-truncate">Host {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}is down{{?}}</div>
+        <div class="col-3 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
+        {{?? it.events.data[i].object === '2' }}
+        <div class="col-1 text-center">
+          {{? it.events.data[i].relatedObject.status === '0' }}
+          <span class="badge event-badge event-status-resolved text-truncate">DISCOVERY</span>
+          {{??}}
+          <span class="badge event-badge event-status-problem text-truncate">DISCOVERY</span>
+          {{?}}
+        </div>
+        <div class="col-2 text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+        <div class="col-6 text-truncate">Service port {{= it.events.data[i].relatedObject.port }} {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}Host is down{{?}}</div>
+        <div class="col-3 text-right text-truncate">{{= it.moment(it.events.data[i].clock * 1000).fromNow() }}</div>
+        {{?}}
+      </div>
+      {{ } }}
+    </div>
+    <div class="d-block d-sm-none">
+      {{ for (var i = 0; i < it.events.data.length; i++) { }}
+      <div id="eventCard-{{= it.events.data[i].eventid }}" class="card mb-2">
+        {{? it.events.data[i].object === '0' }}
+        <div id="eventCardHeader-{{= it.events.data[i].eventid }}" class="card-header" data-toggle="collapse" data-target="#collapseEvent-{{= it.events.data[i].eventid }}" aria-expanded="true" aria-controls="collapseEvent">
+          <div class="row">
+            <div class="col-1">
+              {{? it.events.data[i].value === '0' }}
+              <span class="badge event-status-resolved">&nbsp;</span>
+              {{??}}
+              <span class="badge event-status-problem">&nbsp;</span>
+              {{?}}
+            </div>
+            <div class="col text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+          </div>
+        </div>
+        <div id="collapseEvent-{{= it.events.data[i].eventid }}" class="collapse" aria-labelledby="eventCardHeader-{{= it.events.data[i].eventid }}" data-parent="#eventCard-{{= it.events.data[i].eventid }}">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{= it.events.data[i].relatedObject.description }} ({{= it.moment(it.events.data[i].clock * 1000).fromNow() }})</li>
+          </ul>
+        </div>
+        {{?? it.events.data[i].object === '1' }}
+        <div id="eventCardHeader-{{= it.events.data[i].eventid }}" class="card-header" data-toggle="collapse" data-target="#collapseEvent-{{= it.events.data[i].eventid }}" aria-expanded="true" aria-controls="collapseEvent">
+          <div class="row">
+            <div class="col-1">
+              {{? it.events.data[i].value === '0' }}
+              <span class="badge event-status-resolved">&nbsp;</span>
+              {{??}}
+              <span class="badge event-status-problem">&nbsp;</span>
+              {{?}}
+            </div>
+            <div class="col text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+          </div>
+        </div>
+        <div id="collapseEvent-{{= it.events.data[i].eventid }}" class="collapse" aria-labelledby="eventCardHeader-{{= it.events.data[i].eventid }}" data-parent="#eventCard-{{= it.events.data[i].eventid }}">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Host {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}is down{{?}} ({{= it.moment(it.events.data[i].clock * 1000).fromNow() }})</li>
+          </ul>
+        </div>
+        {{?? it.events.data[i].object === '2' }}
+        <div id="eventCardHeader-{{= it.events.data[i].eventid }}" class="card-header" data-toggle="collapse" data-target="#collapseEvent-{{= it.events.data[i].eventid }}" aria-expanded="true" aria-controls="collapseEvent">
+          <div class="row">
+            <div class="col-1 text-center">
+              {{? it.events.data[i].value === '0' }}
+              <span class="badge event-status-resolved">&nbsp;</span>
+              {{??}}
+              <span class="badge event-status-problem">&nbsp;</span>
+              {{?}}
+            </div>
+            <div class="col text-truncate">{{= it.events.data[i].hosts[0].host }}</div>
+          </div>
+        </div>
+        <div id="collapseEvent-{{= it.events.data[i].eventid }}" class="collapse" aria-labelledby="eventCardHeader-{{= it.events.data[i].eventid }}" data-parent="#eventCard-{{= it.events.data[i].eventid }}">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Service port {{= it.events.data[i].relatedObject.port }} {{? it.events.data[i].relatedObject.status === '0' }}is up{{??}}Host is down{{?}} ({{= it.moment(it.events.data[i].clock * 1000).fromNow() }})</li>
+          </ul>
+        </div>
+        {{?}}
+      </div>
+      {{ } }}
+    </div>
   </div>
 </section>

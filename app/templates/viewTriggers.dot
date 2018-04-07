@@ -1,13 +1,13 @@
 <section id="triggers" class="container-fluid">
   <div class="row">
     {{? it.fullscreen === false }}
-    <div class="col-sm-9">
+    <div class="col-9 d-none d-sm-block">
       <div class="btn-toolbar" role="toolbar">
         <div class="btn-group mr-2" role="group" aria-label="Triggers">
           <div class="btn-group" role="group" aria-label="Status">
             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Status</button>
             <div class="dropdown-menu" role="menu">
-              <a class="dropdown-item{{? it.config.triggers.status === 0 }} active{{?}}" href="#triggers-status-0">History</a>
+              <a class="dropdown-item{{? it.config.triggers.status === 0 }} active{{?}}" href="#triggers-status-0">Any</a>
               <a class="dropdown-item{{? it.config.triggers.status === 1 }} active{{?}}" href="#triggers-status-1">Recent problem</a>
               <a class="dropdown-item{{? it.config.triggers.status === 2 }} active{{?}}" href="#triggers-status-2">Problem</a>
             </div>
@@ -64,68 +64,103 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-3">
-    {{??}}
-    <div class="col">
     {{?}}
+    <div class="col d-none d-sm-block">
       <div class="btn-toolbar float-right" role="toolbar">
         <div class="btn-group" role="group" aria-label="Alerts">
-          <div class="triggers-alerts list-inline">
+          <ul class="list-inline">
             {{? it.config.alerts.enable && it.triggers.alerts }}
             {{? it.triggers.alerts.disaster && (it.triggers.alerts.disaster > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-disaster text-truncate">{{= it.triggers.alerts.disaster }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-disaster text-truncate">{{= it.triggers.alerts.disaster }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.high && (it.triggers.alerts.high > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-high text-truncate">{{= it.triggers.alerts.high }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-high text-truncate">{{= it.triggers.alerts.high }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.average && (it.triggers.alerts.average > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-average text-truncate">{{= it.triggers.alerts.average }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-average text-truncate">{{= it.triggers.alerts.average }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.warning && (it.triggers.alerts.warning > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-warning text-truncate">{{= it.triggers.alerts.warning }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-warning text-truncate">{{= it.triggers.alerts.warning }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.information && (it.triggers.alerts.information > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-information text-truncate">{{= it.triggers.alerts.information }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-information text-truncate">{{= it.triggers.alerts.information }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.notclassified && (it.triggers.alerts.notclassified > 0) }}
-            <h5><span class="badge trigger-badge trigger-priority-notclassified text-truncate">{{= it.triggers.alerts.notclassified }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-notclassified text-truncate">{{= it.triggers.alerts.notclassified }}</span></h5></li>
             {{?}}
             {{? (it.config.alerts.showOnlyProblems === false) && it.triggers.alerts.ok && (it.triggers.alerts.ok > 0) }}
-            <h5><span class="badge trigger-badge trigger-status-ok text-truncate">{{= it.triggers.alerts.ok }}</span></h5>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-status-ok text-truncate">{{= it.triggers.alerts.ok }}</span></h5></li>
             {{?}}
             {{?}}
-          </div>
+          </ul>
         </div>
       </div>
     </div>
   </div>
   <div class="triggers">
-    <div class="triggers-header"></div>
-    {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
-    <div id="trigger-data-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
-      <div class="col-sm-1 text-center">
-        {{? it.triggers.data[i].value === '0' }}
-        <span class="badge trigger-badge trigger-status-ok text-truncate">OK</span>
-        {{?? it.triggers.data[i].value === '1' }}
-        {{? it.triggers.data[i].priority === '5' }}
-        <span class="badge trigger-badge trigger-priority-disaster text-truncate">DISASTER</span>
-        {{?? it.triggers.data[i].priority === '4' }}
-        <span class="badge trigger-badge trigger-priority-high text-truncate">HIGH</span>
-        {{?? it.triggers.data[i].priority === '3' }}
-        <span class="badge trigger-badge trigger-priority-average text-truncate">AVERAGE</span>
-        {{?? it.triggers.data[i].priority === '2' }}
-        <span class="badge trigger-badge trigger-priority-warning text-truncate">WARNING</span>
-        {{?? it.triggers.data[i].priority === '1' }}
-        <span class="badge trigger-badge trigger-priority-information text-truncate">INFORMATION</span>
-        {{??}}
-        <span class="badge trigger-badge trigger-priority-notclassified text-truncate">NOT CLASSIFIED</span>
-        {{?}}
-        {{?}}
+    <div class="d-none d-sm-block">
+      {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
+      <div id="trigger-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
+        <div class="col-1 text-center">
+          {{? it.triggers.data[i].value === '0' }}
+          <span class="badge trigger-badge trigger-status-ok text-truncate">OK</span>
+          {{?? it.triggers.data[i].value === '1' }}
+          {{? it.triggers.data[i].priority === '5' }}
+          <span class="badge trigger-badge trigger-priority-disaster text-truncate">DISASTER</span>
+          {{?? it.triggers.data[i].priority === '4' }}
+          <span class="badge trigger-badge trigger-priority-high text-truncate">HIGH</span>
+          {{?? it.triggers.data[i].priority === '3' }}
+          <span class="badge trigger-badge trigger-priority-average text-truncate">AVERAGE</span>
+          {{?? it.triggers.data[i].priority === '2' }}
+          <span class="badge trigger-badge trigger-priority-warning text-truncate">WARNING</span>
+          {{?? it.triggers.data[i].priority === '1' }}
+          <span class="badge trigger-badge trigger-priority-information text-truncate">INFORMATION</span>
+          {{??}}
+          <span class="badge trigger-badge trigger-priority-notclassified text-truncate">NOT CLASSIFIED</span>
+          {{?}}
+          {{?}}
+        </div>
+        <div class="col-2 text-truncate">{{= it.triggers.data[i].hosts[0].host }}</div>
+        <div class="col-6 text-truncate">{{= it.triggers.data[i].description }}</div>
+        <div class="col-3 text-right text-truncate">{{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
       </div>
-      <div class="col-sm-2 text-truncate">{{= it.triggers.data[i].hosts[0].host }}</div>
-      <div class="col-sm-7 text-truncate">{{= it.triggers.data[i].description }}</div>
-      <div class="col-sm-2 text-right text-truncate">{{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
+      {{ } }}
     </div>
-    {{ } }}
+    <div class="d-block d-sm-none">
+        {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
+        <div id="triggerCard-{{= it.triggers.data[i].triggerid }}" class="card mb-2">
+          <div id="triggerCardHeader-{{= it.triggers.data[i].triggerid }}" class="card-header" data-toggle="collapse" data-target="#collapseTrigger-{{= it.triggers.data[i].triggerid }}" aria-expanded="false" aria-controls="collapseTrigger-{{= it.triggers.data[i].triggerid }}">
+            <div class="row">
+              <div class="col-1">
+                {{? it.triggers.data[i].value === '0' }}
+                <span class="badge trigger-status-ok">&nbsp;</span>
+                {{?? it.triggers.data[i].value === '1' }}
+                {{? it.triggers.data[i].priority === '5' }}
+                <span class="badge trigger-priority-disaster">&nbsp;</span>
+                {{?? it.triggers.data[i].priority === '4' }}
+                <span class="badge trigger-priority-high">&nbsp;</span>
+                {{?? it.triggers.data[i].priority === '3' }}
+                <span class="badge trigger-priority-average">&nbsp;</span>
+                {{?? it.triggers.data[i].priority === '2' }}
+                <span class="badge trigger-priority-warning">&nbsp;</span>
+                {{?? it.triggers.data[i].priority === '1' }}
+                <span class="badge trigger-priority-information">&nbsp;</span>
+                {{??}}
+                <span class="badge trigger-priority-notclassified">&nbsp;</span>
+                {{?}}
+                {{?}}
+              </div>
+              <div class="col text-truncate">{{= it.triggers.data[i].hosts[0].host }}</div>
+            </div>
+          </div>
+          <div id="collapseTrigger-{{= it.triggers.data[i].triggerid }}" class="collapse" aria-labelledby="triggerCardHeader-{{= it.triggers.data[i].triggerid }}" data-parent="#triggerCard-{{= it.triggers.data[i].triggerid }}">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{= it.triggers.data[i].description }} ({{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }})</li>
+            </ul>
+          </div>
+        </div>
+        {{ } }}
+      </div>
+    </div>
   </div>
 </section>
