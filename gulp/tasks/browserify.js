@@ -19,6 +19,10 @@ gulp.task('browserify', ['templates', 'styles'], function() {
     .transform(envify())
     .transform(partialify)
     .bundle()
+    .on('error', function (err) {
+      console.log(err.toString());
+      this.emit('end');
+    })
     .pipe(source('main.js'))
     .pipe(gulp.dest('.tmp/scripts/'));
 });

@@ -1,6 +1,7 @@
-<section id="error" class="container">
+<section id="error" class="container error-alert">
   <div class="alert alert-danger" role="alert">
-    <p><strong>Error</strong></p>
+    <p class="alert-heading">Error</p>
+    <hr />
     <p>{{= it.error.message }}</p>
   </div>
 </section>

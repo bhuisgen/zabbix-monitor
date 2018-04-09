@@ -3,8 +3,8 @@
 var concat = require('gulp-concat');
 var dot = require('gulp-dotjs-compiler');
 var gulp = require('gulp');
-var footer = require('gulp-footer')
-var header = require('gulp-header')
+var footer = require('gulp-footer');
+var header = require('gulp-header');
 var size = require('gulp-size');
 
 gulp.task('dot', function () {

@@ -771,6 +771,18 @@ App.prototype.showEventsView = function() {
     }
 
     self.events.data = data;
+    self.events.alerts = {
+      resolved: 0,
+      problem: 0
+    };
+
+    for (var i = 0, j = self.events.data.length; i < j; i++) {
+      if (self.events.data[i].value === '0') {
+        self.events.alerts.resolved++;
+      } else {
+        self.events.alerts.problem++;
+      }
+    }
 
     $('#view').html(templates.viewEvents({
       moment: moment,
@@ -799,15 +811,21 @@ App.prototype.showWebView = function() {
     }
 
     self.httptests.data = data;
-    self.httptests.alerts = 0;
+    self.httptests.alerts = {
+      ok: 0,
+      problem: 0
+    };
 
     for (var i = 0, j = self.httptests.data.length; i < j; i++) {
-      if (self.httptests.data[i].lastvalue !== '0') {
-        self.httptests.alerts++;
+      if (self.httptests.data[i].lastvalue === '0') {
+        self.httptests.alerts.ok++;
+      } else {
+        self.httptests.alerts.problem++;
       }
     }
 
     $('#view').html(templates.viewWeb({
+      moment: moment,
       config: self.config,
       groups: self.groups,
       hosts: self.hosts,
