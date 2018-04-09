@@ -1,4 +1,3 @@
-
 //
 // Color system
 //
@@ -165,13 +164,11 @@ $close-text-shadow: none !default;
 $pre-color: inherit !default;
 
 
-@import "node_modules/bootstrap/scss/bootstrap";
-
-
-// Variables ===================================================================
-
 $web-font-path: "https://fonts.googleapis.com/css?family=Roboto:400,700" !default;
 @import url($web-font-path);
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
 
 // Navbar ======================================================================
 
