@@ -1,7 +1,7 @@
 <section id="httptests" class="container-fluid">
   <div class="row">
     {{? it.fullscreen === false }}
-    <div class="col-sm-9 d-none d-sm-block">
+    <div class="col-9 d-none d-sm-block">
       <div class="btn-toolbar" role="toolbar">
         <div class="btn-group mr-2" role="group" aria-label="Sort">
           <div class="btn-group" role="group" aria-label="Field">
@@ -33,37 +33,41 @@
     </div>
     {{?}}
     <div class="col d-none d-sm-block">
-      <div class="btn-toolbar float-right" role="toolbar">
+      <div class="alerts btn-toolbar float-right" role="toolbar">
         <div class="btn-group" role="group" aria-label="Alerts">
           <ul class="list-inline">
             {{? it.config.alerts.enable && it.httptests.alerts }}
-            {{? it.httptests.alerts.problem && (it.httptests.alerts.problem > 0) }}
-            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-problem text-truncate">{{= it.httptests.alerts.problem }}</span></h5></li>
-            {{?}}
             {{? (it.config.alerts.showOnlyProblems === false) && it.httptests.alerts.ok && (it.httptests.alerts.ok > 0) }}
-            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-ok text-truncate">{{= it.httptests.alerts.ok }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-ok">{{= it.httptests.alerts.ok }}</span></h5></li>
+            {{?}}
+            {{? it.httptests.alerts.problem && (it.httptests.alerts.problem > 0) }}
+            <li class="list-inline-item"><h5><span class="badge httptest-badge httptest-status-problem">{{= it.httptests.alerts.problem }}</span></h5></li>
             {{?}}
             {{?}}
           </ul>
         </div>
       </div>
-   </div>
+    </div>
   </div>
   <div class="httptests">
     <div class="d-none d-sm-block">
-      {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
-      <div id="httptest-data-{{= it.httptests.data[i].httptestid }}" class="row httptests-row">
-        <div class="col-sm-1 text-center">
-          {{? it.httptests.data[i].lastvalue === '0' }}
-          <span class="badge httptest-badge httptest-status-ok text-truncate">OK</span>
-          {{??}}
-          <span class="badge httptest-badge httptest-status-problem text-truncate">PROBLEM</span>
-          {{?}}
-        </div>
-        <div class="col-sm-2 text-truncate">{{= it.httptests.data[i].hosts[0].name }}</div>
-        <div class="col-sm-9 text-truncate">{{= it.httptests.data[i].name }}</div>
-      </div>
-      {{ } }}
+      <table class="table table-striped">
+        <tbody>
+          {{ for (var i = 0; i < it.httptests.data.length; i++) { }}
+          <tr id="httptestTable-{{= it.httptests.data[i].httptestid }}">
+            <td class="text-center">
+              {{? it.httptests.data[i].lastvalue === '0' }}
+              <span class="badge httptest-badge httptest-status-ok">OK</span>
+              {{??}}
+              <span class="badge httptest-badge httptest-status-problem">PROBLEM</span>
+              {{?}}
+            </td>
+            <td class="text-center">{{= it.httptests.data[i].hosts[0].name }}</td>
+            <td class="text-left">{{= it.httptests.data[i].name }}</td>
+          </tr>
+          {{ } }}
+        </tbody>
+      </table>
     </div>
     <div class="d-block d-sm-none">
       {{ for (var i = 0; i < it.httptests.data.length; i++) { }}

@@ -66,30 +66,30 @@
     </div>
     {{?}}
     <div class="col d-none d-sm-block">
-      <div class="btn-toolbar float-right" role="toolbar">
+      <div class="alerts btn-toolbar float-right" role="toolbar">
         <div class="btn-group" role="group" aria-label="Alerts">
           <ul class="list-inline">
             {{? it.config.alerts.enable && it.triggers.alerts }}
             {{? it.triggers.alerts.disaster && (it.triggers.alerts.disaster > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-disaster text-truncate">{{= it.triggers.alerts.disaster }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-disaster">{{= it.triggers.alerts.disaster }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.high && (it.triggers.alerts.high > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-high text-truncate">{{= it.triggers.alerts.high }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-high">{{= it.triggers.alerts.high }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.average && (it.triggers.alerts.average > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-average text-truncate">{{= it.triggers.alerts.average }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-average">{{= it.triggers.alerts.average }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.warning && (it.triggers.alerts.warning > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-warning text-truncate">{{= it.triggers.alerts.warning }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-warning">{{= it.triggers.alerts.warning }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.information && (it.triggers.alerts.information > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-information text-truncate">{{= it.triggers.alerts.information }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-information">{{= it.triggers.alerts.information }}</span></h5></li>
             {{?}}
             {{? it.triggers.alerts.notclassified && (it.triggers.alerts.notclassified > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-notclassified text-truncate">{{= it.triggers.alerts.notclassified }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-priority-notclassified">{{= it.triggers.alerts.notclassified }}</span></h5></li>
             {{?}}
             {{? (it.config.alerts.showOnlyProblems === false) && it.triggers.alerts.ok && (it.triggers.alerts.ok > 0) }}
-            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-status-ok text-truncate">{{= it.triggers.alerts.ok }}</span></h5></li>
+            <li class="list-inline-item"><h5><span class="badge trigger-badge trigger-status-ok">{{= it.triggers.alerts.ok }}</span></h5></li>
             {{?}}
             {{?}}
           </ul>
@@ -99,32 +99,36 @@
   </div>
   <div class="triggers">
     <div class="d-none d-sm-block">
-      {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
-      <div id="trigger-{{= it.triggers.data[i].triggerid }}" class="row triggers-row">
-        <div class="col-1 text-center">
-          {{? it.triggers.data[i].value === '0' }}
-          <span class="badge trigger-badge trigger-status-ok text-truncate">OK</span>
-          {{?? it.triggers.data[i].value === '1' }}
-          {{? it.triggers.data[i].priority === '5' }}
-          <span class="badge trigger-badge trigger-priority-disaster text-truncate">DISASTER</span>
-          {{?? it.triggers.data[i].priority === '4' }}
-          <span class="badge trigger-badge trigger-priority-high text-truncate">HIGH</span>
-          {{?? it.triggers.data[i].priority === '3' }}
-          <span class="badge trigger-badge trigger-priority-average text-truncate">AVERAGE</span>
-          {{?? it.triggers.data[i].priority === '2' }}
-          <span class="badge trigger-badge trigger-priority-warning text-truncate">WARNING</span>
-          {{?? it.triggers.data[i].priority === '1' }}
-          <span class="badge trigger-badge trigger-priority-information text-truncate">INFORMATION</span>
-          {{??}}
-          <span class="badge trigger-badge trigger-priority-notclassified text-truncate">NOT CLASSIFIED</span>
-          {{?}}
-          {{?}}
-        </div>
-        <div class="col-2 text-truncate">{{= it.triggers.data[i].hosts[0].host }}</div>
-        <div class="col-6 text-truncate">{{= it.triggers.data[i].description }}</div>
-        <div class="col-3 text-right text-truncate">{{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</div>
-      </div>
-      {{ } }}
+      <table class="table table-striped">
+        <tbody>
+          {{ for (var i = 0; i < it.triggers.data.length; i++) { }}
+          <tr id="triggerTable-{{= it.triggers.data[i].triggerid }}">
+            <td class="text-center">
+              {{? it.triggers.data[i].value === '0' }}
+              <span class="badge trigger-badge trigger-status-ok">OK</span>
+              {{?? it.triggers.data[i].value === '1' }}
+              {{? it.triggers.data[i].priority === '5' }}
+              <span class="badge trigger-badge trigger-priority-disaster">DISASTER</span>
+              {{?? it.triggers.data[i].priority === '4' }}
+              <span class="badge trigger-badge trigger-priority-high">HIGH</span>
+              {{?? it.triggers.data[i].priority === '3' }}
+              <span class="badge trigger-badge trigger-priority-average">AVERAGE</span>
+              {{?? it.triggers.data[i].priority === '2' }}
+              <span class="badge trigger-badge trigger-priority-warning">WARNING</span>
+              {{?? it.triggers.data[i].priority === '1' }}
+              <span class="badge trigger-badge trigger-priority-information">INFO</span>
+              {{??}}
+              <span class="badge trigger-badge trigger-priority-notclassified">NOT CLASSIFIED</span>
+              {{?}}
+              {{?}}
+            </th>
+            <td class="text-center">{{= it.triggers.data[i].hosts[0].host }}</td>
+            <td class="text-left">{{= it.triggers.data[i].description }}</td>
+            <td class="text-right">{{= it.moment(it.triggers.data[i].lastchange * 1000).fromNow() }}</td>
+          </tr>
+          {{ } }}
+        </tbody>
+      </table>
     </div>
     <div class="d-block d-sm-none">
         {{ for (var i = 0; i < it.triggers.data.length; i++) { }}

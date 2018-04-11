@@ -2,8 +2,10 @@
 
 ### CURRENT
 
-* Migrate to bootstrap 4
-* Add fullscreen mode
+* Use to bootstrap 4
+* Add sidebar
+* Add presentation and fullscreen modes
+* Refactor views
 
 ### 0.3.0 (2017-12-07)
 

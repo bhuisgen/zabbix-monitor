@@ -20,17 +20,13 @@ var config = {
       selectWithAcknowledgedEvents: false,
       selectWithLastEventUnacknowledged: true,
       selectSkipDependent: true,
-      selectMinimalSeverity: 0,
-
-      showHumanTimes: true
+      selectMinimalSeverity: 0
     },
 
     events: {
       period: 1,
       sortField: 'clock',
-      sortOrder: 'DESC',
-
-      showHumanTimes: false
+      sortOrder: 'DESC'
     },
 
     httptests: {

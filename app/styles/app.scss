@@ -1,100 +1,68 @@
 @import "bootstrap";
 
+.sidebar {
+  min-width: 220px;
+  max-width: 220px;
+  min-height: calc(100vh - 53px);
+  transition: all 0.2s;
+}
+
+.sidebar ul li a {
+  display: block;
+  padding: .75rem 1rem;
+  color: rgba(255, 255, 255, .75);
+  text-decoration: none;
+}
+
+.sidebar ul li a:hover, .sidebar ul .active a {
+  color: rgba(255, 255, 255, 1);
+  background: rgba(0, 0, 0, .25);
+}
+
+.sidebar ul li a.active {
+  background: $secondary;
+}
+
+.sidebar ul ul a {
+  padding-left: 2.5rem;
+  background: rgba(0, 0, 0, .25);
+}
+
+.sidebar [data-toggle="collapse"] {
+  position: relative;
+}
+
+.sidebar [data-toggle="collapse"]:before {
+  position: absolute;
+  right: 1rem;
+}
+
+.sidebar [aria-expanded="true"] {
+  background: rgba(0, 0, 0, .25);
+}
+
+.sidebar.toggled {
+  margin-left: -220px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    min-width: 140px;
+    max-width: 140px;
+  }
+
+  .sidebar.toggled {
+    margin-left: -140px;
+  }
+}
+
+.content {
+  width: 100%;
+}
+
+@import "login";
+@import "views";
+
 .error-alert {
   padding: 40px;
-}
-
-.events-header {
-  padding: 4px;
-}
-
-.events-row {
-  padding: 4px;
-  color: #FFFFFF;
-}
-
-.event-badge {
-  display: block;
-}
-
-.event-status-resolved {
-  background-color: #00AA00;
-}
-
-.event-status-problem {
-  background-color: #DC0000;
-}
-
-.httptests-header {
-  padding: 4px;
-}
-
-.httptests-row {
-  padding: 4px;
-  color: #FFFFFF;
-}
-
-.httptest-badge {
-  display: block;
-}
-
-.httptest-status-ok {
-  background-color: #00AA00;
-}
-
-.httptest-status-problem {
-  background-color: #DC0000;
-}
-
-.httptest-badge {
-  display: block;
-}
-
-.triggers-header {
-  padding: 4px;
-}
-
-.triggers-row {
-  padding: 4px;
-  color: #FFFFFF;
-}
-
-.trigger-badge {
-  display: block;
-}
-
-.trigger-priority-notclassified {
-  background-color: #888888;
-}
-
-.trigger-priority-information {
-  background-color: #2A9FD6;
-}
-
-.trigger-priority-warning {
-  background-color: #FF8800;
-}
-
-.trigger-priority-average {
-  background-color: #FF6666;
-}
-
-.trigger-priority-high {
-  background-color: #FF3333;
-}
-
-.trigger-priority-disaster {
-  background-color: #FF0000;
-}
-
-.trigger-status-ok {
-  background-color: #00AA00;
-}
-
-.trigger-status-problem {
-  background-color: #DC0000;
-}
-
-.trigger-alert {
-  display: block;
 }
