@@ -1,5 +1,5 @@
 <ul class="list-unstyled">
-  <li><a class="nav-item{{? it.view === 'triggers' }} active{{?}}" href="#view-triggers">Triggers</a></li>
-  <li><a class="nav-item{{? it.view === 'events' }} active{{?}}" href="#view-events">Events</a></li>
-  <li><a class="nav-item{{? it.view === 'web' }} active{{?}}" href="#view-web">Web</a></li>
+  <li><a class="nav-item{{? it.config.view === 'triggers' }} active{{?}}" href="#view-triggers">Triggers</a></li>
+  <li><a class="nav-item{{? it.config.view === 'events' }} active{{?}}" href="#view-events">Events</a></li>
+  <li><a class="nav-item{{? it.config.view === 'web' }} active{{?}}" href="#view-web">Web</a></li>
 </ul>
