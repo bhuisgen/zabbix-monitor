@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort</button>
             <div class="dropdown-menu" role="menu">
               <a class="dropdown-item{{? it.config.httptests.sortField === 'httptestid' }} active{{?}}" href="#httptests-sortfield-httptestid">Identifier</a>
-              <a class="dropdown-item{{? it.config.httptests.sortField === 'name' }} active{{?}}>" href="#httptests-sortfield-name">Name</a>
+              <a class="dropdown-item{{? it.config.httptests.sortField === 'name' }} active{{?}}" href="#httptests-sortfield-name">Name</a>
             </div>
           </div>
           <div class="btn-group" role="group" aria-label="Order">
