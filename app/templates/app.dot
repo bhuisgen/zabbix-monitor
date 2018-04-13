@@ -1,4 +1,4 @@
-{{? it.fullscreen === false }}
+{{? it.config.fullscreen === false }}
 <nav class="navbar navbar-expand-sm bg-light">
   <a class="sidebar-toggle text-light mr-3"><span class="oi oi-menu" title="Menu" aria-hidden="true"></span></a>
   <a class="navbar-brand text-light mr-auto">zabbix-monitor</a>
@@ -11,10 +11,10 @@
 </nav>
 {{?}}
 <div class="d-flex align-items-stretch">
-  {{? it.fullscreen === false }}
-  <div id="sidebar" class="sidebar bg-dark {{? it.sidebar === false }} toggled{{?}}">
+  {{? it.config.fullscreen === false }}
+  <div id="sidebar" class="sidebar bg-dark {{? it.config.sidebar === false }} toggled{{?}}">
   </div>
   {{?}}
-  <div id="view" class="content p-2 {{? it.presentation === true }} presentation {{?}}">
+  <div id="view" class="content p-2 {{? it.config.presentation === true }} presentation {{?}}">
   </div>
 </div>

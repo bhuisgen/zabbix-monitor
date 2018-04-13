@@ -1,6 +1,6 @@
 <section id="events" class="container-fluid">
   <div class="row">
-    {{? it.fullscreen === false }}
+    {{? it.config.fullscreen === false }}
     <div class="col-9 d-none d-sm-block">
       <div class="btn-toolbar" role="toolbar">
         <div class="btn-group mr-2" role="group" aria-label="Period">

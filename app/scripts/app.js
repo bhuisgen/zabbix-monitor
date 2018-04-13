@@ -18,12 +18,8 @@ var templates = require('./templates');
 
 var App = function() {
   this.DEFAULT_VIEW = 'triggers';
-  this.LOCALSTORAGE_KEY_CONFIG = 'zabbix-monitor.config';
+  this.CONFIG_KEY = 'zabbix-monitor';
   this.config = null;
-  this.presentation = false;
-  this.fullscreen = false;
-  this.sidebar = false;
-  this.view = this.DEFAULT_VIEW;
   this.timeoutId = null;
   this.zabbix = null;
   this.error = null;
@@ -85,11 +81,7 @@ App.prototype.run = function(callback) {
       self.config.server.user = server.user;
       self.config.server.password = server.password;
 
-      if ($('#formLogin').find('#rememberMe').is(':checked')) {
-        self.saveLocalStorage();
-      } else {
-        self.clearLocalStorage();
-      }
+      self.saveConfiguration($('#formLogin').find('#rememberMe').is(':checked'));
 
       self.zabbix = null;
 
@@ -100,40 +92,48 @@ App.prototype.run = function(callback) {
   $('body').on('click', 'a[href="#presentation"]', function(e) {
     e.preventDefault();
 
-    self.presentation = !self.presentation;
+    self.config.presentation = !self.config.presentation;
+
     self.refresh(true, true);
+    self.saveConfiguration();
   });
 
   $('body').on('click', 'a[href="#fullscreen"]', function(e) {
     e.preventDefault();
 
-    self.fullscreen = true;
+    self.config.fullscreen = true;
+
     self.refresh(true, true);
+    self.saveConfiguration();
   });
 
   document.onkeydown = function(evt) {
     evt = evt || window.event;
 
-    if (self.fullscreen && evt.keyCode == 27) {
-      self.fullscreen = false;
+    if (self.config.fullscreen && (evt.keyCode === 27)) {
+      self.config.fullscreen = false;
+
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   };
 
   $('body').on('click', '.sidebar-toggle', function(e) {
       $('.sidebar').toggleClass('toggled');
+
+      self.config.sidebar = !$('.sidebar').hasClass('toggled');
+      self.saveConfiguration();
   });
 
   $('body').on('click', 'a[href^="#view-"]', function(e) {
     e.preventDefault();
 
-    $('.sidebar').addClass('toggled');
-
     var m = $(this).attr('href').match(/^#view-(.+)/) || [''];
-    if (m[1] != self.view) {
-      self.view = m[1];
+    if (m[1] != self.config.view) {
+      self.config.view = m[1];
 
       self.refresh();
+      self.saveConfiguration();
     }
   });
 
@@ -148,6 +148,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -162,6 +163,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -176,6 +178,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -190,6 +193,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -204,6 +208,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -213,6 +218,7 @@ App.prototype.run = function(callback) {
     delete self.config.triggers.groupids;
 
     self.refresh(true, true);
+    self.saveConfiguration();
   });
 
   $('body').on('click', 'a[href^="#triggers-group-"]', function(e) {
@@ -223,6 +229,7 @@ App.prototype.run = function(callback) {
       self.config.triggers.groupids = m[1];
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -237,6 +244,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -251,6 +259,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -265,6 +274,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -274,6 +284,7 @@ App.prototype.run = function(callback) {
     delete self.config.events.groupids;
 
     self.refresh(true, true);
+    self.saveConfiguration();
   });
 
   $('body').on('click', 'a[href^="#events-group-"]', function(e) {
@@ -284,6 +295,7 @@ App.prototype.run = function(callback) {
       self.config.events.groupids = m[1];
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -298,6 +310,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -312,6 +325,7 @@ App.prototype.run = function(callback) {
       $(this).parent().addClass('active');
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
@@ -321,6 +335,7 @@ App.prototype.run = function(callback) {
     delete self.config.httptests.groupids;
 
     self.refresh(true, true);
+    self.saveConfiguration();
   });
 
   $('body').on('click', 'a[href^="#httptests-group-"]', function(e) {
@@ -331,14 +346,15 @@ App.prototype.run = function(callback) {
       self.config.httptests.groupids = m[1];
 
       self.refresh(true, true);
+      self.saveConfiguration();
     }
   });
 
   this.loadConfiguration(function(err) {
     if (err) {
-      self.showLoginPage();
+      self.showLogin();
 
-      return callback(err);
+      return callback(null);
     }
 
     self.render();
@@ -351,15 +367,11 @@ App.prototype.render = function() {
   var self = this;
 
   $('#app').html(templates.app({
-    config: this.config,
-    presentation: this.presentation,
-    fullscreen: this.fullscreen,
-    sidebar: this.sidebar
+    config: this.config
   }));
 
   $('#sidebar').html(templates.sidebar({
-    config: this.config,
-    view: this.view
+    config: this.config
   }));
 
   this.connectToServer(function(err, data) {
@@ -421,14 +433,10 @@ App.prototype.refresh = function(state, fast) {
 
     $('#app').html(templates.app({
       config: this.config,
-      presentation: this.presentation,
-      fullscreen: this.fullscreen,
-      sidebar: this.sidebar
     }));
 
     $('#sidebar').html(templates.sidebar({
-      config: this.config,
-      view: this.view
+      config: this.config
     }));
   }
 
@@ -444,7 +452,7 @@ App.prototype.refresh = function(state, fast) {
       return;
     }
 
-    switch (this.view) {
+    switch (this.config.view) {
       case 'triggers':
         this.showTriggersView();
         break;
@@ -469,7 +477,7 @@ App.prototype.refresh = function(state, fast) {
   }
 };
 
-App.prototype.showLoginPage = function() {
+App.prototype.showLogin = function() {
   $('#app').html(templates.login({
     config: this.config
   }));
@@ -490,10 +498,6 @@ App.prototype.showTriggersView = function() {
       self.error = new Error('Failed to get triggers (' + err.message + ')');
       self.refresh(true, true);
 
-      return;
-    }
-
-    if (self.view !== 'triggers') {
       return;
     }
 
@@ -542,10 +546,13 @@ App.prototype.showTriggersView = function() {
       }
     }
 
+    if (self.config.view !== 'triggers') {
+      return;
+    }
+
     $('#view').html(templates.viewTriggers({
       moment: moment,
       config: self.config,
-      fullscreen: self.fullscreen,
       groups: self.groups,
       hosts: self.hosts,
       triggers: self.triggers
@@ -556,17 +563,13 @@ App.prototype.showTriggersView = function() {
 App.prototype.showEventsView = function() {
   var self = this;
 
-  this.view = 'events';
+  this.config.view = 'events';
 
   this.getEvents(this.zabbix, function(err, data) {
     if (err) {
       self.error = new Error('Failed to get events (' + err.message + ')');
       self.refresh(true, true);
 
-      return;
-    }
-
-    if (self.view !== 'events') {
       return;
     }
 
@@ -584,10 +587,13 @@ App.prototype.showEventsView = function() {
       }
     }
 
+    if (self.config.view !== 'events') {
+      return;
+    }
+
     $('#view').html(templates.viewEvents({
       moment: moment,
       config: self.config,
-      fullscreen: self.fullscreen,
       groups: self.groups,
       hosts: self.hosts,
       events: self.events
@@ -606,10 +612,6 @@ App.prototype.showWebView = function() {
       return;
     }
 
-    if (self.view !== 'web') {
-      return;
-    }
-
     self.httptests.data = data;
     self.httptests.alerts = {
       ok: 0,
@@ -624,10 +626,13 @@ App.prototype.showWebView = function() {
       }
     }
 
+    if (self.config.view !== 'web') {
+      return;
+    }
+
     $('#view').html(templates.viewWeb({
       moment: moment,
       config: self.config,
-      fullscreen: self.fullscreen,
       groups: self.groups,
       hosts: self.hosts,
       httptests: self.httptests
@@ -643,6 +648,10 @@ App.prototype.loadConfiguration = function(callback) {
   var defaultConfig = {
     server: {},
 
+    sidebar: false,
+    presentation: false,
+    fullscreen: false,
+    view: this.DEFAULT_VIEW,
     refresh: 30,
 
     alerts: {
@@ -676,13 +685,26 @@ App.prototype.loadConfiguration = function(callback) {
     }
   };
 
-  var localConfig;
+  var localConfig = null;
 
   try {
-    localConfig = JSON.parse(localStorage.getItem(this.LOCALSTORAGE_KEY_CONFIG));
+    if (sessionStorage.getItem(this.CONFIG_KEY)) {
+      localConfig = JSON.parse(sessionStorage.getItem(this.CONFIG_KEY));
+    }
   }
   catch (e) {
-    localConfig = null;
+    sessionStorage.removeItem(this.CONFIG_KEY);
+  }
+
+  if (localConfig == null) {
+    try {
+      if (localStorage.getItem(this.CONFIG_KEY)) {
+        localConfig = JSON.parse(localStorage.getItem(this.CONFIG_KEY));
+      }
+    }
+    catch (e) {
+      localStorage.removeItem(this.CONFIG_KEY);
+    }
   }
 
   this.config = _.defaultsDeep(localConfig, globalConfig, defaultConfig);
@@ -694,26 +716,22 @@ App.prototype.loadConfiguration = function(callback) {
   return callback(null);
 };
 
-App.prototype.saveLocalStorage = function(callback) {
+App.prototype.saveConfiguration = function(local, callback) {
+  local = local || false;
   callback = callback || function() {
     return true;
   };
 
   try {
-    localStorage.setItem(this.LOCALSTORAGE_KEY_CONFIG, JSON.stringify(this.config));
+    if (local || localStorage.getItem(this.CONFIG_KEY)) {
+      localStorage.setItem(this.CONFIG_KEY, JSON.stringify(this.config));
+    }
+    else {
+      sessionStorage.setItem(this.CONFIG_KEY, JSON.stringify(this.config));
+    }
   } catch (e) {
-    return callback(new Error('Failed to save in local storage'));
+    return callback(new Error('Failed to save configuration'));
   }
-
-  return callback(null);
-};
-
-App.prototype.clearLocalStorage = function(callback) {
-  callback = callback || function() {
-    return true;
-  };
-
-  localStorage.removeItem(this.LOCALSTORAGE_KEY_CONFIG);
 
   return callback(null);
 };
@@ -723,7 +741,8 @@ App.prototype.connectToServer = function(callback) {
     return true;
   };
 
-  var zabbix = new Zabbix(this.config.server.url, this.config.server.user, this.config.server.password, this.config.server.options);
+  var zabbix = new Zabbix(this.config.server.url, this.config.server.user, this.config.server.password,
+    this.config.server.options);
 
   zabbix.login(function(err) {
     if (err) {

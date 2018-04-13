@@ -6,6 +6,7 @@
 * Add sidebar
 * Add presentation and fullscreen modes
 * Refactor views
+* Use session storage by default
 
 ### 0.3.0 (2017-12-07)
 
