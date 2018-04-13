@@ -662,7 +662,7 @@ App.prototype.loadConfiguration = function(callback) {
     triggers: {
       status: 1,
       severity: 2,
-      age: 24,
+      age: 1,
       sortField: 'priority',
       sortOrder: 'ASC',
       selectInMaintenance: false,
