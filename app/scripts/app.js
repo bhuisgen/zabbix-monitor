@@ -107,16 +107,14 @@ App.prototype.run = function(callback) {
     self.saveConfiguration();
   });
 
-  document.onkeydown = function(evt) {
-    evt = evt || window.event;
-
-    if (self.config.fullscreen && (evt.keyCode === 27)) {
+  $('html').keydown(function(eventData) {
+    if (self.config.fullscreen && (eventData.keyCode === 27)) {
       self.config.fullscreen = false;
 
       self.refresh(true, true);
       self.saveConfiguration();
     }
-  };
+  });
 
   $('body').on('click', '.sidebar-toggle', function(e) {
       $('.sidebar').toggleClass('toggled');
@@ -662,7 +660,7 @@ App.prototype.loadConfiguration = function(callback) {
     triggers: {
       status: 1,
       severity: 2,
-      age: 24,
+      age: 1,
       sortField: 'priority',
       sortOrder: 'ASC',
       selectInMaintenance: false,

@@ -26,7 +26,7 @@
           <div class="btn-group" role="group" aria-label="Age">
             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Age</button>
             <div class="dropdown-menu" role="menu">
-              <a class="dropdown-item{{? it.config.triggers.age === 0 }} active{{?}}" href="#triggers-age-1">1 day</a>
+              <a class="dropdown-item{{? it.config.triggers.age === 1 }} active{{?}}" href="#triggers-age-1">1 day</a>
               <a class="dropdown-item{{? it.config.triggers.age === 2 }} active{{?}}" href="#triggers-age-2">2 days</a>
               <a class="dropdown-item{{? it.config.triggers.age === 7 }} active{{?}}" href="#triggers-age-7">1 week</a>
               <a class="dropdown-item{{? it.config.triggers.age === 30 }} active{{?}}" href="#triggers-age-30">1 month</a>

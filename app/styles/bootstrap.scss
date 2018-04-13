@@ -194,7 +194,6 @@ $web-font-path: "https://fonts.googleapis.com/css?family=Roboto:400,700" !defaul
   &.fixed-bottom {
     border-width: 1px 0 0 0;
   }
-
 }
 
 // Buttons =====================================================================
@@ -391,4 +390,12 @@ legend,
   &-title {
     border-bottom: none;
   }
+}
+
+.dropdown-menu .dropdown-item.active {
+  background: $secondary;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background: rgba(0, 0, 0, .25);
 }
