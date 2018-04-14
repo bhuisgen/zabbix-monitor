@@ -1,68 +1,9 @@
-@import "bootstrap";
+@import "bootstrap/variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "bootstrap/theme";
 
-.sidebar {
-  min-width: 220px;
-  max-width: 220px;
-  min-height: calc(100vh - 53px);
-  transition: all 0.2s;
-}
+@import "sidebar";
 
-.sidebar ul li a {
-  display: block;
-  padding: .75rem 1rem;
-  color: rgba(255, 255, 255, .75);
-  text-decoration: none;
-}
-
-.sidebar ul li a:hover, .sidebar ul .active a {
-  color: rgba(255, 255, 255, 1);
-  background: rgba(0, 0, 0, .25);
-}
-
-.sidebar ul li a.active {
-  background: $secondary;
-}
-
-.sidebar ul ul a {
-  padding-left: 2.5rem;
-  background: rgba(0, 0, 0, .25);
-}
-
-.sidebar [data-toggle="collapse"] {
-  position: relative;
-}
-
-.sidebar [data-toggle="collapse"]:before {
-  position: absolute;
-  right: 1rem;
-}
-
-.sidebar [aria-expanded="true"] {
-  background: rgba(0, 0, 0, .25);
-}
-
-.sidebar.toggled {
-  margin-left: -220px;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    min-width: 140px;
-    max-width: 140px;
-  }
-
-  .sidebar.toggled {
-    margin-left: -140px;
-  }
-}
-
-.content {
-  width: 100%;
-}
-
-@import "login";
 @import "views";
 
-.error-alert {
-  padding: 40px;
-}
+@import "login";
