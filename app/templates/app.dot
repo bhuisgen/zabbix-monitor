@@ -4,8 +4,8 @@
   <a class="navbar-brand text-light mr-auto">zabbix-monitor</a>
   <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item"><a class="nav-link{{? it.config.presentation === true }} active{{?}}" href="#presentation" data-toggle="tab"><span class="oi oi-monitor" title="Presentation" aria-hidden="true"></span></a></li>
       <li class="nav-item"><a class="nav-link{{? it.config.fullscreen === true }} active{{?}}" href="#fullscreen" data-toggle="tab"><span class="oi oi-fullscreen-enter" title="Fullscreen" aria-hidden="true"></span></a></li>
+      <li class="nav-item d-none d-lg-block"><a class="nav-link{{? it.config.presentation === true }} active{{?}}" href="#presentation" data-toggle="tab"><span class="oi oi-monitor" title="Presentation" aria-hidden="true"></span></a></li>
     </ul>
   </div>
 </nav>
