@@ -19,7 +19,6 @@
   "scripts": {
     "clean": "gulp clean",
     "build": "gulp build",
-    "dist": "gulp dist",
     "test": "gulp test"
   },
   "dependencies": {
