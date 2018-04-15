@@ -1,3 +1,11 @@
+.content {
+  width: 100%;
+}
+
+.error-alert {
+  padding: 40px;
+}
+
 @media (min-width: 992px) {
   .presentation .triggers *, .presentation .events *, .presentation .httptests * {
     font-size: 1.1rem;
