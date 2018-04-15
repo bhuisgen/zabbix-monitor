@@ -6,6 +6,12 @@
     <ul class="nav navbar-nav ml-auto">
       <li class="nav-item d-none d-lg-block"><a class="nav-link{{? it.config.presentation === true }} active{{?}}" href="#presentation" data-toggle="tab"><span class="oi oi-monitor" title="Presentation" aria-hidden="true"></span></a></li>
       <li class="nav-item d-none d-md-block"><a class="nav-link{{? it.config.fullscreen === true }} active{{?}}" href="#fullscreen" data-toggle="tab"><span class="oi oi-fullscreen-enter" title="Fullscreen" aria-hidden="true"></span></a></li>
+      <li class="nav-item">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarUserMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-person" title="User" aria-hidden="true"></span></a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="#logout"><span class="oi oi-account-logout" title="Logout" aria-hidden="true"></span>Logout</a>
+        </div>
+      </li>
     </ul>
   </div>
 </nav>

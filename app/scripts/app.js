@@ -116,6 +116,14 @@ App.prototype.run = function(callback) {
     }
   });
 
+  $('body').on('click', 'a[href="#logout"]', function(e) {
+    e.preventDefault();
+
+    self.clearConfiguration(function(err) {
+      self.run();
+    });
+  });
+
   $('body').on('click', '.sidebar-toggle', function(e) {
       $('.sidebar').toggleClass('toggled');
 
@@ -730,6 +738,17 @@ App.prototype.saveConfiguration = function(local, callback) {
   } catch (e) {
     return callback(new Error('Failed to save configuration'));
   }
+
+  return callback(null);
+};
+
+App.prototype.clearConfiguration = function(callback) {
+  callback = callback || function() {
+    return true;
+  };
+
+  localStorage.removeItem(this.CONFIG_KEY);
+  sessionStorage.removeItem(this.CONFIG_KEY);
 
   return callback(null);
 };
