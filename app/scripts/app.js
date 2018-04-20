@@ -61,7 +61,7 @@ App.prototype.run = function(callback) {
     }
 
     var server = {
-      url:'https://' + $('#formLogin').find('#zabbixServer').val() + '/api_jsonrpc.php',
+      url: 'https://' + $('#formLogin').find('#zabbixServer').val() + '/api_jsonrpc.php',
       user: $('#formLogin').find('#zabbixUsername').val(),
       password: $('#formLogin').find('#zabbixPassword').val()
     };
