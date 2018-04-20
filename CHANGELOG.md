@@ -1,8 +1,8 @@
 # ChangeLog
 
-### CURRENT
+### 0.4.0 (2018-04-20)
 
-* Use to bootstrap 4
+* Use to bootstrap 4.1
 * Add sidebar
 * Add presentation and fullscreen modes
 * Refactor views

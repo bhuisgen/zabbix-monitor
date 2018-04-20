@@ -1,0 +1,24 @@
+version: '3.5'
+
+volumes:
+  zabbix-monitor:
+
+services:
+  nginx:
+    depends_on:
+      - zabbix-monitor
+    image: bhuisgen/alpine-nginx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8888:80"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - zabbix-monitor:/var/www
+    environment:
+      - NGINX_TEMPLATE=static
+
+  zabbix-monitor:
+    image: bhuisgen/alpine-zabbix-monitor
+    entrypoint: /bin/sh
+    volumes:
+      - zabbix-monitor:/var/www
